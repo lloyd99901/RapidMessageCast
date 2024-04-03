@@ -1,9 +1,13 @@
+<p align="center">
+    <img src="RapidMessageCast/RapidMessageCast Manager/Resources/imageres_20.png" alt="RMC Icon" />
+</p>
+
 # RapidMessageCast
 RapidMessageCast is a messaging tool designed to help with rapid communication to computers across a network, particularly in emergency scenarios. Leveraging the native msg.exe utility found in the System32 directory of Windows operating systems, RapidMessageCast enables users to send messages to multiple computers simultaneously, ensuring swift dissemination of critical information.
 
-> **Note**
+> **DEVELOPMENT NOTE**
 > 
-> This is a work in progress and isn't working yet. Expect many bugs.
+> This is a work in progress. Expect many bugs or untidy code since this is in indev phase.
 
 ## Features:
 
