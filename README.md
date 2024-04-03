@@ -3,7 +3,7 @@
 </p>
 
 # RapidMessageCast
-RapidMessageCast is a messaging tool designed to help with rapid communication to computers across a network, particularly in emergency scenarios. Leveraging the native msg.exe utility found in the System32 directory of Windows operating systems, RapidMessageCast enables users to send messages to multiple computers simultaneously, ensuring swift dissemination of critical information.
+RapidMessageCast is a messaging tool designed to help with rapid communication to computers across a network. Leveraging the native msg.exe utility found in the System32 directory of Windows operating systems, RapidMessageCast enables users to send messages to multiple computers simultaneously, ensuring swift dissemination of critical information, like in emergency scenarios.
 
 > **DEVELOPMENT NOTE**
 > 
@@ -40,4 +40,8 @@ With RapidMessageCast Run you can:
 - Once done it will close out.
 
 ## Requirements
+MSG.exe is not included in Windows Home editions. Professional/enterprise editions are required.
+Windows 7 and above
+
+Source code is edited on Visual Studio 2022
 Both the sender and the recipient computers must have a Windows operating system that supports the MSG program in order to utilize RapidMessageCastRun effectively.
