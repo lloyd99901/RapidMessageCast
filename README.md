@@ -1,13 +1,21 @@
 <p align="center">
-    <img src="RapidMessageCast/RapidMessageCast Manager/Resources/imageres_20.png" alt="RMC Icon" />
+    <img src="static/images/RMCBanner.png" alt="RMC Banner" />
 </p>
 
 # RapidMessageCast
+## Send messages to multiple computers fast!
+
+[![GitHub issues](https://img.shields.io/github/issues/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/issues)
+[![GitHub stars](https://img.shields.io/github/stars/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/stargazers)
+[![GitHub license](https://img.shields.io/github/license/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/blob/master/LICENSE)
+
 RapidMessageCast is a messaging tool designed to help with rapid communication to computers across a network. Leveraging the native msg.exe utility found in the System32 directory of Windows operating systems, RapidMessageCast enables users to send messages to multiple computers simultaneously, ensuring swift dissemination of critical information, like in emergency scenarios.
+
+![MainWindow](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/RMCManager.png)
 
 > **DEVELOPMENT NOTE**
 > 
-> This is a work in progress. Expect many bugs or untidy code since this is in indev phase.
+> This is a work in progress. Expect bugs or untidy code since this is in indev phase.
 
 ## Features:
 
@@ -22,10 +30,7 @@ RapidMessageCast can be integrated with monitoring and alerting systems to autom
 RapidMessageCast offers a straightforward interface. Users can quickly initiate message broadcasts with minimal effort, making it an ideal choice for urgent communication needs.
 It also prioritizes functionality over frills, omitting flashy startup animations or unnecessary elements. When sending a message is your priority, it's primed for immediate action without delay
 
-### Platform Compatibility.
-RapidMessageCast is designed specifically for Windows operating systems, ensuring seamless integration and compatibility with existing infrastructure. It provides a reliable solution for organizations that predominantly use Windows environments.
-
-### Two programs: Editor and Run
+### Two programs: Manager and Dispatcher
 While it may seem confusing, these two programs allow both the user and automation programs to use RapidMessageCast without complex code or arugments.
 
 With RapidMessageCast Editor you can:
@@ -34,10 +39,17 @@ With RapidMessageCast Editor you can:
 - Import computer names via Active Directory (Intergration with Active Directory to get all computers on a network or OU group.)
 - Save the message to a file that RapidMessageCast can use
 - Run RapidMessageCast
+  
+![MainWindow](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/RMCManager.png)
 
-With RapidMessageCast Run you can:
+With RapidMessageCast Dispatcher you can:
 - Run it and it will immediately begin sending messages to all of the saved computer names. If no arguments are presented to point to a Message file, it will choose the file default.msg. This feature caters to automation programs that lack the functionality to add arguments, ensuring effortless integration of RapidMessageCast.
 - Once done it will close out.
+  
+![Dispatcher](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/ExampleRMCDispatcher.png)
+
+### Platform Compatibility.
+RapidMessageCast is designed specifically for Windows operating systems, ensuring seamless integration and compatibility with existing infrastructure. It provides a reliable solution for organizations that predominantly use Windows environments.
 
 ## Requirements
 MSG.exe is not included in Windows Home editions. Professional/enterprise editions are required.
