@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RMCManager));
             StartBroadcastBtn = new Button();
             MessageLimitLbl = new Label();
@@ -62,6 +63,10 @@
             LoadSelectedRMSGBtn = new Button();
             QuickSaveRMSGListBtn = new Button();
             RMSGFileListBox = new ListBox();
+            Rmsgcontextstrip = new ContextMenuStrip(components);
+            renameSelectRMSGFileToolStripMenuItem = new ToolStripMenuItem();
+            deleteSelectedItemToolStripMenuItem = new ToolStripMenuItem();
+            refreshToolStripMenuItem = new ToolStripMenuItem();
             DeleteSelectedRMSGFileBtn = new Button();
             RefreshRMSGListBtn = new Button();
             RenameSelectedRMSGBtn = new Button();
@@ -77,6 +82,7 @@
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCIconPictureBox).BeginInit();
             panel3.SuspendLayout();
+            Rmsgcontextstrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
@@ -568,6 +574,7 @@
             // 
             RMSGFileListBox.BackColor = Color.FromArgb(73, 68, 80);
             RMSGFileListBox.BorderStyle = BorderStyle.FixedSingle;
+            RMSGFileListBox.ContextMenuStrip = Rmsgcontextstrip;
             RMSGFileListBox.ForeColor = Color.White;
             RMSGFileListBox.FormattingEnabled = true;
             RMSGFileListBox.IntegralHeight = false;
@@ -577,6 +584,33 @@
             RMSGFileListBox.Size = new Size(258, 291);
             RMSGFileListBox.TabIndex = 68;
             RMSGFileListBox.DoubleClick += RMSGFileListBox_DoubleClick;
+            // 
+            // Rmsgcontextstrip
+            // 
+            Rmsgcontextstrip.Items.AddRange(new ToolStripItem[] { renameSelectRMSGFileToolStripMenuItem, deleteSelectedItemToolStripMenuItem, refreshToolStripMenuItem });
+            Rmsgcontextstrip.Name = "Rmsgcontextstrip";
+            Rmsgcontextstrip.Size = new Size(190, 70);
+            // 
+            // renameSelectRMSGFileToolStripMenuItem
+            // 
+            renameSelectRMSGFileToolStripMenuItem.Name = "renameSelectRMSGFileToolStripMenuItem";
+            renameSelectRMSGFileToolStripMenuItem.Size = new Size(189, 22);
+            renameSelectRMSGFileToolStripMenuItem.Text = "Rename Selected Item";
+            renameSelectRMSGFileToolStripMenuItem.Click += RenameSelectedRMSGBtn_Click;
+            // 
+            // deleteSelectedItemToolStripMenuItem
+            // 
+            deleteSelectedItemToolStripMenuItem.Name = "deleteSelectedItemToolStripMenuItem";
+            deleteSelectedItemToolStripMenuItem.Size = new Size(189, 22);
+            deleteSelectedItemToolStripMenuItem.Text = "Delete Selected Item";
+            deleteSelectedItemToolStripMenuItem.Click += DeleteSelectedRMSGFileBtn_Click;
+            // 
+            // refreshToolStripMenuItem
+            // 
+            refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            refreshToolStripMenuItem.Size = new Size(189, 22);
+            refreshToolStripMenuItem.Text = "Refresh";
+            refreshToolStripMenuItem.Click += RefreshRMSGListBtn_Click;
             // 
             // DeleteSelectedRMSGFileBtn
             // 
@@ -601,7 +635,7 @@
             RefreshRMSGListBtn.Font = new Font("Arial", 9F);
             RefreshRMSGListBtn.ForeColor = Color.FromArgb(224, 224, 224);
             RefreshRMSGListBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RefreshRMSGListBtn.Location = new Point(96, 413);
+            RefreshRMSGListBtn.Location = new Point(5, 413);
             RefreshRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
             RefreshRMSGListBtn.Name = "RefreshRMSGListBtn";
             RefreshRMSGListBtn.Size = new Size(82, 26);
@@ -618,7 +652,7 @@
             RenameSelectedRMSGBtn.ForeColor = Color.FromArgb(224, 224, 224);
             RenameSelectedRMSGBtn.Image = Properties.Resources.pen;
             RenameSelectedRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RenameSelectedRMSGBtn.Location = new Point(5, 413);
+            RenameSelectedRMSGBtn.Location = new Point(91, 413);
             RenameSelectedRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             RenameSelectedRMSGBtn.Name = "RenameSelectedRMSGBtn";
             RenameSelectedRMSGBtn.Size = new Size(87, 26);
@@ -690,6 +724,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(32, 31, 36);
             ClientSize = new Size(759, 498);
+            Controls.Add(RenameSelectedRMSGBtn);
             Controls.Add(RMSGHelpLink);
             Controls.Add(MessageDurationHelpLink);
             Controls.Add(pictureBox2);
@@ -698,7 +733,6 @@
             Controls.Add(QuickSaveRMSGListBtn);
             Controls.Add(RMSGFileListBox);
             Controls.Add(DeleteSelectedRMSGFileBtn);
-            Controls.Add(RenameSelectedRMSGBtn);
             Controls.Add(label5);
             Controls.Add(SavePCListTxtBtn);
             Controls.Add(ComputerListLoadFromFileBtn);
@@ -738,6 +772,7 @@
             ((System.ComponentModel.ISupportInitialize)RMCIconPictureBox).EndInit();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            Rmsgcontextstrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
@@ -786,5 +821,9 @@
         private Button QuickSaveRMSGBtn;
         private LinkLabel MessageDurationHelpLink;
         private LinkLabel RMSGHelpLink;
+        private ContextMenuStrip Rmsgcontextstrip;
+        private ToolStripMenuItem renameSelectRMSGFileToolStripMenuItem;
+        private ToolStripMenuItem deleteSelectedItemToolStripMenuItem;
+        private ToolStripMenuItem refreshToolStripMenuItem;
     }
 }

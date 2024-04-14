@@ -264,12 +264,13 @@ namespace RapidMessageCast_Manager
                     expiryMinutesTime.Value = Convert.ToDecimal(durationParts[1]);
                     expirySecondsTime.Value = Convert.ToDecimal(durationParts[2]);
                 }
-
-                Console.WriteLine("Message loaded successfully!");
+                //Add to loglist with the name of file that was loaded.
+                AddItemToListBox("File loaded successfully: " + Path.GetFileName(filePath));
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddItemToListBox("Error loading message: " + ex.Message);
             }
         }
 
@@ -426,8 +427,9 @@ namespace RapidMessageCast_Manager
 
                 // Write the message content to the file
                 File.WriteAllText(filePath, messageContent);
-                //Add to loglist 
-                AddItemToListBox("Message saved successfully!");
+                //Add to loglist to show that the file was saved successfully.
+                AddItemToListBox("File saved successfully: " + Path.GetFileName(filePath));
+                
                 // Refresh the list of RMSG files
                 RefreshRMSGFileList();
             }
@@ -492,6 +494,12 @@ namespace RapidMessageCast_Manager
                     if (!newFileName.EndsWith(".rmsg"))
                     {
                         newFileName += ".rmsg";
+                    }
+                    //Check if the newfilename contains invalid characters.
+                    if (newFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                    {
+                        AddItemToListBox("Error renaming file: The new file name contains invalid characters.");
+                        return;
                     }
                     try
                     {
