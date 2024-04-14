@@ -8,6 +8,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>sendmail_2001.ico</ApplicationIcon>
+    <Version>0.0.1</Version>
+    <Authors>lloyd99901</Authors>
+    <Description>A quick and easy way to broadcast messages to multiple machines fast.</Description>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
