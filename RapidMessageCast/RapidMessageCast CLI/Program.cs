@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 
 string versionNumb = "v0.1 indev 2024";
-Console.WriteLine("RapidMessageCast Dispatcher Version " + versionNumb);
+Console.WriteLine("RapidMessageCast CLI Version " + versionNumb);
 Console.WriteLine("--------------------------------------------------");
 //Print the starting message to the console
 Console.WriteLine("Starting RapidMessageCast Dispatcher...");
@@ -14,7 +14,7 @@ int ExpireSecondTime = 0;
 // Function to print the usage
 void PrintUsage()
 {
-    Console.WriteLine("Usage: RapidMessageCast Dispatcher [options]");
+    Console.WriteLine("Usage: RapidMessageCast CLI [options]");
     Console.WriteLine("Options:");
     Console.WriteLine("  -h, --help    Show this message");
     Console.WriteLine("  -f, --file    Specify the file to broadcast");
@@ -97,6 +97,15 @@ void BeginMessageCast(string message, string pcList, int duration)
     Console.WriteLine("Message: " + message);
     string[] pcNames = pcList.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
     Console.WriteLine("--------------------------------------------------");
+    //check if msg.exe exists in system32
+    if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Error: msg.exe not found in system32. Please ensure msg.exe is installed on this system.");
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Environment.Exit(1);
+    }
+
     foreach (string pcName in pcNames)
     {
         Task.Run(() =>
@@ -107,7 +116,8 @@ void BeginMessageCast(string message, string pcList, int duration)
 
                 var processInfo = new ProcessStartInfo
                 {
-                    FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "msg.exe"),
+                    //Run msg.exe from system32
+                    FileName = "C:\\Windows\\System32\\msg.exe",
                     Arguments = $"* /TIME:{duration} /SERVER:{pcName} \"{message}\"",
                     CreateNoWindow = true,
                     UseShellExecute = false

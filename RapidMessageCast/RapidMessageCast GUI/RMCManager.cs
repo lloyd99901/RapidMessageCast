@@ -8,13 +8,35 @@ namespace RapidMessageCast_Manager
     public partial class RMCManager : Form
     {
         public string versionNumb = "v0.1 indev 2024";
+        List<string> broadcastHistory = new List<string>();
         public RMCManager()
         {
             InitializeComponent();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            AddItemToListBox("RMC Manager " + versionNumb + ". Welcome.");
+            AddItemToListBox("[INFO] - Starting RMC GUI " + versionNumb + ". Welcome.");
+            versionLbl.Text = versionNumb;
+            LoadGlobalSettings();
+            //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
+            if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
+            {
+                AddItemToListBox("Error - msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.");
+                MessageBox.Show("msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            //Create a directory called BroadcastHistory if it doesn't exist.
+            if (!Directory.Exists(Application.StartupPath + "\\BroadcastHistory"))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Application.StartupPath + "\\BroadcastHistory");
+                    AddItemToListBox("Info - BroadcastHistory directory created.");
+                }
+                catch (Exception ex)
+                {
+                    AddItemToListBox("Error - Failure in creating BroadcastHistory directory. " + ex.Message);
+                }
+            }
             // Determine whether RMSGFiles directory exists, if not, create it. Error if it fails.
             if (!Directory.Exists(Application.StartupPath + "\\RMSGFiles"))
             {
@@ -43,8 +65,15 @@ namespace RapidMessageCast_Manager
                 LoadRMSGFileFunction(Application.StartupPath + "\\RMSGFiles\\default.rmsg");
                 AddItemToListBox("Info - Default.rmsg file loaded.");
             }
-            Text = "RapidMessageCast Manager - " + versionNumb;
-            AddItemToListBox("RMC Manager is now ready.");
+            Text = "RapidMessageCast GUI - " + versionNumb;
+            //Add item about the end of life of the program.
+            AddItemToListBox("[INFO] - RMC GUI is now ready.");
+        }
+
+        private void LoadGlobalSettings()
+        {
+            //Load the settings from the settings file.
+            EmergencyModeCheckbox.Checked = Properties.Settings.Default.EmergencyMode;
         }
 
         private bool IsAdministrator()
@@ -252,6 +281,16 @@ namespace RapidMessageCast_Manager
                 string message = GetValueFromSection(sections, "[Message]");
                 string pcList = GetValueFromSection(sections, "[PCList]");
                 string messageDuration = GetValueFromSection(sections, "[MessageDuration]");
+                //Check if emergency mode is enabled in the file.
+                string emergencyMode = GetValueFromSection(sections, "[EmergencyMode]");
+                if (emergencyMode == "Enabled")
+                {
+                    EmergencyModeCheckbox.Checked = true;
+                }
+                else
+                {
+                    EmergencyModeCheckbox.Checked = false;
+                }
 
                 // Populate the TextBoxes with the extracted values
                 MessageTxt.Text = message;
@@ -269,7 +308,7 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error loading message: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 AddItemToListBox("Error loading message: " + ex.Message);
             }
         }
@@ -336,6 +375,24 @@ namespace RapidMessageCast_Manager
         }
         public void BeginMessageCast(string message, string pcList, int duration)
         {
+            //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
+            if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
+            {
+                AddItemToListBox("Error - msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.");
+                MessageBox.Show("msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //Clear BroadcastHistory list.
+            broadcastHistory.Clear();
+            //Add that broadcast has started to the loglist.
+            AddItemToListBox("Broadcast started.");
+            //Add if emergency mode is enabled to the broadcast history.
+            if (EmergencyModeCheckbox.Checked)
+            {
+                broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
+            }
+            //Add the message to the broadcast history.
+            broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Broadcast has started - Message: " + message);
             string[] pcNames = pcList.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string pcName in pcNames)
             {
@@ -347,7 +404,7 @@ namespace RapidMessageCast_Manager
 
                         var processInfo = new ProcessStartInfo
                         {
-                            FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "msg.exe"),
+                            FileName = "C:\\Windows\\System32\\msg.exe",
                             Arguments = $"* /TIME:{duration} /SERVER:{pcName} \"{message}\"",
                             CreateNoWindow = true,
                             UseShellExecute = false
@@ -357,16 +414,65 @@ namespace RapidMessageCast_Manager
 
                         // Start the process
                         process.Start();
-
+                        //Add the PC to the broadcast history.
+                        //broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Attempting to message - " + pcName);
                         AddItemToListBox($"MSG process sent for PC: {pcName}");
+
+                        //Check if emergency mode is enabled. if it is, do not wait for the process to exit.
+                        if (!EmergencyModeCheckbox.Checked)
+                        {
+                            //Check if the program exits without any errors.
+                            if (!process.WaitForExit(1500))
+                            {
+                                //Add the error to the broadcast history.
+                                broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - ERROR - The process did not exit in time.");
+                                AddItemToListBox($"ERROR - The process did not exit in time for PC: {pcName}");
+                            }
+                            else
+                            {
+                                //Add the success to the broadcast history.
+                                broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - SUCCESS - MSG.exe process exited within allocated timelimit.");
+                                AddItemToListBox($"SUCCESS - MSG.exe process exited within allocated timelimit: {pcName}");
+                            }
+                        }
+                        else
+                        {
+                            //Add PC name to the broadcast history. But write unknown if message was sent or not.
+                            broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - UNKNOWN if message was sent. - ");
+                        }
                     }
                     catch (Exception ex)
                     {
+                        //Add the error to the broadcast history.
+                        broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - ERROR - " + ex.Message);
                         AddItemToListBox($"ERROR - Failure to send command for PC: {pcName}");
                         AddItemToListBox(ex.ToString());
                     }
                 });
             }
+            //Wait for all processes that contain msg.exe to close before saving the broadcast history.
+            Task.Run(() =>
+            {
+                while (Process.GetProcessesByName("msg").Length > 0)
+                {
+                    Thread.Sleep(1000);
+                }
+                //Add end of broadcast to the broadcast history.
+                broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Broadcast has ended.");
+                AddItemToListBox("Broadcast finished. Saving broadcast log...");
+                SaveBroadcastHistory();
+            });
+            //Set the start broadcast button to green and start the timer to change it back to the original color.
+            StartBroadcastBtn.BackColor = Color.Green;
+            GreenButtonTimer.Start();
+        }
+
+        private void SaveBroadcastHistory()
+        {
+            //Save the broadcast history to a file in the directory called BroadcastHistory.
+            string broadcastHistoryFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+            File.WriteAllLines(Application.StartupPath + "\\BroadcastHistory\\" + broadcastHistoryFileName, broadcastHistory);
+            AddItemToListBox("Broadcast history saved to file: " + broadcastHistoryFileName);
         }
 
         private void clearLogBtn_Click(object sender, EventArgs e)
@@ -385,11 +491,6 @@ namespace RapidMessageCast_Manager
                 logList.Items.Add(item);
                 logList.TopIndex = logList.Items.Count - 1; // Scroll to the latest item
             }
-        }
-
-        private void AboutLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            MessageBox.Show("RapidMessageCast [RMC] " + versionNumb + " created by lloyd99901 on GitHub. Under MIT license. Free to use for personal and commerical settings.");
         }
 
         private void LoadSelectedRMSGBtn_Click(object sender, EventArgs e)
@@ -424,12 +525,17 @@ namespace RapidMessageCast_Manager
                 string messageContent = $"[Message]\r\n{MessageTxt.Text}\r\n\r\n";
                 messageContent += $"[PCList]\r\n{ComputerSelectList.Text}\r\n\r\n";
                 messageContent += $"[MessageDuration]\r\n{expiryHourTime.Value}:{expiryMinutesTime.Value}:{expirySecondsTime.Value}";
+                //Add emergency mode to the message content if it's enabled.
+                if (EmergencyModeCheckbox.Checked)
+                {
+                    messageContent += "\r\n\r\n[EmergencyMode]\r\nEnabled";
+                }
 
                 // Write the message content to the file
                 File.WriteAllText(filePath, messageContent);
                 //Add to loglist to show that the file was saved successfully.
                 AddItemToListBox("File saved successfully: " + Path.GetFileName(filePath));
-                
+
                 // Refresh the list of RMSG files
                 RefreshRMSGFileList();
             }
@@ -542,6 +648,45 @@ namespace RapidMessageCast_Manager
                     e.Cancel = true;
                 }
             }
+        }
+
+        private void ComputerSelectList_TextChanged(object sender, EventArgs e)
+        {
+            //For each line, count it on the PCCountLBL.
+            int pcCount = ComputerSelectList.Lines.Length;
+            PCCountLbl.Text = "PC Count: " + pcCount.ToString();
+        }
+
+        private void GreenButtonTimer_Tick(object sender, EventArgs e)
+        {
+            //On Tick, Change the color of the start broadcast button to 53, 48, 70 and then disable the timer.
+            StartBroadcastBtn.BackColor = Color.FromArgb(53, 48, 70);
+            GreenButtonTimer.Stop();
+        }
+
+        private void EmergencyModeCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            //Save checkbox state to the settings file.
+            Properties.Settings.Default.EmergencyMode = EmergencyModeCheckbox.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void EmergencyHelpLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //Messagebox with information on what the emergency mode is. It will not check if the message sent, it will just send it and move on.
+            MessageBox.Show("Emergency mode is a mode that will not check if the message was sent to the computer. It will just send the message and move on to the next computer. This is useful if you need to send a message to a lot of computers quickly.");
+        }
+
+        private void IconsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //Create a process 
+            Process process = new();
+            //Set the startinfo to the process.
+            process.StartInfo = new ProcessStartInfo("https://icons8.com/");
+            process.StartInfo.UseShellExecute = true;
+            //Start the process.
+            process.Start();
+
         }
     }
 }

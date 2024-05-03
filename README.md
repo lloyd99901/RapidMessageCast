@@ -30,20 +30,24 @@ RapidMessageCast can be integrated with monitoring and alerting systems to autom
 RapidMessageCast offers a straightforward interface. Users can quickly initiate message broadcasts with minimal effort, making it an ideal choice for urgent communication needs.
 It also prioritizes functionality over frills, omitting flashy startup animations or unnecessary elements. When sending a message is your priority, it's primed for immediate action without delay
 
-### Two programs: Manager and Dispatcher
+### Two programs: GUI and CLI
 While it may seem confusing, these two programs allow both the user and automation programs to use RapidMessageCast without complex code or arugments.
 
-With RapidMessageCast Editor you can:
+With RapidMessageCast GUI you can:
+- Create and send a message with a simple GUI, making it an easy experience
 - Edit the message
 - Edit what computers are sent the message
 - Import computer names via Active Directory (Intergration with Active Directory to get all computers on a network or OU group.)
 - Save the message to a file that RapidMessageCast can use
+- Schedule a message
+- View broadcast history
 - Run RapidMessageCast
   
 ![MainWindow](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/RMCManager.png)
 
-With RapidMessageCast Dispatcher you can:
-- Run it and it will immediately begin sending messages to all of the saved computer names. If no arguments are presented to point to a Message file, it will choose the file default.msg. This feature caters to automation programs that lack the functionality to add arguments, ensuring effortless integration of RapidMessageCast.
+With RapidMessageCast CLI you can:
+- Run it and it will immediately begin sending messages to all of the saved computer names. 
+- If no arguments are presented to point to a Message file, it will choose the file default.msg. This feature caters to automation programs that lack the functionality to add arguments, ensuring effortless integration of RapidMessageCast.
 - Once done it will close out.
   
 ![Dispatcher](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/ExampleRMCDispatcher.png)
