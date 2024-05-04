@@ -3,7 +3,6 @@
 </p>
 
 # RapidMessageCast
-## Send messages to multiple computers fast!
 
 [![GitHub issues](https://img.shields.io/github/issues/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/issues)
 [![GitHub stars](https://img.shields.io/github/stars/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/stargazers)
@@ -60,4 +59,5 @@ MSG.exe is not included in Windows Home editions. Professional/enterprise editio
 Windows 7 and above
 
 Source code is edited on Visual Studio 2022
+
 Both the sender and the recipient computers must have a Windows operating system that supports the MSG program in order to utilize RapidMessageCastRun effectively.
