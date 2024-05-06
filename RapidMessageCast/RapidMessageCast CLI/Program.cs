@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 
+//This code needs to be redone, the GUI code is newer so that should be used as a reference.
+
 string versionNumb = "v0.1 indev 2024";
 Console.WriteLine("RapidMessageCast CLI Version " + versionNumb);
 Console.WriteLine("--------------------------------------------------");
@@ -184,7 +186,7 @@ else
             {
                 filePath = args[Array.IndexOf(args, arg) + 1];
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //Arguments failed. Print an error message and exit
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -194,7 +196,7 @@ else
                 PrintUsage();
                 Environment.Exit(1);
             }
-            
+
             //Parse the file
             LoadRMSGFileFunction(filePath);
             //Begin the message cast

@@ -34,5 +34,53 @@ namespace RapidMessageCast_Manager.Properties {
                 this["EmergencyMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DontSaveBroadcastHistory {
+            get {
+                return ((bool)(this["DontSaveBroadcastHistory"]));
+            }
+            set {
+                this["DontSaveBroadcastHistory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MessagePCEnabled {
+            get {
+                return ((bool)(this["MessagePCEnabled"]));
+            }
+            set {
+                this["MessagePCEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MessageEmailEnabled {
+            get {
+                return ((bool)(this["MessageEmailEnabled"]));
+            }
+            set {
+                this["MessageEmailEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MessagePSExecEnabled {
+            get {
+                return ((bool)(this["MessagePSExecEnabled"]));
+            }
+            set {
+                this["MessagePSExecEnabled"] = value;
+            }
+        }
     }
 }

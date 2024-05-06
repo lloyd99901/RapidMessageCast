@@ -83,6 +83,16 @@ namespace RapidMessageCast_Manager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_chat_bubble_24_black {
+            get {
+                object obj = ResourceManager.GetObject("icons8-chat-bubble-24-black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_delete_24 {
             get {
                 object obj = ResourceManager.GetObject("icons8-delete-24", resourceCulture);
@@ -103,9 +113,59 @@ namespace RapidMessageCast_Manager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_email_24 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-email-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_email_24_black {
+            get {
+                object obj = ResourceManager.GetObject("icons8-email-24-black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_expand_24 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-expand-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_external_link_24 {
             get {
                 object obj = ResourceManager.GetObject("icons8-external-link-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_filter_24 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-filter-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_hide_24 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-hide-24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -126,6 +186,26 @@ namespace RapidMessageCast_Manager.Properties {
         internal static System.Drawing.Bitmap icons8_pc_24 {
             get {
                 object obj = ResourceManager.GetObject("icons8-pc-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_pc_24_black {
+            get {
+                object obj = ResourceManager.GetObject("icons8-pc-24-black", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_radio_tower_24_black {
+            get {
+                object obj = ResourceManager.GetObject("icons8-radio-tower-24-black", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -176,6 +256,26 @@ namespace RapidMessageCast_Manager.Properties {
         internal static System.Drawing.Bitmap icons8_send_letter_24 {
             get {
                 object obj = ResourceManager.GetObject("icons8-send-letter-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_turn_on_24 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-turn-on-24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icons8_turn_on_24_black {
+            get {
+                object obj = ResourceManager.GetObject("icons8-turn-on-24-black", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
