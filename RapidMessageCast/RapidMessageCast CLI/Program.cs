@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-//This code needs to be redone, the GUI code is newer so that should be used as a reference.
+//NOTE: This program shouldn't be used, since the GUI code is newer and saves the files differently it may cause issues with the file parsing on the CLI version.
+//This code is going to be be redone but for now, it's here for reference. The GUI version is the recommended version to use.
+//The features will be added to the GUI first and once all features are added, the CLI version will be updated to match the GUI version to ensure compatibility.
 
 string versionNumb = "v0.1 indev 2024";
 Console.WriteLine("RapidMessageCast CLI Version " + versionNumb);
 Console.WriteLine("--------------------------------------------------");
+Console.WriteLine("IMPORTANT NOTICE: This CLI program might not be compatible with the GUI version at this point in time. Use with caution.");
 //Print the starting message to the console
 Console.WriteLine("Starting RapidMessageCast Dispatcher...");
 string pcNames = "";

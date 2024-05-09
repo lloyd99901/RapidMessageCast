@@ -1,3 +1,4 @@
+using RapidMessageCast_Manager.Modules;
 using System.Diagnostics;
 using System.DirectoryServices;
 using System.Security.Principal;
@@ -25,17 +26,13 @@ using System.Text.RegularExpressions;
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-//Note: This code is going to be untidy and code will not be moved into seperate classes yet, as this is a work in progress.
-//I will clean up the code and move it into seperate classes when the program is more finalised.
-
 namespace RapidMessageCast_Manager
 {
     public partial class RMCManager : Form
     {
         public string versionNumb = "v0.1 indev 2024";
-        private static readonly string[] RMCseparator = ["\r\n\r\n"]; //Used for RMC file IO parsing.
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
-        List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
+        readonly List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         readonly ImageList tabControlImageList = new();
         public RMCManager()
         {
@@ -53,7 +50,24 @@ namespace RapidMessageCast_Manager
             versionLbl.Text = versionNumb;
             LoadGlobalSettings();
             AddIconsToTabControls();
-            CreateRMCDirectories();
+            AddItemToListBox(RMC_IO_Manager.CreateRMCDirectories()); //Create the directories for the program and then displays the status in the loglist.
+            RefreshRMSGFileList();
+            CheckSystemState();
+            //If there is a RMSG file called default.rmsg, load it into the program.
+            if (File.Exists(Application.StartupPath + "\\RMSGFiles\\default.rmsg"))
+            {
+                LoadRMSGFileInProgram(Application.StartupPath + "\\RMSGFiles\\default.rmsg");
+                AddItemToListBox("Info - Default.rmsg file loaded.");
+            }
+            Text = "RapidMessageCast GUI - " + versionNumb;
+            AddItemToListBox("[INFO] - RMC GUI is now ready.");
+        }
+
+        #region Functions
+        //Start of the functions.
+
+        private void CheckSystemState()
+        {
             //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
             if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
             {
@@ -65,50 +79,11 @@ namespace RapidMessageCast_Manager
             {
                 AddItemToListBox("Notice - The program is not running as an administrator. If broadcasting a message doesn't work, try running this program as administrator.");
             }
-            //If there is a RMSG file called default.rmsg, load it into the program.
-            if (File.Exists(Application.StartupPath + "\\RMSGFiles\\default.rmsg"))
+            //Check System RAM, if less than 1GB, display a message to the user.
+            if (new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory < 1073741824)
             {
-                LoadRMSGFileFunction(Application.StartupPath + "\\RMSGFiles\\default.rmsg");
-                AddItemToListBox("Info - Default.rmsg file loaded.");
-            }
-            Text = "RapidMessageCast GUI - " + versionNumb;
-            AddItemToListBox("[INFO] - RMC GUI is now ready.");
-        }
-        #region Functions
-        //Start of the functions.
-        private void CreateRMCDirectories()
-        {
-            //Create a directory called BroadcastHistory if it doesn't exist.
-            if (!Directory.Exists(Application.StartupPath + "\\BroadcastHistory"))
-            {
-                try
-                {
-                    Directory.CreateDirectory(Application.StartupPath + "\\BroadcastHistory");
-                    AddItemToListBox("Info - BroadcastHistory directory created.");
-                }
-                catch (Exception ex)
-                {
-                    AddItemToListBox("Error - Failure in creating BroadcastHistory directory. " + ex.Message);
-                }
-            }
-            // Determine whether RMSGFiles directory exists, if not, create it. Error if it fails.
-            if (!Directory.Exists(Application.StartupPath + "\\RMSGFiles"))
-            {
-                try
-                {
-                    Directory.CreateDirectory(Application.StartupPath + "\\RMSGFiles");
-                    AddItemToListBox("Info - RMSGFiles directory created.");
-                }
-                catch (Exception ex)
-                {
-                    AddItemToListBox("Error - Failure in creating RMSGFiles directory. " + ex.Message);
-                }
-            }
-            else
-            {
-                //Add to loglist that rmsg files are being loaded.
-                AddItemToListBox("Info - Loading RMSG files.");
-                RefreshRMSGFileList();
+                MessageBox.Show("The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                AddItemToListBox("Warning - The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.");
             }
         }
 
@@ -181,44 +156,27 @@ namespace RapidMessageCast_Manager
             return Regex.Replace(text, pattern, "");
         }
 
-        private static string GetValueFromSection(string[] sections, string sectionHeader)
+        private void LoadRMSGFileInProgram(string filePath)
         {
-            foreach (string section in sections)
+            //Use RMSG_IO_Manager.LoadRMSGFile(openFileDialog.FileName); and store the return values in a string array.
+            string[] RMSGFileValues = RMC_IO_Manager.LoadRMSGFile(filePath);
+
+            //Check if the first value in the array is "Error". If it is, report it to the user and add to loglist
+            if (RMSGFileValues[0] != "") //If there is something in the first value, it means that there is an error. Break and report it to the user.
             {
-                if (section.StartsWith(sectionHeader))
-                {
-                    // Get the value following the section header
-                    string value = section[sectionHeader.Length..].Trim();
-
-                    // Filter out invalid characters only for PC list section
-                    if (sectionHeader == "[PCList]")
-                    {
-                        value = FilterInvalidCharacters(value);
-                    }
-
-                    return value;
-                }
+                MessageBox.Show("Error loading message: " + RMSGFileValues[0], "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddItemToListBox("Error loading message: " + RMSGFileValues[0]);
             }
-            return string.Empty;
-        }
-
-        private void LoadRMSGFileFunction(string filePath)
-        {
-            try
+            else
             {
-                // Read the contents of the selected file
-                string fileContents = File.ReadAllText(filePath);
-
-                // Split the file contents by section headers
-                string[] sections = fileContents.Split(RMCseparator, StringSplitOptions.RemoveEmptyEntries);
-
-                // Extract message, PC list, and message duration from sections
-                string message = GetValueFromSection(sections, "[Message]");
-                string pcList = GetValueFromSection(sections, "[PCList]");
-                string messageDuration = GetValueFromSection(sections, "[MessageDuration]");
+                //Populate the textboxes with the values from the array.
+                MessageTxt.Text = RMSGFileValues[1];
+                ComputerSelectList.Text = RMSGFileValues[2];
+                expiryHourTime.Value = Convert.ToDecimal(RMSGFileValues[3]);
+                expiryMinutesTime.Value = Convert.ToDecimal(RMSGFileValues[4]);
+                expirySecondsTime.Value = Convert.ToDecimal(RMSGFileValues[5]);
                 //Check if emergency mode is enabled in the file.
-                string emergencyMode = GetValueFromSection(sections, "[EmergencyMode]");
-                if (emergencyMode == "Enabled")
+                if (RMSGFileValues[6] == "True")
                 {
                     EmergencyModeCheckbox.Checked = true;
                 }
@@ -226,10 +184,8 @@ namespace RapidMessageCast_Manager
                 {
                     EmergencyModeCheckbox.Checked = false;
                 }
-
                 //Check module states in the file. if it exists, enable it. if not, disable it.
-                string messagePC = GetValueFromSection(sections, "[MessagePC]");
-                if (messagePC == "Enabled")
+                if (RMSGFileValues[7] == "True")
                 {
                     MessagePCcheckBox.Checked = true;
                 }
@@ -237,8 +193,7 @@ namespace RapidMessageCast_Manager
                 {
                     MessagePCcheckBox.Checked = false;
                 }
-                string messageEmail = GetValueFromSection(sections, "[MessageEmail]");
-                if (messageEmail == "Enabled")
+                if (RMSGFileValues[8] == "True")
                 {
                     MessageEmailcheckBox.Checked = true;
                 }
@@ -246,8 +201,7 @@ namespace RapidMessageCast_Manager
                 {
                     MessageEmailcheckBox.Checked = false;
                 }
-                string messagePSExec = GetValueFromSection(sections, "[MessagePSExec]");
-                if (messagePSExec == "Enabled")
+                if (RMSGFileValues[9] == "True")
                 {
                     MessagePSExecCheckBox.Checked = true;
                 }
@@ -255,67 +209,8 @@ namespace RapidMessageCast_Manager
                 {
                     MessagePSExecCheckBox.Checked = false;
                 }
-
-                // Populate the TextBoxes with the extracted values
-                MessageTxt.Text = message;
-                ComputerSelectList.Text = pcList;
-
-                string[] durationParts = messageDuration.Split(':');
-                if (durationParts.Length == 3)
-                {
-                    expiryHourTime.Value = Convert.ToDecimal(durationParts[0]);
-                    expiryMinutesTime.Value = Convert.ToDecimal(durationParts[1]);
-                    expirySecondsTime.Value = Convert.ToDecimal(durationParts[2]);
-                }
                 //Add to loglist with the name of file that was loaded.
                 AddItemToListBox("File loaded successfully: " + Path.GetFileName(filePath));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading message: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddItemToListBox("Error loading message: " + ex.Message);
-            }
-        }
-
-        private void SaveRMSGFileFunction(string filePath)
-        {
-            try
-            {
-                // Prepare the message content
-                string messageContent = $"[Message]\r\n{MessageTxt.Text}\r\n\r\n";
-                messageContent += $"[PCList]\r\n{ComputerSelectList.Text}\r\n\r\n";
-                messageContent += $"[MessageDuration]\r\n{expiryHourTime.Value}:{expiryMinutesTime.Value}:{expirySecondsTime.Value}";
-                //Add emergency mode to the message content if it's enabled.
-                if (EmergencyModeCheckbox.Checked)
-                {
-                    messageContent += "\r\n\r\n[EmergencyMode]\r\nEnabled";
-                }
-                //Add the Module States to the file (Message, Email, PSExec), If it enabled, add it to the file. if not, do not add it.
-                if (MessagePCcheckBox.Checked)
-                {
-                    messageContent += "\r\n\r\n[MessagePC]\r\nEnabled";
-                }
-                if (MessageEmailcheckBox.Checked)
-                {
-                    messageContent += "\r\n\r\n[MessageEmail]\r\nEnabled";
-                }
-                if (MessagePSExecCheckBox.Checked)
-                {
-                    messageContent += "\r\n\r\n[MessagePSExec]\r\nEnabled";
-                }
-
-                // Write the message content to the file
-                File.WriteAllText(filePath, messageContent);
-                //Add to loglist to show that the file was saved successfully.
-                AddItemToListBox("File saved successfully: " + Path.GetFileName(filePath));
-
-                // Refresh the list of RMSG files
-                RefreshRMSGFileList();
-            }
-            catch (Exception ex)
-            {
-                AddItemToListBox("Error saving message: " + ex.Message);
-                MessageBox.Show("Error saving message: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -352,15 +247,15 @@ namespace RapidMessageCast_Manager
             broadcastHistoryBuffer.Clear();
             //Add that broadcast has started to the loglist.
             AddItemToListBox("Broadcast started.");
+            //Add the message to the broadcast history.
+            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Info - Broadcast has started - Message: " + message);
             //Add if emergency mode is enabled to the broadcast history.
             if (EmergencyModeCheckbox.Checked)
             {
                 //add to loglist that emergency mode is enabled.
                 AddItemToListBox("Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
+                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Warning - Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
             }
-            //Add the message to the broadcast history.
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Broadcast has started - Message: " + message);
             string[] pcNames = pcList.Split(PCseparatorArray, StringSplitOptions.RemoveEmptyEntries);
             foreach (string pcName in pcNames)
             {
@@ -406,7 +301,7 @@ namespace RapidMessageCast_Manager
                         else
                         {
                             //Add PC name to the broadcast history. But write unknown if message was sent or not.
-                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - UNKNOWN if message was sent. - ");
+                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - Message attempted, Unknown if it worked due to emergency mode being enabled - ");
                         }
                     }
                     catch (Exception ex)
@@ -604,7 +499,7 @@ namespace RapidMessageCast_Manager
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                LoadRMSGFileFunction(openFileDialog.FileName);
+                LoadRMSGFileInProgram(openFileDialog.FileName);
             }
         }
 
@@ -678,7 +573,8 @@ namespace RapidMessageCast_Manager
                 int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
                 //BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false); //Start the message cast.
                 //Begin message cast asynchroniously. This will then allow the other code below to run at the same time.
-                Task.Run(() => BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false));
+                //Task.Run(() => BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false));
+                BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false);
             }
             //Check if Email module is enabled. If it is, start the Email cast.
             if (MessageEmailcheckBox.Checked)
@@ -712,7 +608,7 @@ namespace RapidMessageCast_Manager
             string? selectedFile = RMSGFileListBox.SelectedItem?.ToString();
             if (selectedFile != null)
             {
-                LoadRMSGFileFunction(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile));
+                LoadRMSGFileInProgram(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile));
             }
         }
 
@@ -727,7 +623,8 @@ namespace RapidMessageCast_Manager
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                SaveRMSGFileFunction(saveFileDialog.FileName);
+                RMC_IO_Manager.SaveRMSGFile(saveFileDialog.FileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked);
+                RefreshRMSGFileList();
             }
         }
 
@@ -736,7 +633,9 @@ namespace RapidMessageCast_Manager
             //Save a quick save file name based on the current date and time.
             string quickSaveFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".rmsg";
 
-            SaveRMSGFileFunction(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName));
+            //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
+            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked);
+            RefreshRMSGFileList();
         }
 
         private void RefreshRMSGListBtn_Click(object sender, EventArgs e)
@@ -869,8 +768,8 @@ namespace RapidMessageCast_Manager
 
         private void EmergencyHelpLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //Messagebox with information on what the emergency mode is. It will not check if the message sent, it will just send it and move on.
-            MessageBox.Show("Emergency mode is a mode that will not check if the message was sent to the computer. It will just attempt to send the message and move on to the next computer. This is useful if you need to send a message to a lot of computers quickly.");
+            //Messagebox with information on what the fast broadcast is. It will not check if the message sent, it will just send it and move on.
+            MessageBox.Show("Fast broadcast is a mode that will not check if the message was sent to the computer. It will just attempt to send the message and move on to the next computer. This is useful if you need to send a message to a lot of computers quickly (e.g. in emergencies).");
         }
 
         private void IconsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -938,6 +837,18 @@ namespace RapidMessageCast_Manager
                 ToggleRMSGListBtn.Image = Properties.Resources.icons8_expand_24;
                 ToggleRMSGListBtn.Text = "Show RMSG List";
             }
+        }
+
+        private void ScheduleBroadcastBtn_Click(object sender, EventArgs e)
+        {
+            //will be implemented in a future update.
+            MessageBox.Show("Scheduled Broadcast is not implemented yet. This is a placeholder message.", "Scheduled Broadcast", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void BroadcastHistoryBtn_Click(object sender, EventArgs e)
+        {
+            BroadcastHistoryForm broadcastHistoryForm = new();
+            broadcastHistoryForm.Show();
         }
     }
 }
