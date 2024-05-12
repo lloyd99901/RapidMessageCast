@@ -34,6 +34,7 @@ namespace RapidMessageCast_Manager
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
         readonly List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         readonly ImageList tabControlImageList = new();
+        private bool isScheduledBroadcast = false;
         public RMCManager()
         {
             //Add images to the tabcontrol. Used for the icons on the tabs.
@@ -46,28 +47,64 @@ namespace RapidMessageCast_Manager
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            AddItemToListBox("[INFO] - Starting RMC GUI " + versionNumb + ". Welcome. - " + DateTime.Now.ToString());
-            versionLbl.Text = versionNumb;
+            AddItemToListBox("INFO - Starting RMC GUI " + versionNumb + ". Welcome. - " + DateTime.Now.ToString());
+            //Check if the program has a argument that contains a .rmsg file and also contains schedule, if it does, immediately start the broadcast with that file and close the form.
+            if (Environment.GetCommandLineArgs().Length > 1)
+            {
+                AddItemToListBox("INFO - Command line arguments detected.");
+                //If program only has one argument, load the file into the program. But if it has two arguments, check if the second argument is schedule. If it is, start the broadcast.
+                if (Environment.GetCommandLineArgs().Length == 2)
+                {
+                    AddItemToListBox("INFO - Loading RMSG file from command line argument.");
+                    LoadRMSGFileInProgram(Environment.GetCommandLineArgs()[1]);
+                }
+                else if (Environment.GetCommandLineArgs().Length == 3 && Environment.GetCommandLineArgs()[2] == "schedule")
+                {
+                    isScheduledBroadcast = true; //Used to tell the broadcast code to close the program after the broadcast has finished.
+                    RunScheduledBroastcast(Environment.GetCommandLineArgs()[1]);
+                    //This is a scheduled message broadcast. Start the broadcast immediately.
+                }
+            }
+            CheckSystemState();
             LoadGlobalSettings();
             AddIconsToTabControls();
-            AddItemToListBox(RMC_IO_Manager.CreateRMCDirectories()); //Create the directories for the program and then displays the status in the loglist.
+            AddItemToListBox(RMC_IO_Manager.AttemptToCreateRMCDirectories()); //Create the directories for the program and then displays the status in the loglist.
             RefreshRMSGFileList();
-            CheckSystemState();
             //If there is a RMSG file called default.rmsg, load it into the program.
             if (File.Exists(Application.StartupPath + "\\RMSGFiles\\default.rmsg"))
             {
                 LoadRMSGFileInProgram(Application.StartupPath + "\\RMSGFiles\\default.rmsg");
                 AddItemToListBox("Info - Default.rmsg file loaded.");
             }
+            versionLbl.Text = versionNumb;
             Text = "RapidMessageCast GUI - " + versionNumb;
-            AddItemToListBox("[INFO] - RMC GUI is now ready.");
+            AddItemToListBox("INFO - RMC GUI is now ready.");
         }
-
         #region Functions
         //Start of the functions.
+        private void RunScheduledBroastcast(string RMSGFile)
+        {
+            //Hide form
+            Hide();
+            LoadRMSGFileInProgram(RMSGFile); //Load the RMSG file into the program.
+            //Check if modules are selected. If not, close the program.
+            if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !MessagePSExecCheckBox.Checked)
+            {
+                Application.Exit();
+            }
+            //Check if message or pclist is empty. If it is, close the program.
+            if (MessageTxt.Text == "" || ComputerSelectList.Text == "")
+            {
+                Application.Exit();
+            }
+            int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
+            BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false); //Start the message cast.
+            Hide();
+        }
 
         private void CheckSystemState()
         {
+            //This function will check the system state and display messages to the user if something that might impact messaging is detected.
             //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
             if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
             {
@@ -84,6 +121,16 @@ namespace RapidMessageCast_Manager
             {
                 MessageBox.Show("The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 AddItemToListBox("Warning - The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.");
+            }
+            //Check if the computer is able to send messages. Check by seeing if the computer has an ip or an available network device.
+            if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                AddItemToListBox("Info - Network is available. The program is able to send messages.");
+            }
+            else
+            {
+                AddItemToListBox("Error - Network is not available. The program is unable to send messages.");
+                MessageBox.Show("RMC has detected that your computer's network is not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -115,7 +162,7 @@ namespace RapidMessageCast_Manager
             {
                 if (logList.InvokeRequired)
                 {
-                    logList.Invoke(new MethodInvoker(() => AddItemToListBox(item)));
+                    logList.Invoke(new MethodInvoker(() => AddItemToListBox(item))); //This was added to prevent crashing when there are multiple threads trying to access the listbox.
                 }
                 else
                 {
@@ -210,7 +257,7 @@ namespace RapidMessageCast_Manager
                     MessagePSExecCheckBox.Checked = false;
                 }
                 //Add to loglist with the name of file that was loaded.
-                AddItemToListBox("File loaded successfully: " + Path.GetFileName(filePath));
+                AddItemToListBox("Info - File loaded successfully: " + Path.GetFileName(filePath));
             }
         }
 
@@ -247,6 +294,11 @@ namespace RapidMessageCast_Manager
             broadcastHistoryBuffer.Clear();
             //Add that broadcast has started to the loglist.
             AddItemToListBox("Broadcast started.");
+            //Check if isScheduledBroadcast is true. If it is, add to the broadcast history that it's a scheduled broadcast.
+            if (isScheduledBroadcast)
+            {
+                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Info - Scheduled broadcast has started.");
+            }
             //Add the message to the broadcast history.
             broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Info - Broadcast has started - Message: " + message);
             //Add if emergency mode is enabled to the broadcast history.
@@ -331,6 +383,12 @@ namespace RapidMessageCast_Manager
                 broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Broadcast has ended.");
                 AddItemToListBox("Broadcast finished. Saving broadcast log...");
                 SaveBroadcastHistory();
+                if (isScheduledBroadcast)
+                {
+                    //Close the program if it's a scheduled broadcast.
+                    AddItemToListBox("Scheduled broadcast finished. Closing program.");
+                    Application.Exit();
+                }
             });
             //Set the start broadcast button to green and start the timer to change it back to the original color.
             StartBroadcastBtn.BackColor = Color.Green;
@@ -730,6 +788,11 @@ namespace RapidMessageCast_Manager
 
         private void RMCManager_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //If isScheduledBroadcast is true, close the program without asking.
+            if (isScheduledBroadcast)
+            {
+                return;
+            }
             //Ask the user if they want to close the program if they press the X button. However, if the MessageTxt and pclist is empty, close the program without asking.
             if (MessageTxt.Text == "" && ComputerSelectList.Text == "")
             {
@@ -841,14 +904,31 @@ namespace RapidMessageCast_Manager
 
         private void ScheduleBroadcastBtn_Click(object sender, EventArgs e)
         {
-            //will be implemented in a future update.
-            MessageBox.Show("Scheduled Broadcast is not implemented yet. This is a placeholder message.", "Scheduled Broadcast", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ScheduleBroadcastForm scheduleBroadcastForm = new();
+            scheduleBroadcastForm.ShowDialog();
         }
 
         private void BroadcastHistoryBtn_Click(object sender, EventArgs e)
         {
             BroadcastHistoryForm broadcastHistoryForm = new();
             broadcastHistoryForm.Show();
+        }
+
+        private void SaveRMCRuntimeLogBtn_Click(object sender, EventArgs e)
+        {
+            //Save the loglist to a file in the application startup path. With the name of the file being the current date and time and before that "RMC_Runtime_Log_"
+            string logFileName = "RMC_Runtime_Log_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+            try
+            {
+                File.WriteAllLines(Path.Combine(Application.StartupPath, logFileName), logList.Items.Cast<string>());
+                AddItemToListBox("Runtime log saved to file: " + logFileName);
+                MessageBox.Show("Runtime log saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving runtime log: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddItemToListBox("Error saving runtime log: " + ex.Message);
+            }
         }
     }
 }
