@@ -25,7 +25,7 @@ namespace RapidMessageCast_Manager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool EmergencyMode {
             get {
                 return ((bool)(this["EmergencyMode"]));

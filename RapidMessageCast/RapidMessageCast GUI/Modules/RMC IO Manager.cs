@@ -144,27 +144,28 @@ namespace RapidMessageCast_Manager.Modules
         public static string AttemptToCreateRMCDirectories()
         {
             //Create a directory called BroadcastHistory if it doesn't exist.
-            if (!Directory.Exists(Application.StartupPath + "\\BroadcastHistory") || !Directory.Exists(Application.StartupPath + "\\RMSGFiles"))
+            if (!Directory.Exists(Application.StartupPath + "\\BroadcastHistory") || !Directory.Exists(Application.StartupPath + "\\RMSGFiles") || !Directory.Exists(Application.StartupPath + "\\RMC Runtime Logs"))
             {
                 try
                 {
                     Directory.CreateDirectory(Application.StartupPath + "\\BroadcastHistory");
                     Directory.CreateDirectory(Application.StartupPath + "\\RMSGFiles");
+                    Directory.CreateDirectory(Application.StartupPath + "\\RMC Runtime Logs");
                     //Show a welcome msgbox to the user and also allow them to agree to the MIT License.
                     MessageBox.Show("Welcome to RapidMessageCast!\r\n\r\nBy using this software, you agree to the MIT License.\r\n\r\n" +
                         "This software is provided as-is, without any warranty or guarantee of any kind.\r\n\r\n" +
                         "Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.", "Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return "Info - BroadcastHistory and RMSGFiles directory created.";
+                    return "Info - RMC_IO_Manager: Required directories created. (RMSGFiles, RMC Runtime Logs, BroadcastHistory)";
                 }
                 catch (Exception ex)
                 {
-                    return "Error - Failure in creating RMSGFiles and BroadcastHistory directories: " + ex.Message;
+                    return "Error - RMC_IO_Manager: Failure in creating required directories: " + ex.Message;
                 }
             }
             else
             {
                 //Add to loglist that rmsg files are being loaded.
-                return "Info - Loading list of RMSG files.";
+                return "Info - RMC_IO_Manager: Loading list of RMSG files.";
             }
         }
 

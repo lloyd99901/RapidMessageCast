@@ -69,7 +69,7 @@
             menuStrip.MdiWindowListItem = windowsMenu;
             menuStrip.Name = "menuStrip";
             menuStrip.Padding = new Padding(8, 3, 0, 3);
-            menuStrip.Size = new Size(922, 30);
+            menuStrip.Size = new Size(1118, 30);
             menuStrip.TabIndex = 0;
             menuStrip.Text = "MenuStrip";
             // 
@@ -206,7 +206,7 @@
             toolStrip.Items.AddRange(new ToolStripItem[] { openToolStripButton, saveToolStripButton, toolStripSeparator1, printToolStripButton });
             toolStrip.Location = new Point(0, 30);
             toolStrip.Name = "toolStrip";
-            toolStrip.Size = new Size(922, 27);
+            toolStrip.Size = new Size(1118, 27);
             toolStrip.TabIndex = 1;
             toolStrip.Text = "ToolStrip";
             // 
@@ -251,7 +251,7 @@
             HistoryListBox.IntegralHeight = false;
             HistoryListBox.Location = new Point(0, 57);
             HistoryListBox.Name = "HistoryListBox";
-            HistoryListBox.Size = new Size(230, 467);
+            HistoryListBox.Size = new Size(230, 543);
             HistoryListBox.Sorted = true;
             HistoryListBox.TabIndex = 4;
             HistoryListBox.DoubleClick += HistoryListBox_DoubleClick;
@@ -260,7 +260,7 @@
             // 
             splitter1.Location = new Point(230, 57);
             splitter1.Name = "splitter1";
-            splitter1.Size = new Size(4, 467);
+            splitter1.Size = new Size(4, 543);
             splitter1.TabIndex = 6;
             splitter1.TabStop = false;
             // 
@@ -268,7 +268,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(922, 524);
+            ClientSize = new Size(1118, 600);
             Controls.Add(splitter1);
             Controls.Add(HistoryListBox);
             Controls.Add(toolStrip);
