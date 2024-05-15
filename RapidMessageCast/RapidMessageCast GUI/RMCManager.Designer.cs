@@ -78,6 +78,7 @@
             loadFromActiveDirectoryToolStripMenuItem = new ToolStripMenuItem();
             fitlerToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
+            testBroadcastMessageToolStripMenuItem = new ToolStripMenuItem();
             undoToolStripMenuItem = new ToolStripMenuItem();
             selectAllToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
@@ -118,8 +119,8 @@
             label6 = new Label();
             verNumbLblAboutLbl = new Label();
             LogTab = new TabPage();
-            SaveRMCRuntimeLogBtn = new Button();
             clearLogBtn = new Button();
+            SaveRMCRuntimeLogBtn = new Button();
             label1 = new Label();
             logList = new ListBox();
             IconList = new ImageList(components);
@@ -771,72 +772,79 @@
             // PCListcontextMenuStrip
             // 
             PCListcontextMenuStrip.ImageScalingSize = new Size(20, 20);
-            PCListcontextMenuStrip.Items.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveToolStripMenuItem, loadFromActiveDirectoryToolStripMenuItem, fitlerToolStripMenuItem, toolStripSeparator2, undoToolStripMenuItem, selectAllToolStripMenuItem, toolStripSeparator1, addThisPCToTheListToolStripMenuItem, clearAllToolStripMenuItem });
+            PCListcontextMenuStrip.Items.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveToolStripMenuItem, loadFromActiveDirectoryToolStripMenuItem, fitlerToolStripMenuItem, toolStripSeparator2, testBroadcastMessageToolStripMenuItem, undoToolStripMenuItem, selectAllToolStripMenuItem, toolStripSeparator1, addThisPCToTheListToolStripMenuItem, clearAllToolStripMenuItem });
             PCListcontextMenuStrip.Name = "PCListcontextMenuStrip";
-            PCListcontextMenuStrip.Size = new Size(267, 208);
+            PCListcontextMenuStrip.Size = new Size(268, 232);
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(266, 24);
+            openToolStripMenuItem.Size = new Size(267, 24);
             openToolStripMenuItem.Text = "&Open...";
             openToolStripMenuItem.Click += openSendComputerListToolStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(266, 24);
+            saveToolStripMenuItem.Size = new Size(267, 24);
             saveToolStripMenuItem.Text = "&Save...";
             saveToolStripMenuItem.Click += SaveComputerListBtn_Click;
             // 
             // loadFromActiveDirectoryToolStripMenuItem
             // 
             loadFromActiveDirectoryToolStripMenuItem.Name = "loadFromActiveDirectoryToolStripMenuItem";
-            loadFromActiveDirectoryToolStripMenuItem.Size = new Size(266, 24);
+            loadFromActiveDirectoryToolStripMenuItem.Size = new Size(267, 24);
             loadFromActiveDirectoryToolStripMenuItem.Text = "Load from &Active Directory...";
             loadFromActiveDirectoryToolStripMenuItem.Click += ActiveDirectorySelectBtn_Click;
             // 
             // fitlerToolStripMenuItem
             // 
             fitlerToolStripMenuItem.Name = "fitlerToolStripMenuItem";
-            fitlerToolStripMenuItem.Size = new Size(266, 24);
+            fitlerToolStripMenuItem.Size = new Size(267, 24);
             fitlerToolStripMenuItem.Text = "&Filter List...";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(263, 6);
+            toolStripSeparator2.Size = new Size(264, 6);
+            // 
+            // testBroadcastMessageToolStripMenuItem
+            // 
+            testBroadcastMessageToolStripMenuItem.Name = "testBroadcastMessageToolStripMenuItem";
+            testBroadcastMessageToolStripMenuItem.Size = new Size(267, 24);
+            testBroadcastMessageToolStripMenuItem.Text = "Send test message to this PC";
+            testBroadcastMessageToolStripMenuItem.Click += testBroadcastMessageToolStripMenuItem_Click;
             // 
             // undoToolStripMenuItem
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.Size = new Size(266, 24);
+            undoToolStripMenuItem.Size = new Size(267, 24);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
             // selectAllToolStripMenuItem
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            selectAllToolStripMenuItem.Size = new Size(266, 24);
+            selectAllToolStripMenuItem.Size = new Size(267, 24);
             selectAllToolStripMenuItem.Text = "Select All";
             selectAllToolStripMenuItem.Click += selectAllToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(263, 6);
+            toolStripSeparator1.Size = new Size(264, 6);
             // 
             // addThisPCToTheListToolStripMenuItem
             // 
             addThisPCToTheListToolStripMenuItem.Name = "addThisPCToTheListToolStripMenuItem";
-            addThisPCToTheListToolStripMenuItem.Size = new Size(266, 24);
+            addThisPCToTheListToolStripMenuItem.Size = new Size(267, 24);
             addThisPCToTheListToolStripMenuItem.Text = "Add current PC to the list";
             addThisPCToTheListToolStripMenuItem.Click += addThisPCToTheListToolStripMenuItem_Click;
             // 
             // clearAllToolStripMenuItem
             // 
             clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            clearAllToolStripMenuItem.Size = new Size(266, 24);
+            clearAllToolStripMenuItem.Size = new Size(267, 24);
             clearAllToolStripMenuItem.Text = "Clear All Text";
             clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
             // 
@@ -1019,7 +1027,7 @@
             // 
             // GreenButtonTimer
             // 
-            GreenButtonTimer.Interval = 2000;
+            GreenButtonTimer.Interval = 5000;
             GreenButtonTimer.Tick += GreenButtonTimer_Tick;
             // 
             // pictureBox5
@@ -1218,7 +1226,7 @@
             AboutTab.Name = "AboutTab";
             AboutTab.Size = new Size(395, 325);
             AboutTab.TabIndex = 3;
-            AboutTab.Text = "About RMC";
+            AboutTab.Text = "About";
             // 
             // pictureBox2
             // 
@@ -1288,8 +1296,8 @@
             // LogTab
             // 
             LogTab.BackColor = Color.FromArgb(30, 30, 30);
-            LogTab.Controls.Add(SaveRMCRuntimeLogBtn);
             LogTab.Controls.Add(clearLogBtn);
+            LogTab.Controls.Add(SaveRMCRuntimeLogBtn);
             LogTab.Controls.Add(label1);
             LogTab.Controls.Add(logList);
             LogTab.Location = new Point(4, 29);
@@ -1297,6 +1305,25 @@
             LogTab.Size = new Size(395, 325);
             LogTab.TabIndex = 4;
             LogTab.Text = "Logs";
+            // 
+            // clearLogBtn
+            // 
+            clearLogBtn.BackColor = Color.FromArgb(48, 48, 48);
+            clearLogBtn.Dock = DockStyle.Right;
+            clearLogBtn.FlatStyle = FlatStyle.Flat;
+            clearLogBtn.Font = new Font("Arial", 6.5F);
+            clearLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            clearLogBtn.Image = Properties.Resources.icons8_delete_24;
+            clearLogBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            clearLogBtn.Location = new Point(229, 0);
+            clearLogBtn.Margin = new Padding(3, 2, 3, 2);
+            clearLogBtn.Name = "clearLogBtn";
+            clearLogBtn.Size = new Size(81, 37);
+            clearLogBtn.TabIndex = 58;
+            clearLogBtn.Text = "Clear log";
+            clearLogBtn.TextAlign = ContentAlignment.MiddleRight;
+            clearLogBtn.UseVisualStyleBackColor = false;
+            clearLogBtn.Click += clearLogBtn_Click;
             // 
             // SaveRMCRuntimeLogBtn
             // 
@@ -1310,35 +1337,19 @@
             SaveRMCRuntimeLogBtn.Location = new Point(310, 0);
             SaveRMCRuntimeLogBtn.Margin = new Padding(3, 2, 3, 2);
             SaveRMCRuntimeLogBtn.Name = "SaveRMCRuntimeLogBtn";
-            SaveRMCRuntimeLogBtn.Size = new Size(85, 26);
+            SaveRMCRuntimeLogBtn.Size = new Size(85, 37);
             SaveRMCRuntimeLogBtn.TabIndex = 57;
             SaveRMCRuntimeLogBtn.Text = "Save log";
             SaveRMCRuntimeLogBtn.TextAlign = ContentAlignment.MiddleRight;
             SaveRMCRuntimeLogBtn.UseVisualStyleBackColor = false;
             SaveRMCRuntimeLogBtn.Click += SaveRMCRuntimeLogBtn_Click;
             // 
-            // clearLogBtn
-            // 
-            clearLogBtn.BackColor = Color.FromArgb(48, 48, 48);
-            clearLogBtn.Dock = DockStyle.Bottom;
-            clearLogBtn.FlatStyle = FlatStyle.Flat;
-            clearLogBtn.Font = new Font("Arial", 6.5F);
-            clearLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            clearLogBtn.Location = new Point(0, 26);
-            clearLogBtn.Margin = new Padding(3, 2, 3, 2);
-            clearLogBtn.Name = "clearLogBtn";
-            clearLogBtn.Size = new Size(395, 25);
-            clearLogBtn.TabIndex = 56;
-            clearLogBtn.Text = "Clear log";
-            clearLogBtn.UseVisualStyleBackColor = false;
-            clearLogBtn.Click += clearLogBtn_Click;
-            // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Arial", 10F);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(3, 2);
+            label1.Location = new Point(3, 7);
             label1.Name = "label1";
             label1.Size = new Size(146, 19);
             label1.TabIndex = 55;
@@ -1356,10 +1367,10 @@
             logList.HorizontalScrollbar = true;
             logList.IntegralHeight = false;
             logList.ItemHeight = 13;
-            logList.Location = new Point(0, 51);
+            logList.Location = new Point(0, 37);
             logList.Margin = new Padding(3, 2, 3, 2);
             logList.Name = "logList";
-            logList.Size = new Size(395, 274);
+            logList.Size = new Size(395, 288);
             logList.TabIndex = 54;
             // 
             // IconList
@@ -1500,7 +1511,6 @@
         private Label label6;
         private Label verNumbLblAboutLbl;
         private TabPage LogTab;
-        private Button clearLogBtn;
         private Label label1;
         public ListBox logList;
         private CheckBox MessagePSExecCheckBox;
@@ -1529,5 +1539,7 @@
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripMenuItem selectAllToolStripMenuItem;
         private ToolStripMenuItem undoToolStripMenuItem;
+        private ToolStripMenuItem testBroadcastMessageToolStripMenuItem;
+        private Button clearLogBtn;
     }
 }

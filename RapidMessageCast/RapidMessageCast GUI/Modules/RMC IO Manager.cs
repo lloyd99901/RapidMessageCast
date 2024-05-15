@@ -100,6 +100,7 @@ namespace RapidMessageCast_Manager.Modules
             catch (Exception ex)
             {
                 //Return an error message along with the exception.
+                MessageBox.Show("Error - RMC_IO_Manager: Failure in loading RMSG file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return ["Error" + ex.ToString()];
             }
         }

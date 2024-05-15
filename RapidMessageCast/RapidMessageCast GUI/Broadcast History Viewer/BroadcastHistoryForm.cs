@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
 
 namespace RapidMessageCast_Manager
 {
@@ -16,28 +8,6 @@ namespace RapidMessageCast_Manager
         public BroadcastHistoryForm()
         {
             InitializeComponent();
-        }
-
-        private void OpenFile(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            openFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                string FileName = openFileDialog.FileName;
-            }
-        }
-
-        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                string FileName = saveFileDialog.FileName;
-            }
         }
 
         private void ExitToolsStripMenuItem_Click(object sender, EventArgs e)
@@ -80,6 +50,13 @@ namespace RapidMessageCast_Manager
 
         private void BroadcastHistoryForm_Load(object sender, EventArgs e)
         {
+            LoadBroadcastHistoryList();
+        }
+
+        private void LoadBroadcastHistoryList()
+        {
+            //clear listbox
+            HistoryListBox.Items.Clear();
             //Load the broadcast history from the application directory / broadcast history folder and add it to the HistoryListBox
             string[] files = Directory.GetFiles(Application.StartupPath + "\\BroadcastHistory");
             foreach (string file in files)
@@ -91,10 +68,33 @@ namespace RapidMessageCast_Manager
         private void HistoryListBox_DoubleClick(object sender, EventArgs e)
         {
             //Get the selected item from the HistoryListBox and open a new ChildBroadcastViewer form with the selected file
-            string selectedFile = HistoryListBox.SelectedItem.ToString();
-            Broadcast_History_Viewer.ChildBroadcastViewer childForm = new Broadcast_History_Viewer.ChildBroadcastViewer(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile);
-            childForm.MdiParent = this;
-            childForm.Show();
+            try
+            {
+                string selectedFile = HistoryListBox.SelectedItem.ToString();
+                Broadcast_History_Viewer.ChildBroadcastViewer childForm = new Broadcast_History_Viewer.ChildBroadcastViewer(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile);
+                childForm.MdiParent = this;
+                childForm.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+        private void RefreshtoolStripButton_Click(object sender, EventArgs e)
+        {
+            LoadBroadcastHistoryList();
+        }
+
+        private void OpenBroadcastHistoryFolder(object sender, EventArgs e)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                Arguments = Application.StartupPath + "BroadcastHistory\\",
+                FileName = "explorer.exe"
+            };
+            Process.Start(startInfo);
+        }
+
     }
 }

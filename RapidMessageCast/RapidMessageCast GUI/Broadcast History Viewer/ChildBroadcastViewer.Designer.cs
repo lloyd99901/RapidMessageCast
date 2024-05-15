@@ -29,27 +29,85 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChildBroadcastViewer));
-            toolStrip1 = new ToolStrip();
+            splitContainer1 = new SplitContainer();
+            splitContainer2 = new SplitContainer();
+            MessageInsightsLabel = new Label();
+            PCList = new ListBox();
             LogList = new RichTextBox();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
             SuspendLayout();
             // 
-            // toolStrip1
+            // splitContainer1
             // 
-            toolStrip1.ImageScalingSize = new Size(20, 20);
-            toolStrip1.Location = new Point(0, 0);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(902, 25);
-            toolStrip1.TabIndex = 0;
-            toolStrip1.Text = "toolStrip1";
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.BackColor = SystemColors.ControlDark;
+            splitContainer1.Panel1.Controls.Add(splitContainer2);
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(LogList);
+            splitContainer1.Size = new Size(798, 431);
+            splitContainer1.SplitterDistance = 195;
+            splitContainer1.TabIndex = 2;
+            // 
+            // splitContainer2
+            // 
+            splitContainer2.Dock = DockStyle.Fill;
+            splitContainer2.Location = new Point(0, 0);
+            splitContainer2.Name = "splitContainer2";
+            splitContainer2.Orientation = Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            splitContainer2.Panel1.Controls.Add(MessageInsightsLabel);
+            // 
+            // splitContainer2.Panel2
+            // 
+            splitContainer2.Panel2.Controls.Add(PCList);
+            splitContainer2.Size = new Size(195, 431);
+            splitContainer2.SplitterDistance = 146;
+            splitContainer2.TabIndex = 2;
+            // 
+            // MessageInsightsLabel
+            // 
+            MessageInsightsLabel.Dock = DockStyle.Top;
+            MessageInsightsLabel.Location = new Point(0, 0);
+            MessageInsightsLabel.Name = "MessageInsightsLabel";
+            MessageInsightsLabel.Size = new Size(195, 127);
+            MessageInsightsLabel.TabIndex = 7;
+            MessageInsightsLabel.Text = "Log Type Numbers Here";
+            MessageInsightsLabel.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // PCList
+            // 
+            PCList.Dock = DockStyle.Fill;
+            PCList.FormattingEnabled = true;
+            PCList.IntegralHeight = false;
+            PCList.Location = new Point(0, 0);
+            PCList.Name = "PCList";
+            PCList.Size = new Size(195, 281);
+            PCList.TabIndex = 3;
             // 
             // LogList
             // 
             LogList.BackColor = Color.Silver;
             LogList.Dock = DockStyle.Fill;
-            LogList.Location = new Point(0, 25);
+            LogList.Location = new Point(0, 0);
             LogList.Name = "LogList";
-            LogList.Size = new Size(902, 506);
-            LogList.TabIndex = 1;
+            LogList.Size = new Size(599, 431);
+            LogList.TabIndex = 2;
             LogList.Text = "";
             LogList.WordWrap = false;
             // 
@@ -57,21 +115,29 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(902, 531);
-            Controls.Add(LogList);
-            Controls.Add(toolStrip1);
+            ClientSize = new Size(798, 431);
+            Controls.Add(splitContainer1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ChildBroadcastViewer";
             Text = "ChildBroadcastViewer";
             FormClosing += ChildBroadcastViewer_FormClosing;
             Load += ChildBroadcastViewer_Load;
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private ToolStrip toolStrip1;
+        private SplitContainer splitContainer1;
         private RichTextBox LogList;
+        private SplitContainer splitContainer2;
+        private ListBox PCList;
+        private Label MessageInsightsLabel;
     }
 }

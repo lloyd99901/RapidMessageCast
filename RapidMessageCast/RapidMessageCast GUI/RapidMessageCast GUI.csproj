@@ -12,6 +12,7 @@
     <Authors>lloyd99901</Authors>
     <Description>A quick and easy way to broadcast messages to multiple machines fast.</Description>
     <NeutralLanguage>en</NeutralLanguage>
+    <ResourceLanguages>en</ResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>

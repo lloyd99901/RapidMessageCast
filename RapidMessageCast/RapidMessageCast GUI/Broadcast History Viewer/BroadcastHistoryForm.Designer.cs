@@ -32,12 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BroadcastHistoryForm));
             menuStrip = new MenuStrip();
             fileMenu = new ToolStripMenuItem();
-            toolStripMenuItem1 = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator3 = new ToolStripSeparator();
-            saveAsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator4 = new ToolStripSeparator();
-            printToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             exitToolStripMenuItem = new ToolStripMenuItem();
             viewMenu = new ToolStripMenuItem();
@@ -50,10 +45,7 @@
             closeAllToolStripMenuItem = new ToolStripMenuItem();
             arrangeIconsToolStripMenuItem = new ToolStripMenuItem();
             toolStrip = new ToolStrip();
-            openToolStripButton = new ToolStripButton();
-            saveToolStripButton = new ToolStripButton();
-            toolStripSeparator1 = new ToolStripSeparator();
-            printToolStripButton = new ToolStripButton();
+            RefreshtoolStripButton = new ToolStripButton();
             toolTip = new ToolTip(components);
             HistoryListBox = new ListBox();
             splitter1 = new Splitter();
@@ -75,19 +67,11 @@
             // 
             // fileMenu
             // 
-            fileMenu.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, openToolStripMenuItem, toolStripSeparator3, saveAsToolStripMenuItem, toolStripSeparator4, printToolStripMenuItem, toolStripSeparator5, exitToolStripMenuItem });
+            fileMenu.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, toolStripSeparator5, exitToolStripMenuItem });
             fileMenu.ImageTransparentColor = SystemColors.ActiveBorder;
             fileMenu.Name = "fileMenu";
             fileMenu.Size = new Size(46, 24);
             fileMenu.Text = "&File";
-            // 
-            // toolStripMenuItem1
-            // 
-            toolStripMenuItem1.Image = (Image)resources.GetObject("toolStripMenuItem1.Image");
-            toolStripMenuItem1.ImageTransparentColor = Color.Black;
-            toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(295, 26);
-            toolStripMenuItem1.Text = "&Open";
             // 
             // openToolStripMenuItem
             // 
@@ -96,32 +80,7 @@
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new Size(295, 26);
             openToolStripMenuItem.Text = "&Open Broadcast History Folder";
-            openToolStripMenuItem.Click += OpenFile;
-            // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(292, 6);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new Size(295, 26);
-            saveAsToolStripMenuItem.Text = "Save &As";
-            saveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator4
-            // 
-            toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(292, 6);
-            // 
-            // printToolStripMenuItem
-            // 
-            printToolStripMenuItem.Image = (Image)resources.GetObject("printToolStripMenuItem.Image");
-            printToolStripMenuItem.ImageTransparentColor = Color.Black;
-            printToolStripMenuItem.Name = "printToolStripMenuItem";
-            printToolStripMenuItem.Size = new Size(295, 26);
-            printToolStripMenuItem.Text = "&Print";
+            openToolStripMenuItem.Click += OpenBroadcastHistoryFolder;
             // 
             // toolStripSeparator5
             // 
@@ -203,45 +162,22 @@
             // toolStrip
             // 
             toolStrip.ImageScalingSize = new Size(20, 20);
-            toolStrip.Items.AddRange(new ToolStripItem[] { openToolStripButton, saveToolStripButton, toolStripSeparator1, printToolStripButton });
+            toolStrip.Items.AddRange(new ToolStripItem[] { RefreshtoolStripButton });
             toolStrip.Location = new Point(0, 30);
             toolStrip.Name = "toolStrip";
             toolStrip.Size = new Size(1118, 27);
             toolStrip.TabIndex = 1;
             toolStrip.Text = "ToolStrip";
             // 
-            // openToolStripButton
+            // RefreshtoolStripButton
             // 
-            openToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            openToolStripButton.Image = (Image)resources.GetObject("openToolStripButton.Image");
-            openToolStripButton.ImageTransparentColor = Color.Black;
-            openToolStripButton.Name = "openToolStripButton";
-            openToolStripButton.Size = new Size(29, 24);
-            openToolStripButton.Text = "Open";
-            openToolStripButton.Click += OpenFile;
-            // 
-            // saveToolStripButton
-            // 
-            saveToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            saveToolStripButton.Image = (Image)resources.GetObject("saveToolStripButton.Image");
-            saveToolStripButton.ImageTransparentColor = Color.Black;
-            saveToolStripButton.Name = "saveToolStripButton";
-            saveToolStripButton.Size = new Size(29, 24);
-            saveToolStripButton.Text = "Save";
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 27);
-            // 
-            // printToolStripButton
-            // 
-            printToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            printToolStripButton.Image = (Image)resources.GetObject("printToolStripButton.Image");
-            printToolStripButton.ImageTransparentColor = Color.Black;
-            printToolStripButton.Name = "printToolStripButton";
-            printToolStripButton.Size = new Size(29, 24);
-            printToolStripButton.Text = "Print";
+            RefreshtoolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            RefreshtoolStripButton.Image = (Image)resources.GetObject("RefreshtoolStripButton.Image");
+            RefreshtoolStripButton.ImageTransparentColor = Color.Magenta;
+            RefreshtoolStripButton.Name = "RefreshtoolStripButton";
+            RefreshtoolStripButton.Size = new Size(88, 24);
+            RefreshtoolStripButton.Text = "Refresh List";
+            RefreshtoolStripButton.Click += RefreshtoolStripButton_Click;
             // 
             // HistoryListBox
             // 
@@ -293,15 +229,10 @@
 
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem tileHorizontalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileMenu;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewMenu;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
@@ -311,13 +242,10 @@
         private System.Windows.Forms.ToolStripMenuItem tileVerticalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem arrangeIconsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton openToolStripButton;
-        private System.Windows.Forms.ToolStripButton saveToolStripButton;
-        private System.Windows.Forms.ToolStripButton printToolStripButton;
         private System.Windows.Forms.ToolTip toolTip;
         private ListBox HistoryListBox;
         private Splitter splitter1;
-        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripButton RefreshtoolStripButton;
     }
 }
 
