@@ -82,5 +82,29 @@ namespace RapidMessageCast_Manager.Properties {
                 this["MessagePSExecEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("9")]
+        public decimal MagicPortNumber {
+            get {
+                return ((decimal)(this["MagicPortNumber"]));
+            }
+            set {
+                this["MagicPortNumber"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ReattemptOnError {
+            get {
+                return ((bool)(this["ReattemptOnError"]));
+            }
+            set {
+                this["ReattemptOnError"] = value;
+            }
+        }
     }
 }

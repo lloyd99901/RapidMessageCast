@@ -19,6 +19,8 @@ namespace RapidMessageCast_Manager.Modules
             // [7] = Enable messaging of PCs
             // [8] = Enable email
             // [9] = Enable PSExec
+            // [10] = Reattempt on error
+            // [11] = Dont save history
 
             //Declare variables to store the extracted values.
             bool EmergencyModeEnabled;
@@ -30,6 +32,8 @@ namespace RapidMessageCast_Manager.Modules
             decimal expiryHourTime = 0;
             decimal expiryMinutesTime = 0;
             decimal expirySecondsTime = 0;
+            bool ReattemptOnErrorCheck;
+            bool DontSaveHistoryCheck;
 
             try
             {
@@ -82,6 +86,26 @@ namespace RapidMessageCast_Manager.Modules
                 {
                     EnablePSExec = false;
                 }
+                //Get the reattempt on error state from the file.
+                string reattemptOnError = GetValueFromSection(sections, "[ReattemptOnError]");
+                if (reattemptOnError == "Enabled")
+                {
+                    ReattemptOnErrorCheck = true;
+                }
+                else
+                {
+                    ReattemptOnErrorCheck = false;
+                }
+                //Get the dont save history state from the file.
+                string dontSaveHistory = GetValueFromSection(sections, "[DontSaveHistory]");
+                if (dontSaveHistory == "Enabled")
+                {
+                    DontSaveHistoryCheck = true;
+                }
+                else
+                {
+                    DontSaveHistoryCheck = false;
+                }
 
                 // Populate the TextBoxes with the extracted values
                 MessageContent = message;
@@ -95,7 +119,7 @@ namespace RapidMessageCast_Manager.Modules
                     expirySecondsTime = Convert.ToDecimal(durationParts[2]);
                 }
                 //Return the extracted values via an array.
-                return ["", MessageContent, PCList, expiryHourTime.ToString(), expiryMinutesTime.ToString(), expirySecondsTime.ToString(), EmergencyModeEnabled.ToString(), EnableMessagingOfPCs.ToString(), EnableEmail.ToString(), EnablePSExec.ToString()];
+                return ["", MessageContent, PCList, expiryHourTime.ToString(), expiryMinutesTime.ToString(), expirySecondsTime.ToString(), EmergencyModeEnabled.ToString(), EnableMessagingOfPCs.ToString(), EnableEmail.ToString(), EnablePSExec.ToString(), ReattemptOnErrorCheck.ToString(), DontSaveHistoryCheck.ToString()];
             }
             catch (Exception ex)
             {
@@ -105,7 +129,7 @@ namespace RapidMessageCast_Manager.Modules
             }
         }
 
-        public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec)
+        public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory)
         {
             // Create a string builder to store the contents of the RMC file
             //StringBuilder rmcFileContent = new StringBuilder();
@@ -137,7 +161,14 @@ namespace RapidMessageCast_Manager.Modules
             {
                 rmcFileContent += "\r\n\r\n[MessagePSExec]\r\nEnabled";
             }
-
+            if (reattemptOnError)
+            {
+                rmcFileContent += "\r\n\r\n[ReattemptOnError]\r\nEnabled";
+            }
+            if (dontSaveHistory)
+            {
+                rmcFileContent += "\r\n\r\n[DontSaveHistory]\r\nEnabled";
+            }
             // Write the contents to the specified file
             File.WriteAllText(filePath, rmcFileContent);
         }

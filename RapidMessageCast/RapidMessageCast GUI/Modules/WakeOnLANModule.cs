@@ -8,7 +8,7 @@ namespace RapidMessageCast_Manager.Modules
     internal class WakeOnLANModule
     {
         //Thanks to Poul Bak on StackOverflow for the following code
-        public static async Task WakeOnLan(string macAddress)
+        public static async Task WakeOnLan(string macAddress, int port)
         {
             byte[] magicPacket = BuildMagicPacket(macAddress);
             foreach (NetworkInterface networkInterface in NetworkInterface.GetAllNetworkInterfaces().Where((n) =>
@@ -24,7 +24,7 @@ namespace RapidMessageCast_Manager.Modules
                             u.Address.AddressFamily == AddressFamily.InterNetworkV6 && !u.Address.IsIPv6LinkLocal).FirstOrDefault();
                         if (unicastIPAddressInformation != null)
                         {
-                            await SendWakeOnLan(unicastIPAddressInformation.Address, multicastIpAddress, magicPacket);
+                            await SendWakeOnLan(unicastIPAddressInformation.Address, multicastIpAddress, magicPacket, port);
                         }
                     }
                     else if (multicastIpAddress.ToString().Equals("224.0.0.1")) // Ipv4: All hosts on LAN
@@ -33,7 +33,7 @@ namespace RapidMessageCast_Manager.Modules
                             u.Address.AddressFamily == AddressFamily.InterNetwork && !iPInterfaceProperties.GetIPv4Properties().IsAutomaticPrivateAddressingActive).FirstOrDefault();
                         if (unicastIPAddressInformation != null)
                         {
-                            await SendWakeOnLan(unicastIPAddressInformation.Address, multicastIpAddress, magicPacket);
+                            await SendWakeOnLan(unicastIPAddressInformation.Address, multicastIpAddress, magicPacket, port);
                         }
                     }
                 }
@@ -50,10 +50,16 @@ namespace RapidMessageCast_Manager.Modules
             return header.Concat(data).ToArray();
         }
 
-        static async Task SendWakeOnLan(IPAddress localIpAddress, IPAddress multicastIpAddress, byte[] magicPacket)
+        static async Task SendWakeOnLan(IPAddress localIpAddress, IPAddress multicastIpAddress, byte[] magicPacket, int port)
         {
             using UdpClient client = new(new IPEndPoint(localIpAddress, 0));
-            await client.SendAsync(magicPacket, magicPacket.Length, new IPEndPoint(multicastIpAddress, 9));
+            await client.SendAsync(magicPacket, magicPacket.Length, new IPEndPoint(multicastIpAddress, port));
+            
+        }
+
+        public static bool isValidMacAddress(string macAddress)
+        {
+            return Regex.IsMatch(macAddress, "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"); //This will return true if the mac address is in the format of 00:00:00:00:00:00
         }
     }
 }

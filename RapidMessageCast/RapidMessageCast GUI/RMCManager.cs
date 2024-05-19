@@ -31,9 +31,8 @@ using System.Text.RegularExpressions;
 //Email and PSExec modules are not implemented yet. They are placeholders for future development.
 //Add a form to select the OU's from the Active Directory. For now, it will just add all computers from the Computers OU.
 //Need to look into how multiple modules can save to the same broadcast history file. It's currently only saving the PC module. Might need to add a bool for each module, showing their status, then saving.
-//Also add the ability to turn off reattempt for the message module.
 //Filters PCList based on custom user regex pattern.
-//Add WOL module.
+//WOL added, but testing is needed.
 //Panic Button that activates broadcasting immediately with a predefined message.
 
 namespace RapidMessageCast_Manager
@@ -159,6 +158,10 @@ namespace RapidMessageCast_Manager
                     MessageBox.Show("RMC has detected that your computer's TCP port 445 is closed. This port is required for msg broadcasting.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            if (!PSExecModule.isPSExecPresent())
+            {
+                AddTextToLogList("Warning - System Status Check: PsExec.exe is not present or valid in the program directory. Please ensure that PsExec is present and that the Product Name of the PsExec.exe program contains 'Sysinternals PsExec'.");
+            }
             AddTextToLogList("Info - System Status Check: System state check completed.");
         }
 
@@ -192,7 +195,7 @@ namespace RapidMessageCast_Manager
             //Debug States:
             //Info - Used for general information.
             //Error - Used for errors that are not critical.
-            //Critical - Used for critical errors that could impact the program or it's ability to message pc's.
+            //Critical - Used for critical errors that could impact the program or its ability to message pc's.
             //Warning - Used for warnings that are not critical.
             //Notice - Used for notices that are not critical.
             //Then what it was called by, eg GUI, RMC_IO_Manager, etc.
@@ -223,7 +226,9 @@ namespace RapidMessageCast_Manager
             MessagePCcheckBox.Checked = Properties.Settings.Default.MessagePCEnabled;
             MessagePSExecCheckBox.Checked = Properties.Settings.Default.MessagePSExecEnabled;
             MessageEmailcheckBox.Checked = Properties.Settings.Default.MessageEmailEnabled;
-            AddTextToLogList("Info - Settings: Global settings loaded.");
+            MagicPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
+            ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
+            AddTextToLogList("Info - RMC Settings: Program settings loaded. Number of settings loaded: " + Properties.Settings.Default.Properties.Count);
         }
 
         private static bool IsAdministrator()
@@ -295,6 +300,22 @@ namespace RapidMessageCast_Manager
                 else
                 {
                     MessagePSExecCheckBox.Checked = false;
+                }
+                if (RMSGFileValues[10] == "True")
+                {
+                    ReattemptOnErrorCheckbox.Checked = true;
+                }
+                else
+                {
+                    ReattemptOnErrorCheckbox.Checked = false;
+                }
+                if (RMSGFileValues[11] == "True")
+                {
+                    DontSaveBroadcastHistoryCheckbox.Checked = true;
+                }
+                else
+                {
+                    DontSaveBroadcastHistoryCheckbox.Checked = false;
                 }
                 //Add to loglist with the name of file that was loaded.
                 AddTextToLogList("Info - LoadRMSGFileInProgram: RMSG File loaded successfully: " + Path.GetFileName(filePath));
@@ -406,13 +427,12 @@ namespace RapidMessageCast_Manager
                         broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - ERROR - " + ex.ToString());
                         AddTextToLogList($"Critical - BeginPCMessageCast: Broadcast module reported an error. Failure to send command for PC: {pcName} | Error Details: {ex.ToString()}");
                         StartBroadcastBtn.BackColor = Color.DarkRed;
-                        ////Attempt to resend message to the PC, unless it's already been reattempted.
-                        //if (!Reattempted)
-                        //{
-                        //    broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - Attempting to message PC again - ");
-                        //    AddTextToLogList($"Warning - BeginPCMessageCast: Reattempting to message PC again for a final time: {pcName}");
-                        //    BeginPCMessageCast(message, pcName, duration, true);
-                        //}
+                        if (!Reattempted & ReattemptOnErrorCheckbox.Checked) //If the message has not been reattempted and the reattempt on error checkbox is enabled, reattempt the message.
+                        {
+                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - Attempting to message PC again - ");
+                            AddTextToLogList($"Warning - BeginPCMessageCast: Reattempting to message PC again for a final time: {pcName}");
+                            BeginPCMessageCast(message, pcName, duration, true);
+                        }
                     }
                 });
             }
@@ -425,7 +445,7 @@ namespace RapidMessageCast_Manager
                 }
                 //Add end of broadcast to the broadcast history.
                 broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - END - Broadcast has ended.");
-                AddTextToLogList("Info - BeginPCMessageCast: RMC detected no MSG processes. Broadcast has finished. Saving broadcast log...");
+                AddTextToLogList("Info - BeginPCMessageCast: RMC detected no remaining MSG processes. Broadcast has finished. Saving broadcast log...");
                 SaveBroadcastHistory();
                 if (isScheduledBroadcast)
                 {
@@ -690,7 +710,6 @@ namespace RapidMessageCast_Manager
                     return;
                 }
                 int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
-                //BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false); //Start the message cast.
                 //Begin message cast asynchroniously. This will then allow the other code below to run at the same time.
                 //Task.Run(() => BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false));
                 BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false);
@@ -752,7 +771,7 @@ namespace RapidMessageCast_Manager
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 AddTextToLogList("Info - SaveRMSGBtn: Saving RMSG file: " + saveFileDialog.FileName);
-                RMC_IO_Manager.SaveRMSGFile(saveFileDialog.FileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked);
+                RMC_IO_Manager.SaveRMSGFile(saveFileDialog.FileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
                 RefreshRMSGFileList();
             }
         }
@@ -764,7 +783,7 @@ namespace RapidMessageCast_Manager
 
             AddTextToLogList("Info - QuickSaveBtn: Quick saving RMSG file: " + quickSaveFileName);
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
-            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked);
+            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
             RefreshRMSGFileList();
         }
 
@@ -1051,6 +1070,109 @@ namespace RapidMessageCast_Manager
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             BeginPCMessageCast(MessageTxt.Text, Environment.MachineName, totalSeconds, false);
+        }
+
+        private async void SendWOLPacketBtn_Click(object sender, EventArgs e)
+        {
+            AddTextToLogList("Info - SendWOLPacket: Sending WOL packet to the PC's in the list.");
+            //Send a WOL packet to all mac addresses in the WOLTextbox. But first check if the textbox is empty or contains invalid mac addresses.
+            string[] macAddresses = WOLTextbox.Text.Split(PCseparatorArray, StringSplitOptions.RemoveEmptyEntries);
+            if (macAddresses.Length == 0)
+            {
+                MessageBox.Show("No MAC addresses in the textbox. Please add MAC addresses before sending a WOL packet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddTextToLogList("Error - SendWOLPacket: No MAC addresses in the textbox. Please add MAC addresses before sending a WOL packet.");
+                return;
+            }
+            foreach (string macAddress in macAddresses)
+            {
+                if (!WakeOnLANModule.isValidMacAddress(macAddress))
+                {
+                    //MessageBox.Show("Invalid MAC address: " + macAddress, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList("Error - SendWOLPacket: Invalid MAC address: " + macAddress);
+                    return;
+                }
+                AddTextToLogList("Info - SendWOLPacket: Sending WOL packet to MAC address: " + macAddress);
+                await
+                WakeOnLANModule.WakeOnLan(macAddress, (int)MagicPortNumberBox.Value);
+            }
+        }
+
+        private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
+        {
+            //Open a file dialog to select a txt file, then load that into the wol textbox.
+            OpenFileDialog openFileDialog = new()
+            {
+                // Set the initial directory and file filter
+                InitialDirectory = Application.StartupPath,
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // Read the selected file and filter out invalid characters
+                    string filePath = openFileDialog.FileName;
+                    string fileContents = File.ReadAllText(filePath);
+
+                    // Filter out invalid characters
+                    string filteredContents = FilterInvalidCharacters(fileContents);
+
+                    // Display the filtered contents in the TextBox
+                    WOLTextbox.Text = filteredContents;
+                    AddTextToLogList("Info - MacAddressfromTxt: Mac addresses loaded from file: " + Path.GetFileName(filePath));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error - Error reading the MAC address file: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList("Error - OpenMacAddressfromTxt: Failure in reading the MAC address file: " + ex.ToString());
+                }
+            }
+        }
+
+        private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
+        {
+            //Save the mac addresses in the wol textbox to a txt file.
+            SaveFileDialog saveFileDialog = new()
+            {
+                // Set the initial directory and file filter
+                InitialDirectory = Application.StartupPath,
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    // Get the file path selected by the user
+                    string filePath = saveFileDialog.FileName;
+
+                    // Write the message text to the file
+                    File.WriteAllText(filePath, WOLTextbox.Text);
+
+                    AddTextToLogList("Info - SaveMacAddressesAsTXTBtn: Mac addresses saved successfully.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error saving mac addresses: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList("Error - SaveMacAddressesAsTXTBtn: Failure in saving mac addresses: " + ex.ToString());
+                }
+            }
+        }
+
+        private void MagicPortNumberBox_ValueChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.MagicPortNumber = MagicPortNumberBox.Value;
+        }
+
+        private void ReattemptonErrorHelpLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show("If the program fails to send a message to a PC, it will reattempt to send the message to the PC. This will only happen once per PC. If it fails again, it will not reattempt to send the message.");
+        }
+
+        private void ReattemptOnErrorCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            //Save
+            Properties.Settings.Default.ReattemptOnError = ReattemptOnErrorCheckbox.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }
