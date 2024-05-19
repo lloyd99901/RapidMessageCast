@@ -4,10 +4,12 @@ using System.DirectoryServices;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 
+//--RapidMessageCast Software--
+//RMCManager.cs - RapidMessageCast Manager
+
+//Copyright (c) 2024 Lunar/lloyd99901
+
 //MIT License
-
-//Copyright (c) 2024 Lunar
-
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
 //in the Software without restriction, including without limitation the rights
@@ -44,6 +46,7 @@ namespace RapidMessageCast_Manager
         readonly List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         readonly ImageList tabControlImageList = new(); //Used for the icons on the tabs.
         private bool isScheduledBroadcast = false; //Used for scheduled broadcasts. If true, the program will close after the broadcast has finished.
+        readonly PCBroadcastModule pcBroadcastModule = new(); //Create a new instance of the PCBroadcastModule class.
         public RMCManager()
         {
             //Add images to the tabcontrol. Used for the icons on the tabs.
@@ -59,7 +62,7 @@ namespace RapidMessageCast_Manager
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - RMCManager: Starting RMC GUI " + versionNumb + ". Welcome, " + Environment.UserName);
+            AddTextToLogList($"Info - RMC Manager: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
             //Check if the program has a argument that contains a .rmsg file and also contains schedule, if it does, immediately start the broadcast with that file and close the form.
             if (Environment.GetCommandLineArgs().Length > 1)
             {
@@ -84,16 +87,17 @@ namespace RapidMessageCast_Manager
             AddTextToLogList(RMC_IO_Manager.AttemptToCreateRMCDirectories()); //Create the directories for the program and then displays the status in the loglist.
             RefreshRMSGFileList();
             //If there is a RMSG file called default.rmsg, load it into the program.
-            if (File.Exists(Application.StartupPath + "\\RMSGFiles\\default.rmsg"))
+            if (File.Exists($"{Application.StartupPath}\\RMSGFiles\\default.rmsg"))
             {
-                LoadRMSGFileInProgram(Application.StartupPath + "\\RMSGFiles\\default.rmsg");
+                LoadRMSGFileInProgram($"{Application.StartupPath}\\RMSGFiles\\default.rmsg");
                 AddTextToLogList("Info - RMCManager: Default.rmsg file loaded.");
             }
             versionLbl.Text = versionNumb;
-            verNumbLblAboutLbl.Text = "by lloyd99901 | " + versionNumb;
-            Text = "RapidMessageCast GUI - " + versionNumb;
+            verNumbLblAboutLbl.Text = $"by lloyd99901 | {versionNumb}";
+            Text = $"RapidMessageCast GUI - {versionNumb}";
             AddTextToLogList("Info - RMCManager: RMC GUI is now ready.");
         }
+
         #region Functions
         //Start of the functions.
         private void RunScheduledBroastcast(string RMSGFile)
@@ -110,13 +114,14 @@ namespace RapidMessageCast_Manager
                 Application.Exit();
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
-            BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false); //Start the message cast.
+            //BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false); //Start the message cast.
+            pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
         }
 
         private void CheckSystemState()
         {
-            AddTextToLogList("Info - System Status Check: Checking system state...");
             //This function will check the system state and display messages to the user if something that might impact messaging is detected.
+            AddTextToLogList("Info - System Status Check: Checking system state...");
             //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
             if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
             {
@@ -145,7 +150,7 @@ namespace RapidMessageCast_Manager
                 MessageBox.Show("RMC has detected that your computer's network is not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             //Check if TCP port 445 is open. If it's not, display a message to the user.
-            using (System.Net.Sockets.TcpClient tcpClient = new System.Net.Sockets.TcpClient())
+            using (System.Net.Sockets.TcpClient tcpClient = new())
             {
                 try
                 {
@@ -158,7 +163,7 @@ namespace RapidMessageCast_Manager
                     MessageBox.Show("RMC has detected that your computer's TCP port 445 is closed. This port is required for msg broadcasting.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            if (!PSExecModule.isPSExecPresent())
+            if (!PSExecModule.IsPSExecPresent())
             {
                 AddTextToLogList("Warning - System Status Check: PsExec.exe is not present or valid in the program directory. Please ensure that PsExec is present and that the Product Name of the PsExec.exe program contains 'Sysinternals PsExec'.");
             }
@@ -186,7 +191,7 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                AddTextToLogList("Error - GUI: Failed to add images to the form tabcontrol: " + ex.ToString());
+                AddTextToLogList($"Error - GUI: Failed to add images to the form tabcontrol: {ex}");
             }
         }
 
@@ -208,13 +213,14 @@ namespace RapidMessageCast_Manager
                 else
                 {
                     //add item to loglist with Date Time, Event Type and the item.
-                    logList.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + item);
+                    logList.Items.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {item}");
                     logList.TopIndex = logList.Items.Count - 1; // Scroll to the latest item
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Debug failsafe error - Error occurred when adding item to listbox, report to the programmers! " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //This exception has to be caught, otherwise the program will crash if an error occurs in the loglist.
+                Console.WriteLine($"LogWriter Error! An exception occurred when adding an item to the loglist: {ex}");
             }
         }
 
@@ -228,7 +234,7 @@ namespace RapidMessageCast_Manager
             MessageEmailcheckBox.Checked = Properties.Settings.Default.MessageEmailEnabled;
             MagicPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
             ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
-            AddTextToLogList("Info - RMC Settings: Program settings loaded. Number of settings loaded: " + Properties.Settings.Default.Properties.Count);
+            AddTextToLogList($"Info - RMC Settings: Program settings loaded. Number of settings loaded: {Properties.Settings.Default.Properties.Count}");
         }
 
         private static bool IsAdministrator()
@@ -247,7 +253,10 @@ namespace RapidMessageCast_Manager
             // Replace invalid characters with empty string
             return Regex.Replace(text, pattern, "");
         }
-
+        private static void SetCheckboxState(CheckBox checkBox, string value)
+        {
+            checkBox.Checked = value == "True";
+        }
         private void LoadRMSGFileInProgram(string filePath)
         {
             //Use RMSG_IO_Manager.LoadRMSGFile(openFileDialog.FileName); and store the return values in a string array.
@@ -267,56 +276,12 @@ namespace RapidMessageCast_Manager
                 expiryHourTime.Value = Convert.ToDecimal(RMSGFileValues[3]);
                 expiryMinutesTime.Value = Convert.ToDecimal(RMSGFileValues[4]);
                 expirySecondsTime.Value = Convert.ToDecimal(RMSGFileValues[5]);
-                //Check if emergency mode is enabled in the file.
-                if (RMSGFileValues[6] == "True")
-                {
-                    EmergencyModeCheckbox.Checked = true;
-                }
-                else
-                {
-                    EmergencyModeCheckbox.Checked = false;
-                }
-                //Check module states in the file. if it exists, enable it. if not, disable it.
-                if (RMSGFileValues[7] == "True")
-                {
-                    MessagePCcheckBox.Checked = true;
-                }
-                else
-                {
-                    MessagePCcheckBox.Checked = false;
-                }
-                if (RMSGFileValues[8] == "True")
-                {
-                    MessageEmailcheckBox.Checked = true;
-                }
-                else
-                {
-                    MessageEmailcheckBox.Checked = false;
-                }
-                if (RMSGFileValues[9] == "True")
-                {
-                    MessagePSExecCheckBox.Checked = true;
-                }
-                else
-                {
-                    MessagePSExecCheckBox.Checked = false;
-                }
-                if (RMSGFileValues[10] == "True")
-                {
-                    ReattemptOnErrorCheckbox.Checked = true;
-                }
-                else
-                {
-                    ReattemptOnErrorCheckbox.Checked = false;
-                }
-                if (RMSGFileValues[11] == "True")
-                {
-                    DontSaveBroadcastHistoryCheckbox.Checked = true;
-                }
-                else
-                {
-                    DontSaveBroadcastHistoryCheckbox.Checked = false;
-                }
+                SetCheckboxState(EmergencyModeCheckbox, RMSGFileValues[6]);
+                SetCheckboxState(MessagePCcheckBox, RMSGFileValues[7]);
+                SetCheckboxState(MessageEmailcheckBox, RMSGFileValues[8]);
+                SetCheckboxState(MessagePSExecCheckBox, RMSGFileValues[9]);
+                SetCheckboxState(ReattemptOnErrorCheckbox, RMSGFileValues[10]);
+                SetCheckboxState(DontSaveBroadcastHistoryCheckbox, RMSGFileValues[11]);
                 //Add to loglist with the name of file that was loaded.
                 AddTextToLogList("Info - LoadRMSGFileInProgram: RMSG File loaded successfully: " + Path.GetFileName(filePath));
             }
@@ -339,148 +304,6 @@ namespace RapidMessageCast_Manager
             catch (Exception ex)
             {
                 AddTextToLogList("Error - RefreshRMSGFileList: Failure in creating QuickLoad folder(s)/Refreshing the RMSGFileList " + ex.ToString());
-            }
-        }
-
-        public void BeginPCMessageCast(string message, string pcList, int duration, bool Reattempted)
-        {
-            //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
-            if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
-            {
-                AddTextToLogList("Critical - BeginPCMessageCast: An attempt to broadcast was made but msg.exe was not found in the System32 folder. Please ensure that you have a supported operating system.");
-                MessageBox.Show("msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            //Clear BroadcastHistory list.
-            broadcastHistoryBuffer.Clear();
-            //add to broadcast history program name and version.
-            broadcastHistoryBuffer.Add("===RapidMessageCast=== - Version: " + versionNumb);
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - START - Broadcast has started.");
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Broadcast started by: " + Environment.UserName + " - System Name: " + Environment.MachineName);
-            //Add that broadcast has started to the loglist.
-            AddTextToLogList("Info - BeginPCMessageCast: PC Broadcast has been started.");
-            //Check if isScheduledBroadcast is true. If it is, add to the broadcast history that it's a scheduled broadcast.
-            if (isScheduledBroadcast)
-            {
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Info - Scheduled broadcast has started.");
-            }
-            //Add the Message to the broadcast history and also what user it was sent by.
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Message - Message Content: " + message);
-            //Also add the duration of the message to the broadcast history.
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Duration - Message Duration: " + duration + " seconds");
-            //Add if emergency mode is enabled to the broadcast history.
-            if (EmergencyModeCheckbox.Checked)
-            {
-                //add to loglist that emergency mode is enabled.
-                AddTextToLogList("Notice - BeginPCMessageCast: Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Notice - Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
-            }
-            string[] pcNames = pcList.Split(PCseparatorArray, StringSplitOptions.RemoveEmptyEntries);
-            //Set StartBroadcastBtn text to Starting broadcast.
-            foreach (string pcName in pcNames)
-            {
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        AddTextToLogList($"Info - BeginPCMessageCast: Preparing to message PC: {pcName} ...");
-                        var processInfo = new ProcessStartInfo
-                        {
-                            FileName = "C:\\Windows\\System32\\msg.exe",
-                            Arguments = $"* /TIME:{duration} /SERVER:{pcName} \"{message}\"",
-                            CreateNoWindow = true,
-                            UseShellExecute = false
-                        };
-
-                        var process = new Process { StartInfo = processInfo };
-                        // Start the process
-                        process.Start();
-                        //Add the PC to the broadcast history.
-                        //broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Attempting to message - " + pcName);
-                        AddTextToLogList($"Info - BeginPCMessageCast: MSG process started for \"{pcName}\". (Process ID: {process.Id})");
-
-                        //Check if emergency mode is enabled. if it is, do not wait for the process to exit.
-                        if (!EmergencyModeCheckbox.Checked)
-                        {
-                            //Check if the program exits without any errors.
-                            if (!process.WaitForExit(1500))
-                            {
-                                //Add the error to the broadcast history.
-                                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - \"" + pcName + "\" - ERROR - The process did not exit in time.");
-                                AddTextToLogList($"Error - BeginPCMessageCast: The process did not exit in time for PC: {pcName}");
-                            }
-                            else
-                            {
-                                //Add the success to the broadcast history.
-                                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - \"" + pcName + "\" - SUCCESS - MSG.exe process exited within allocated timelimit.");
-                                AddTextToLogList($"Info - BeginPCMessageCast: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
-                            }
-                        }
-                        else
-                        {
-                            //Add PC name to the broadcast history. But write unknown if message was sent or not.
-                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - (Unknown if successful) MSG process started for \"" + pcName + "\" - Process ID:" + process.Id);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - ERROR - " + ex.ToString());
-                        AddTextToLogList($"Critical - BeginPCMessageCast: Broadcast module reported an error. Failure to send command for PC: {pcName} | Error Details: {ex.ToString()}");
-                        StartBroadcastBtn.BackColor = Color.DarkRed;
-                        if (!Reattempted & ReattemptOnErrorCheckbox.Checked) //If the message has not been reattempted and the reattempt on error checkbox is enabled, reattempt the message.
-                        {
-                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - Attempting to message PC again - ");
-                            AddTextToLogList($"Warning - BeginPCMessageCast: Reattempting to message PC again for a final time: {pcName}");
-                            BeginPCMessageCast(message, pcName, duration, true);
-                        }
-                    }
-                });
-            }
-            //Wait for all processes that contain msg.exe to close before saving the broadcast history.
-            Task.Run(() =>
-            {
-                while (Process.GetProcessesByName("msg").Length > 0)
-                {
-                    Thread.Sleep(1000);
-                }
-                //Add end of broadcast to the broadcast history.
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - END - Broadcast has ended.");
-                AddTextToLogList("Info - BeginPCMessageCast: RMC detected no remaining MSG processes. Broadcast has finished. Saving broadcast log...");
-                SaveBroadcastHistory();
-                if (isScheduledBroadcast)
-                {
-                    //Close the program if it's a scheduled broadcast.
-                    AddTextToLogList("Info - Automated Broadcast: Scheduled broadcast finished. Closing program.");
-                    Application.Exit();
-                }
-                //Set StartBroadcastBtn text to Start Broadcast.
-            });
-            //Set the start broadcast button to green and start the timer to change it back to the original color.
-            StartBroadcastBtn.BackColor = Color.Green;
-            GreenButtonTimer.Start();
-        }
-
-        private void SaveBroadcastHistory()
-        {
-            //Save the broadcast history to a file in the directory called BroadcastHistory.
-            //Check if dont save is checked. If it is, do not save the broadcast history.
-            if (DontSaveBroadcastHistoryCheckbox.Checked)
-            {
-                AddTextToLogList("Info - Broadcast: Broadcast history save halted. Don't save history checkbox is checked.");
-                return;
-            }
-            string broadcastHistoryFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
-            try
-            {
-                File.WriteAllLines(Application.StartupPath + "\\BroadcastHistory\\" + broadcastHistoryFileName, broadcastHistoryBuffer);
-                AddTextToLogList("Info - Broadcast: History saved to file: " + broadcastHistoryFileName);
-            }
-            catch (Exception ex)
-            {
-                AddTextToLogList("Error - Broadcast: Failure in saving broadcast history. " + ex.ToString());
-                //wait for 1 to 5 seconds and then try to save the broadcast history again.
-                Thread.Sleep(new Random().Next(1000, 5000));
-                SaveBroadcastHistory();
             }
         }
 
@@ -514,7 +337,7 @@ namespace RapidMessageCast_Manager
 
         }
 
-        private void messageTxt_TextChanged(object sender, EventArgs e)
+        private void MessageTxt_TextChanged(object sender, EventArgs e)
         {
             int remainingCharacters = 255 - MessageTxt.TextLength;
             if (remainingCharacters >= 0)
@@ -533,7 +356,7 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void messageTxt_KeyPress(object sender, KeyPressEventArgs e)
+        private void MessageTxt_KeyPress(object sender, KeyPressEventArgs e)
         {
             //invalidcharspattern is a regex pattern that will check if the key pressed is invalid. If it is, it will suppress the key press. BAD CHARACTERS: /
             string invalidCharsPattern = @"[\/]";
@@ -544,7 +367,7 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void openMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
@@ -571,7 +394,7 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void openSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
@@ -711,8 +534,9 @@ namespace RapidMessageCast_Manager
                 }
                 int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
                 //Begin message cast asynchroniously. This will then allow the other code below to run at the same time.
-                //Task.Run(() => BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false));
-                BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false);
+                //TODO: look into making this asyncronious so that the program resumes to the next line of code.
+                //BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false);
+                pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
             }
             //Check if Email module is enabled. If it is, start the Email cast.
             if (MessageEmailcheckBox.Checked)
@@ -738,7 +562,7 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void clearLogBtn_Click(object sender, EventArgs e)
+        private void ClearLogBtn_Click(object sender, EventArgs e)
         {
             //ask the user if they are sure they want to clear the loglist. If yes, clear it.
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to clear the log list?", "Clear Log List", MessageBoxButtons.YesNo);
@@ -1029,23 +853,23 @@ namespace RapidMessageCast_Manager
 
         }
 
-        private void addThisPCToTheListToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AddThisPCToTheListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Get the current pc hostname and add it to the pclist.
             ComputerSelectList.Text += Environment.MachineName + "\r\n";
         }
 
-        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ClearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ComputerSelectList.Clear();
         }
 
-        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SelectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ComputerSelectList.SelectAll();
         }
 
-        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ComputerSelectList.Undo();
         }
@@ -1059,7 +883,7 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void testBroadcastMessageToolStripMenuItem_Click(object sender, EventArgs e)
+        private void TestBroadcastMessageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Broadcast the message to just the computer that the program is running on.
             if (MessageTxt.Text == "" || ComputerSelectList.Text == "")
@@ -1069,7 +893,8 @@ namespace RapidMessageCast_Manager
                 return;
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
-            BeginPCMessageCast(MessageTxt.Text, Environment.MachineName, totalSeconds, false);
+            //BeginPCMessageCast(MessageTxt.Text, Environment.MachineName, totalSeconds, false);
+            pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, Environment.MachineName, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
         }
 
         private async void SendWOLPacketBtn_Click(object sender, EventArgs e)
@@ -1085,7 +910,7 @@ namespace RapidMessageCast_Manager
             }
             foreach (string macAddress in macAddresses)
             {
-                if (!WakeOnLANModule.isValidMacAddress(macAddress))
+                if (!WakeOnLANModule.IsValidMacAddress(macAddress))
                 {
                     //MessageBox.Show("Invalid MAC address: " + macAddress, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     AddTextToLogList("Error - SendWOLPacket: Invalid MAC address: " + macAddress);

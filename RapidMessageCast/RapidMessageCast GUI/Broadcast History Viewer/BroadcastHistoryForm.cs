@@ -1,5 +1,29 @@
 ﻿using System.Diagnostics;
 
+//--RapidMessageCast Software--
+//BroadcastHistoryForm.cs - RapidMessageCast Manager
+
+//Copyright (c) 2024 Lunar/lloyd99901
+
+//MIT License
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
 namespace RapidMessageCast_Manager
 {
     public partial class BroadcastHistoryForm : Form
@@ -71,8 +95,10 @@ namespace RapidMessageCast_Manager
             try
             {
                 string selectedFile = HistoryListBox.SelectedItem.ToString();
-                Broadcast_History_Viewer.ChildBroadcastViewer childForm = new Broadcast_History_Viewer.ChildBroadcastViewer(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile);
-                childForm.MdiParent = this;
+                Broadcast_History_Viewer.ChildBroadcastViewer childForm = new(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile)
+                {
+                    MdiParent = this
+                };
                 childForm.Show();
             }
             catch (Exception ex)
@@ -88,7 +114,7 @@ namespace RapidMessageCast_Manager
 
         private void OpenBroadcastHistoryFolder(object sender, EventArgs e)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            ProcessStartInfo startInfo = new()
             {
                 Arguments = Application.StartupPath + "BroadcastHistory\\",
                 FileName = "explorer.exe"

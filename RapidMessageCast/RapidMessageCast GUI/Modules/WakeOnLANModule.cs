@@ -3,6 +3,30 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
+//--RapidMessageCast Software--
+//WakeOnLANModule.cs - RapidMessageCast Manager
+
+//Copyright (c) 2024 Lunar/lloyd99901
+
+//MIT License
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
 namespace RapidMessageCast_Manager.Modules
 {
     internal class WakeOnLANModule
@@ -54,10 +78,10 @@ namespace RapidMessageCast_Manager.Modules
         {
             using UdpClient client = new(new IPEndPoint(localIpAddress, 0));
             await client.SendAsync(magicPacket, magicPacket.Length, new IPEndPoint(multicastIpAddress, port));
-            
+
         }
 
-        public static bool isValidMacAddress(string macAddress)
+        public static bool IsValidMacAddress(string macAddress)
         {
             return Regex.IsMatch(macAddress, "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"); //This will return true if the mac address is in the format of 00:00:00:00:00:00
         }

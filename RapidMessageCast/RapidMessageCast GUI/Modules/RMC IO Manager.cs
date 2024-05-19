@@ -1,11 +1,34 @@
 ﻿using System.Text.RegularExpressions;
 
+//--RapidMessageCast Software--
+//RMC_IO_Manager.cs - RapidMessageCast Manager
+
+//Copyright (c) 2024 Lunar/lloyd99901
+
+//MIT License
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
 namespace RapidMessageCast_Manager.Modules
 {
     internal class RMC_IO_Manager
     {
         private static readonly string[] RMCseparator = ["\r\n\r\n"]; //Used for RMC file IO parsing.
-
         public static string[] LoadRMSGFile(string filePath)
         {
             //Here is the return array structure:
@@ -200,7 +223,37 @@ namespace RapidMessageCast_Manager.Modules
                 return "Info - RMC_IO_Manager: Loading list of RMSG files.";
             }
         }
+        public static void SaveBroadcastHistory(List<string> broadcastHistoryBuffer, bool DontSave)
+        {
+            RMCManager RMCManagerForm = (RMCManager)Application.OpenForms[0];
+            //Check if RMCManagerForm is null. If it is, return.
+            if (RMCManagerForm == null)
+            {
+                MessageBox.Show("Fatal Error - Error with communicating with RMCManagerForm while attempting to save broadcast history. RMCManagerForm reported as null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            //Save the broadcast history to a file in the directory called BroadcastHistory.
+            //Check if dont save is checked. If it is, do not save the broadcast history.
+            if (DontSave)
+            {
+                RMCManagerForm.AddTextToLogList("Info - Broadcast: Broadcast history save halted. Don't save history checkbox is checked.");
+                return;
+            }
+            string broadcastHistoryFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+            try
+            {
+                File.WriteAllLines(Application.StartupPath + "\\BroadcastHistory\\" + broadcastHistoryFileName, broadcastHistoryBuffer);
+                RMCManagerForm.AddTextToLogList("Info - Broadcast: History saved to file: " + broadcastHistoryFileName);
+            }
+            catch (Exception ex)
+            {
+                RMCManagerForm.AddTextToLogList("Error - Broadcast: Failure in saving broadcast history. " + ex.ToString());
+                //wait for 1 to 5 seconds and then try to save the broadcast history again.
+                Thread.Sleep(new Random().Next(1000, 5000));
+                SaveBroadcastHistory(broadcastHistoryBuffer, DontSave);
+            }
+        }
         private static string GetValueFromSection(string[] sections, string sectionHeader)
         {
             foreach (string section in sections)

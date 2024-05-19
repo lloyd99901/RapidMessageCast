@@ -1,13 +1,36 @@
-﻿
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+
+//--RapidMessageCast Software--
+//ChildBroadcastViewer.cs - RapidMessageCast Manager
+
+//Copyright (c) 2024 Lunar/lloyd99901
+
+//MIT License
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
 
 namespace RapidMessageCast_Manager.Broadcast_History_Viewer
 {
     public partial class ChildBroadcastViewer : Form
     {
-        Regex errorRegex = new Regex(@"\b(error|exception|fail(ed)?|fatal)\b", RegexOptions.IgnoreCase);
-        Regex warningRegex = new Regex(@"\b(warning|caution|alert)\b", RegexOptions.IgnoreCase);
-        Regex criticalRegex = new Regex(@"\b(critical|urgent|important)\b", RegexOptions.IgnoreCase);
+        readonly Regex errorRegex = new(@"\b(error|exception|fail(ed)?|fatal)\b", RegexOptions.IgnoreCase);
+        readonly Regex warningRegex = new(@"\b(warning|caution|alert)\b", RegexOptions.IgnoreCase);
+        readonly Regex criticalRegex = new(@"\b(critical|urgent|important)\b", RegexOptions.IgnoreCase);
         readonly string FilePath = "";
         public ChildBroadcastViewer(string FileLocation)
         {
@@ -59,7 +82,7 @@ namespace RapidMessageCast_Manager.Broadcast_History_Viewer
             int pcCount = pcMatches.Count;
             MessageInsightsLabel.Text = $"Number of log types:\nCritical: {criticalCount}\nError: {errorCount}\nWarning: {warningCount}\nInfo: {infoCount}\nPC Count: {pcCount}";
             //With the PCMatches, now for each match, get the text inside the "" and add it to the PC list.
-            foreach (Match match in pcMatches)
+            foreach (Match match in pcMatches.Cast<Match>())
             {
                 string pcName = match.Groups[1].Value;
                 if (!PCList.Items.Contains(pcName))

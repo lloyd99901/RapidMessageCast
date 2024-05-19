@@ -605,7 +605,7 @@
             MessageOpenTxtBtn.TabIndex = 76;
             MessageOpenTxtBtn.Text = "Open from .txt";
             MessageOpenTxtBtn.UseVisualStyleBackColor = false;
-            MessageOpenTxtBtn.Click += openMessageTextToolStripMenuItem_Click;
+            MessageOpenTxtBtn.Click += OpenMessageTextToolStripMenuItem_Click;
             // 
             // expirySecondsTime
             // 
@@ -676,8 +676,8 @@
             MessageTxt.ScrollBars = ScrollBars.Vertical;
             MessageTxt.Size = new Size(370, 148);
             MessageTxt.TabIndex = 77;
-            MessageTxt.TextChanged += messageTxt_TextChanged;
-            MessageTxt.KeyPress += messageTxt_KeyPress;
+            MessageTxt.TextChanged += MessageTxt_TextChanged;
+            MessageTxt.KeyPress += MessageTxt_KeyPress;
             // 
             // label2
             // 
@@ -807,7 +807,7 @@
             ComputerListLoadFromFileBtn.TabIndex = 73;
             ComputerListLoadFromFileBtn.Text = "Open from .txt";
             ComputerListLoadFromFileBtn.UseVisualStyleBackColor = false;
-            ComputerListLoadFromFileBtn.Click += openSendComputerListToolStripMenuItem_Click;
+            ComputerListLoadFromFileBtn.Click += OpenSendComputerListToolStripMenuItem_Click;
             // 
             // ComputerSelectList
             // 
@@ -839,7 +839,7 @@
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.Size = new Size(267, 24);
             openToolStripMenuItem.Text = "&Open...";
-            openToolStripMenuItem.Click += openSendComputerListToolStripMenuItem_Click;
+            openToolStripMenuItem.Click += OpenSendComputerListToolStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
@@ -871,21 +871,21 @@
             testBroadcastMessageToolStripMenuItem.Name = "testBroadcastMessageToolStripMenuItem";
             testBroadcastMessageToolStripMenuItem.Size = new Size(267, 24);
             testBroadcastMessageToolStripMenuItem.Text = "Send test message to this PC";
-            testBroadcastMessageToolStripMenuItem.Click += testBroadcastMessageToolStripMenuItem_Click;
+            testBroadcastMessageToolStripMenuItem.Click += TestBroadcastMessageToolStripMenuItem_Click;
             // 
             // undoToolStripMenuItem
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             undoToolStripMenuItem.Size = new Size(267, 24);
             undoToolStripMenuItem.Text = "Undo";
-            undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
+            undoToolStripMenuItem.Click += UndoToolStripMenuItem_Click;
             // 
             // selectAllToolStripMenuItem
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             selectAllToolStripMenuItem.Size = new Size(267, 24);
             selectAllToolStripMenuItem.Text = "Select All";
-            selectAllToolStripMenuItem.Click += selectAllToolStripMenuItem_Click;
+            selectAllToolStripMenuItem.Click += SelectAllToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
@@ -897,14 +897,14 @@
             addThisPCToTheListToolStripMenuItem.Name = "addThisPCToTheListToolStripMenuItem";
             addThisPCToTheListToolStripMenuItem.Size = new Size(267, 24);
             addThisPCToTheListToolStripMenuItem.Text = "Add current PC to the list";
-            addThisPCToTheListToolStripMenuItem.Click += addThisPCToTheListToolStripMenuItem_Click;
+            addThisPCToTheListToolStripMenuItem.Click += AddThisPCToTheListToolStripMenuItem_Click;
             // 
             // clearAllToolStripMenuItem
             // 
             clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
             clearAllToolStripMenuItem.Size = new Size(267, 24);
             clearAllToolStripMenuItem.Text = "Clear All Text";
-            clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
+            clearAllToolStripMenuItem.Click += ClearAllToolStripMenuItem_Click;
             // 
             // ActiveDirectorySelectBtn
             // 
@@ -1528,7 +1528,7 @@
             clearLogBtn.Text = "Clear log";
             clearLogBtn.TextAlign = ContentAlignment.MiddleRight;
             clearLogBtn.UseVisualStyleBackColor = false;
-            clearLogBtn.Click += clearLogBtn_Click;
+            clearLogBtn.Click += ClearLogBtn_Click;
             // 
             // SaveRMCRuntimeLogBtn
             // 
@@ -1655,7 +1655,6 @@
         }
 
         #endregion
-        private Button StartBroadcastBtn;
         private Panel panel1;
         private Button BroadcastHistoryBtn;
         private Button ScheduleBroadcastBtn;
@@ -1696,7 +1695,6 @@
         private PictureBox pictureBox1;
         private Label PCCountLbl;
         private Label versionLbl;
-        private System.Windows.Forms.Timer GreenButtonTimer;
         private CheckBox EmergencyModeCheckbox;
         private LinkLabel EmergencyHelpLink;
         private PictureBox pictureBox3;
@@ -1762,5 +1760,7 @@
         private CheckBox ReattemptOnErrorCheckbox;
         private LinkLabel ReattemptonErrorHelpLbl;
         private Label label14;
+        public Button StartBroadcastBtn;
+        public System.Windows.Forms.Timer GreenButtonTimer;
     }
 }
