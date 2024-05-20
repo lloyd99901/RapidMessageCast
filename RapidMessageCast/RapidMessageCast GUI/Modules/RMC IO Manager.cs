@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+using static System.Collections.Specialized.BitVector32;
 
 //--RapidMessageCast Software--
 //RMC_IO_Manager.cs - RapidMessageCast Manager
@@ -45,19 +47,6 @@ namespace RapidMessageCast_Manager.Modules
             // [10] = Reattempt on error
             // [11] = Dont save history
 
-            //Declare variables to store the extracted values.
-            bool EmergencyModeEnabled;
-            bool EnableMessagingOfPCs;
-            bool EnableEmail;
-            bool EnablePSExec;
-            string MessageContent;
-            string PCList;
-            decimal expiryHourTime = 0;
-            decimal expiryMinutesTime = 0;
-            decimal expirySecondsTime = 0;
-            bool ReattemptOnErrorCheck;
-            bool DontSaveHistoryCheck;
-
             try
             {
                 // Read the contents of the selected file
@@ -66,194 +55,187 @@ namespace RapidMessageCast_Manager.Modules
                 // Split the file contents by section headers
                 string[] sections = fileContents.Split(RMCseparator, StringSplitOptions.RemoveEmptyEntries);
 
-                // Extract message, PC list, and message duration from sections
+                // Helper function to get section value and check if it is "Enabled"
+                bool IsEnabled(string section) => GetValueFromSection(sections, section) == "Enabled";
+
+                // Extract values
                 string message = GetValueFromSection(sections, "[Message]");
                 string pcList = GetValueFromSection(sections, "[PCList]");
                 string messageDuration = GetValueFromSection(sections, "[MessageDuration]");
-                //Check if emergency mode is enabled in the file.
-                string emergencyMode = GetValueFromSection(sections, "[EmergencyMode]");
-                if (emergencyMode == "Enabled")
-                {
-                    EmergencyModeEnabled = true;
-                }
-                else
-                {
-                    EmergencyModeEnabled = false;
-                }
-
-                //Check module states in the file. if it exists, enable it. if not, disable it.
-                string messagePC = GetValueFromSection(sections, "[MessagePC]");
-                if (messagePC == "Enabled")
-                {
-                    EnableMessagingOfPCs = true;
-                }
-                else
-                {
-                    EnableMessagingOfPCs = false;
-                }
-                string messageEmail = GetValueFromSection(sections, "[MessageEmail]");
-                if (messageEmail == "Enabled")
-                {
-                    EnableEmail = true;
-                }
-                else
-                {
-                    EnableEmail = false;
-                }
-                string messagePSExec = GetValueFromSection(sections, "[MessagePSExec]");
-                if (messagePSExec == "Enabled")
-                {
-                    EnablePSExec = true;
-                }
-                else
-                {
-                    EnablePSExec = false;
-                }
-                //Get the reattempt on error state from the file.
-                string reattemptOnError = GetValueFromSection(sections, "[ReattemptOnError]");
-                if (reattemptOnError == "Enabled")
-                {
-                    ReattemptOnErrorCheck = true;
-                }
-                else
-                {
-                    ReattemptOnErrorCheck = false;
-                }
-                //Get the dont save history state from the file.
-                string dontSaveHistory = GetValueFromSection(sections, "[DontSaveHistory]");
-                if (dontSaveHistory == "Enabled")
-                {
-                    DontSaveHistoryCheck = true;
-                }
-                else
-                {
-                    DontSaveHistoryCheck = false;
-                }
-
-                // Populate the TextBoxes with the extracted values
-                MessageContent = message;
-                PCList = pcList;
-
                 string[] durationParts = messageDuration.Split(':');
-                if (durationParts.Length == 3)
-                {
-                    expiryHourTime = Convert.ToDecimal(durationParts[0]);
-                    expiryMinutesTime = Convert.ToDecimal(durationParts[1]);
-                    expirySecondsTime = Convert.ToDecimal(durationParts[2]);
-                }
-                //Return the extracted values via an array.
-                return ["", MessageContent, PCList, expiryHourTime.ToString(), expiryMinutesTime.ToString(), expirySecondsTime.ToString(), EmergencyModeEnabled.ToString(), EnableMessagingOfPCs.ToString(), EnableEmail.ToString(), EnablePSExec.ToString(), ReattemptOnErrorCheck.ToString(), DontSaveHistoryCheck.ToString()];
+
+                decimal expiryHourTime = durationParts.Length == 3 ? Convert.ToDecimal(durationParts[0]) : 0;
+                decimal expiryMinutesTime = durationParts.Length == 3 ? Convert.ToDecimal(durationParts[1]) : 0;
+                decimal expirySecondsTime = durationParts.Length == 3 ? Convert.ToDecimal(durationParts[2]) : 0;
+
+                // Check module states
+                bool EmergencyModeEnabled = IsEnabled("[EmergencyMode]");
+                bool EnableMessagingOfPCs = IsEnabled("[MessagePC]");
+                bool EnableEmail = IsEnabled("[MessageEmail]");
+                bool EnablePSExec = IsEnabled("[MessagePSExec]");
+                bool ReattemptOnErrorCheck = IsEnabled("[ReattemptOnError]");
+                bool DontSaveHistoryCheck = IsEnabled("[DontSaveHistory]");
+
+                // Return the extracted values via an array
+                return
+                [
+                    "",
+                    message,
+                    pcList,
+                    expiryHourTime.ToString(),
+                    expiryMinutesTime.ToString(),
+                    expirySecondsTime.ToString(),
+                    EmergencyModeEnabled.ToString(),
+                    EnableMessagingOfPCs.ToString(),
+                    EnableEmail.ToString(),
+                    EnablePSExec.ToString(),
+                    ReattemptOnErrorCheck.ToString(),
+                    DontSaveHistoryCheck.ToString()
+                ];
             }
             catch (Exception ex)
             {
-                //Return an error message along with the exception.
+                // Return an error message along with the exception
                 MessageBox.Show("Error - RMC_IO_Manager: Failure in loading RMSG file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return ["Error" + ex.ToString()];
+                return ["Error: " + ex.ToString()];
             }
         }
 
         public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory)
         {
-            // Create a string builder to store the contents of the RMC file
-            //StringBuilder rmcFileContent = new StringBuilder();
+            // Create a StringBuilder to store the contents of the RMC file
+            var rmcFileContent = new StringBuilder();
 
             // Append the message content section
-            string rmcFileContent = $"[Message]\r\n{messageContent}\r\n\r\n";
+            rmcFileContent.AppendLine("[Message]");
+            rmcFileContent.AppendLine(messageContent);
+            rmcFileContent.AppendLine();
 
             // Append the PC list section
-            rmcFileContent += $"[PCList]\r\n{pcList}\r\n\r\n";
+            rmcFileContent.AppendLine("[PCList]");
+            rmcFileContent.AppendLine(pcList);
+            rmcFileContent.AppendLine();
 
             // Append the message duration section
-            rmcFileContent += $"[MessageDuration]\r\n{expiryHour}:{expiryMinutes}:{expirySeconds}";
+            rmcFileContent.AppendLine("[MessageDuration]");
+            rmcFileContent.AppendLine($"{expiryHour}:{expiryMinutes}:{expirySeconds}");
 
-            //Add emergency mode to the message content if it's enabled.
-            if (emergencyModeEnabled)
+            // Helper function to append sections if enabled
+            void AppendSectionIfEnabled(string sectionName, bool isEnabled)
             {
-                rmcFileContent += "\r\n\r\n[EmergencyMode]\r\nEnabled";
+                if (isEnabled)
+                {
+                    rmcFileContent.AppendLine();
+                    rmcFileContent.AppendLine(sectionName);
+                    rmcFileContent.AppendLine("Enabled");
+                }
             }
-            //Add the Module States to the file (Message, Email, PSExec), If it enabled, add it to the file. if not, do not add it.
-            if (enableMessagingOfPCs)
-            {
-                rmcFileContent += "\r\n\r\n[MessagePC]\r\nEnabled";
-            }
-            if (enableEmail)
-            {
-                rmcFileContent += "\r\n\r\n[MessageEmail]\r\nEnabled";
-            }
-            if (enablePSExec)
-            {
-                rmcFileContent += "\r\n\r\n[MessagePSExec]\r\nEnabled";
-            }
-            if (reattemptOnError)
-            {
-                rmcFileContent += "\r\n\r\n[ReattemptOnError]\r\nEnabled";
-            }
-            if (dontSaveHistory)
-            {
-                rmcFileContent += "\r\n\r\n[DontSaveHistory]\r\nEnabled";
-            }
+
+            // Add emergency mode and module states to the file if enabled
+            AppendSectionIfEnabled("[EmergencyMode]", emergencyModeEnabled);
+            AppendSectionIfEnabled("[MessagePC]", enableMessagingOfPCs);
+            AppendSectionIfEnabled("[MessageEmail]", enableEmail);
+            AppendSectionIfEnabled("[MessagePSExec]", enablePSExec);
+            AppendSectionIfEnabled("[ReattemptOnError]", reattemptOnError);
+            AppendSectionIfEnabled("[DontSaveHistory]", dontSaveHistory);
+
             // Write the contents to the specified file
-            File.WriteAllText(filePath, rmcFileContent);
+            File.WriteAllText(filePath, rmcFileContent.ToString());
         }
+
+
 
         public static string AttemptToCreateRMCDirectories()
         {
-            //Create a directory called BroadcastHistory if it doesn't exist.
-            if (!Directory.Exists(Application.StartupPath + "\\BroadcastHistory") || !Directory.Exists(Application.StartupPath + "\\RMSGFiles") || !Directory.Exists(Application.StartupPath + "\\RMC Runtime Logs"))
+            string[] directories = [
+                Path.Combine(Application.StartupPath, "BroadcastHistory"),
+                Path.Combine(Application.StartupPath, "RMSGFiles"),
+                Path.Combine(Application.StartupPath, "RMC Runtime Logs")
+            ];
+
+            bool directoriesCreated = false;
+
+            try
             {
-                try
+                foreach (var dir in directories)
                 {
-                    Directory.CreateDirectory(Application.StartupPath + "\\BroadcastHistory");
-                    Directory.CreateDirectory(Application.StartupPath + "\\RMSGFiles");
-                    Directory.CreateDirectory(Application.StartupPath + "\\RMC Runtime Logs");
-                    //Show a welcome msgbox to the user and also allow them to agree to the MIT License.
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                        directoriesCreated = true;
+                    }
+                }
+
+                if (directoriesCreated) //If the directories were created, show a welcome message to the user.
+                {
+                    // Show a welcome message to the user and prompt them to agree to the MIT License.
                     MessageBox.Show("Welcome to RapidMessageCast!\r\n\r\nBy using this software, you agree to the MIT License.\r\n\r\n" +
-                        "This software is provided as-is, without any warranty or guarantee of any kind.\r\n\r\n" +
-                        "Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.", "Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    "This software is provided as-is, without any warranty or guarantee of any kind.\r\n\r\n" +
+                                    "Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.",
+                                    "Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return "Info - RMC_IO_Manager: Required directories created. (RMSGFiles, RMC Runtime Logs, BroadcastHistory)";
                 }
-                catch (Exception ex)
-                {
-                    return "Error - RMC_IO_Manager: Failure in creating required directories: " + ex.Message;
-                }
+                
+                return "Info - RMC_IO_Manager: Loading list of RMSG files."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
             }
-            else
+            catch (Exception ex)
             {
-                //Add to loglist that rmsg files are being loaded.
-                return "Info - RMC_IO_Manager: Loading list of RMSG files.";
+                return "Error - RMC_IO_Manager: Failure in creating required directories: " + ex.Message;
             }
         }
-        public static void SaveBroadcastHistory(List<string> broadcastHistoryBuffer, bool DontSave)
+
+        public static void SaveBroadcastHistory(List<string> broadcastHistoryBuffer, bool dontSave)
         {
-            RMCManager RMCManagerForm = (RMCManager)Application.OpenForms[0];
-            //Check if RMCManagerForm is null. If it is, return.
-            if (RMCManagerForm == null)
+            if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm) //If this happens, something went really wrong here...
             {
-                MessageBox.Show("Fatal Error - Error with communicating with RMCManagerForm while attempting to save broadcast history. RMCManagerForm reported as null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Fatal Error - RMC IO Manager has reported a critical error, it is recommeneded that you restart RapidMessageCast. Details: Error with communicating with RMCManagerForm while attempting to save broadcast history. RMCManagerForm reported as null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            //Save the broadcast history to a file in the directory called BroadcastHistory.
-            //Check if dont save is checked. If it is, do not save the broadcast history.
-            if (DontSave)
+            if (dontSave) //If the user has checked the "Don't save history" checkbox, don't save the history.
             {
                 RMCManagerForm.AddTextToLogList("Info - Broadcast: Broadcast history save halted. Don't save history checkbox is checked.");
                 return;
             }
+
             string broadcastHistoryFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+            string directoryPath = Path.Combine(Application.StartupPath, "BroadcastHistory");
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            string filePath = Path.Combine(directoryPath, broadcastHistoryFileName);
+
             try
             {
-                File.WriteAllLines(Application.StartupPath + "\\BroadcastHistory\\" + broadcastHistoryFileName, broadcastHistoryBuffer);
+                File.WriteAllLines(filePath, broadcastHistoryBuffer);
                 RMCManagerForm.AddTextToLogList("Info - Broadcast: History saved to file: " + broadcastHistoryFileName);
             }
             catch (Exception ex)
             {
                 RMCManagerForm.AddTextToLogList("Error - Broadcast: Failure in saving broadcast history. " + ex.ToString());
-                //wait for 1 to 5 seconds and then try to save the broadcast history again.
-                Thread.Sleep(new Random().Next(1000, 5000));
-                SaveBroadcastHistory(broadcastHistoryBuffer, DontSave);
+                RetrySaveBroadcastHistory(broadcastHistoryBuffer, filePath, RMCManagerForm);
             }
         }
+
+        private static void RetrySaveBroadcastHistory(List<string> broadcastHistoryBuffer, string filePath, RMCManager RMCManagerForm)
+        {
+            int retryDelay = new Random().Next(1000, 5000);
+            Thread.Sleep(retryDelay);
+
+            try
+            {
+                File.WriteAllLines(filePath, broadcastHistoryBuffer);
+                RMCManagerForm.AddTextToLogList("Info - Broadcast: History saved to file after retry: " + Path.GetFileName(filePath));
+            }
+            catch (Exception ex)
+            {
+                RMCManagerForm.AddTextToLogList("Error - Broadcast: Failure in saving broadcast history after retry. " + ex.ToString());
+            }
+        }
+
         private static string GetValueFromSection(string[] sections, string sectionHeader)
         {
             foreach (string section in sections)

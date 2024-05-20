@@ -63,43 +63,57 @@ namespace RapidMessageCast_Manager
         private void Form1_Load(object sender, EventArgs e)
         {
             AddTextToLogList($"Info - RMC Manager: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
-            //Check if the program has a argument that contains a .rmsg file and also contains schedule, if it does, immediately start the broadcast with that file and close the form.
-            if (Environment.GetCommandLineArgs().Length > 1)
-            {
-                AddTextToLogList("Info - RMCManager: Startup command line arguments detected.");
-                //If program only has one argument, load the file into the program. But if it has two arguments, check if the second argument is schedule. If it is, start the broadcast.
-                if (Environment.GetCommandLineArgs().Length == 2)
-                {
-                    AddTextToLogList("Info - RMCManager: Startup loading RMSG file from command line argument.");
-                    LoadRMSGFileInProgram(Environment.GetCommandLineArgs()[1]);
-                }
-                else if (Environment.GetCommandLineArgs().Length == 3 && Environment.GetCommandLineArgs()[2] == "schedule")
-                {
-                    AddTextToLogList("Info - RMCManager: Startup loading RMSG file from command line argument and starting scheduled broadcast.");
-                    isScheduledBroadcast = true; //Used to tell the broadcast code to close the program after the broadcast has finished.
-                    RunScheduledBroastcast(Environment.GetCommandLineArgs()[1]);
-                    //This is a scheduled message broadcast. Start the broadcast immediately.
-                }
-            }
-            CheckSystemState(); //Check the system state and display messages to the user if something that might impact messaging is detected.
+            CheckCommandLineArguments();
+            CheckSystemState();
             LoadGlobalSettings();
             AddIconsToTabControls();
-            AddTextToLogList(RMC_IO_Manager.AttemptToCreateRMCDirectories()); //Create the directories for the program and then displays the status in the loglist.
+            HandleDefaultRMSGFile();
+            UpdateUIWithVersionInformation();
             RefreshRMSGFileList();
-            //If there is a RMSG file called default.rmsg, load it into the program.
-            if (File.Exists($"{Application.StartupPath}\\RMSGFiles\\default.rmsg"))
+            AddTextToLogList("Info - RMCManager: RMC GUI is now ready.");
+        }
+        
+        #region Functions
+        //Start of the functions.
+
+        private void CheckCommandLineArguments()
+        {
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
             {
-                LoadRMSGFileInProgram($"{Application.StartupPath}\\RMSGFiles\\default.rmsg");
+                AddTextToLogList("Info - RMCManager: Startup command line arguments detected.");
+
+                if (args.Length == 2)
+                {
+                    AddTextToLogList("Info - RMCManager: Startup loading RMSG file from command line argument.");
+                    LoadRMSGFileInProgram(args[1]);
+                }
+                else if (args.Length == 3 && args[2] == "schedule")
+                {
+                    AddTextToLogList("Info - RMCManager: Startup loading RMSG file from command line argument and starting scheduled broadcast.");
+                    isScheduledBroadcast = true;
+                    RunScheduledBroastcast(args[1]);
+                }
+            }
+        }
+
+        private void HandleDefaultRMSGFile()
+        {
+            var defaultRMSGPath = $"{Application.StartupPath}\\RMSGFiles\\default.rmsg";
+            if (File.Exists(defaultRMSGPath))
+            {
+                LoadRMSGFileInProgram(defaultRMSGPath);
                 AddTextToLogList("Info - RMCManager: Default.rmsg file loaded.");
             }
+        }
+
+        private void UpdateUIWithVersionInformation()
+        {
             versionLbl.Text = versionNumb;
             verNumbLblAboutLbl.Text = $"by lloyd99901 | {versionNumb}";
             Text = $"RapidMessageCast GUI - {versionNumb}";
-            AddTextToLogList("Info - RMCManager: RMC GUI is now ready.");
         }
 
-        #region Functions
-        //Start of the functions.
         private void RunScheduledBroastcast(string RMSGFile)
         {
             LoadRMSGFileInProgram(RMSGFile); //Load the RMSG file into the program.
@@ -120,53 +134,19 @@ namespace RapidMessageCast_Manager
 
         private void CheckSystemState()
         {
-            //This function will check the system state and display messages to the user if something that might impact messaging is detected.
+            var systemChecker = new SystemCheckModule(AddTextToLogList);
             AddTextToLogList("Info - System Status Check: Checking system state...");
-            //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
-            if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
-            {
-                AddTextToLogList("Critical - System Status Check: msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.");
-                MessageBox.Show("msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            //Check if the user is running the program as an administrator. If not, display a message.
-            if (!IsAdministrator())
-            {
-                AddTextToLogList("Notice - System Status Check: The program is not running as an administrator. If broadcasting a message doesn't work, try running this program as administrator.");
-            }
-            //Check System RAM, if less than 1GB, display a message to the user.
-            if (new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory < 1073741824)
-            {
-                MessageBox.Show("The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                AddTextToLogList("Warning - System Status Check: The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.");
-            }
-            //Check if the computer is able to send messages. Check by seeing if the computer has an ip or an available network device.
-            if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
-            {
-                AddTextToLogList("Info - System Status Check: Network is available. The program is able to send messages.");
-            }
-            else
-            {
-                AddTextToLogList("Error - System Status Check: System network connectivity state is not available. Sending messages may not be possible.");
-                MessageBox.Show("RMC has detected that your computer's network is not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            //Check if TCP port 445 is open. If it's not, display a message to the user.
-            using (System.Net.Sockets.TcpClient tcpClient = new())
-            {
-                try
-                {
-                    tcpClient.Connect("127.0.0.1", 445);
-                    AddTextToLogList("Info - System Status Check: TCP Port 445 is open.");
-                }
-                catch (Exception)
-                {
-                    AddTextToLogList("Critical - System Status Check: TCP Port 445 is closed. Sending messages may not be possible.");
-                    MessageBox.Show("RMC has detected that your computer's TCP port 445 is closed. This port is required for msg broadcasting.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            if (!PSExecModule.IsPSExecPresent())
-            {
-                AddTextToLogList("Warning - System Status Check: PsExec.exe is not present or valid in the program directory. Please ensure that PsExec is present and that the Product Name of the PsExec.exe program contains 'Sysinternals PsExec'.");
-            }
+            systemChecker.CheckFileExistence("C:\\Windows\\System32\\msg.exe",
+                "Critical - System Status Check: msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.",
+                "msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.");
+            systemChecker.CheckAdministratorStatus();
+            systemChecker.CheckSystemMemory();
+            systemChecker.CheckNetworkAvailability();
+            systemChecker.CheckTCPPort(445,
+                "Info - System Status Check: TCP Port 445 is open.",
+                "Critical - System Status Check: TCP Port 445 is closed. Sending messages may not be possible.",
+                "RMC has detected that your computer's TCP port 445 is closed. This port is required for msg broadcasting.");
+            systemChecker.CheckPSExecPresence();
             AddTextToLogList("Info - System Status Check: System state check completed.");
         }
 
@@ -235,14 +215,6 @@ namespace RapidMessageCast_Manager
             MagicPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
             ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
             AddTextToLogList($"Info - RMC Settings: Program settings loaded. Number of settings loaded: {Properties.Settings.Default.Properties.Count}");
-        }
-
-        private static bool IsAdministrator()
-        {
-            //Check if the user is running the program as an administrator.
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         private static string FilterInvalidCharacters(string text)
@@ -519,23 +491,29 @@ namespace RapidMessageCast_Manager
         private void StartBroadcastBtn_Click(object sender, EventArgs e)
         {
             AddTextToLogList("Info - StartBroadcast: Broadcast triggered, checking what modules are turned on, then will start the modules.");
+            //If nothing is enabled, display a message to the user.
+            if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !MessagePSExecCheckBox.Checked)
+            {
+                AddTextToLogList("Error - StartBroadcast: No modules are enabled. Unable to broadcast.");
+                MessageBox.Show("No modules are enabled. Please enable at least one module before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             //Clear broadcast history buffer.
             broadcastHistoryBuffer.Clear();
-            //Check if message module is enabled. If it is, start the message cast.
+
             if (MessagePCcheckBox.Checked)
             {
                 AddTextToLogList("Info - StartBroadcast: Message module is enabled. Starting message cast.");
-                //Check if message or pclist is empty. If it is, display a message to the user.
-                if (MessageTxt.Text == "" || ComputerSelectList.Text == "")
+
+                // Check if message or PC list is empty
+                if (string.IsNullOrWhiteSpace(MessageTxt.Text) || string.IsNullOrWhiteSpace(ComputerSelectList.Text))
                 {
                     MessageBox.Show("Message or PC list is empty. Please fill in the message and PC list before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     AddTextToLogList("Error - StartBroadcast: Message or PC list is empty. Broadcast halted.");
                     return;
                 }
-                int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
-                //Begin message cast asynchroniously. This will then allow the other code below to run at the same time.
-                //TODO: look into making this asyncronious so that the program resumes to the next line of code.
-                //BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false);
+
+                int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value;
                 pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
             }
             //Check if Email module is enabled. If it is, start the Email cast.
@@ -553,12 +531,6 @@ namespace RapidMessageCast_Manager
                 //Start the PSExec cast.
                 //send test messagebox to the user.
                 MessageBox.Show("PSExec module is not implemented yet. This is a placeholder message.", "PSExec Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            //If nothing is enabled, display a message to the user.
-            if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !MessagePSExecCheckBox.Checked)
-            {
-                AddTextToLogList("Error - StartBroadcast: No modules are enabled. Unable to broadcast.");
-                MessageBox.Show("No modules are enabled. Please enable at least one module before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -649,43 +621,46 @@ namespace RapidMessageCast_Manager
 
         private void RenameSelectedRMSGBtn_Click(object sender, EventArgs e)
         {
-            //Rename the selected file from the listbox with a new name that the user inputs. If the .RMSG is missing, put it back in.
+            // Get the selected file from the list box
             string? selectedFile = RMSGFileListBox.SelectedItem?.ToString();
             if (selectedFile != null)
             {
+                // Prompt the user for a new file name
                 string newFileName = Microsoft.VisualBasic.Interaction.InputBox("Enter the new name for the file. (the .rmsg at the end will be added if it's missing)", "Rename File", selectedFile);
-                if (newFileName != "")
+                if (string.IsNullOrWhiteSpace(newFileName))
+                    return;
+
+                // Add .rmsg extension if missing
+                if (!newFileName.EndsWith(".rmsg"))
+                    newFileName += ".rmsg";
+
+                // Check for invalid characters in the file name
+                if (newFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                 {
-                    if (!newFileName.EndsWith(".rmsg"))
-                    {
-                        newFileName += ".rmsg";
-                    }
-                    //Check if the newfilename contains invalid characters.
-                    if (newFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-                    {
-                        AddTextToLogList("Error - RenameSelectedRMSGBtn: Error renaming file, invalid characters in the filename.");
+                    AddTextToLogList("Error - RenameSelectedRMSGBtn: Error renaming file, invalid characters in the filename.");
+                    return;
+                }
+
+                // Check if the file already exists and prompt for overwrite
+                string filePath = Path.Combine(Application.StartupPath, "RMSGFiles", newFileName);
+                if (File.Exists(filePath))
+                {
+                    DialogResult dialogResult = MessageBox.Show("The file already exists. Do you want to overwrite it?", "Overwrite File", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                    if (dialogResult == DialogResult.No)
                         return;
-                    }
-                    //Check if the file already exists. If it does, display a overwrite message.
-                    if (File.Exists(Path.Combine(Application.StartupPath, "RMSGFiles", newFileName)))
-                    {
-                        DialogResult dialogResult = MessageBox.Show("The file already exists. Do you want to overwrite it?", "Overwrite File", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                        if (dialogResult == DialogResult.No)
-                        {
-                            return;
-                        }
-                    }
-                    try
-                    {
-                        File.Move(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile), Path.Combine(Application.StartupPath, "RMSGFiles", newFileName), true);
-                        AddTextToLogList("Info - RenameSelectedRMSGBtn: File renamed: " + selectedFile + " to " + newFileName);
-                        RefreshRMSGFileList();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error renaming file: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        AddTextToLogList("Error - RenameSelectedRMSGBtn: Failure in renaming file: " + ex.ToString());
-                    }
+                }
+
+                try
+                {
+                    // Move the file to the new location
+                    File.Move(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile), filePath, true);
+                    AddTextToLogList($"Info - RenameSelectedRMSGBtn: File renamed: {selectedFile} to {newFileName}");
+                    RefreshRMSGFileList();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error renaming file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - RenameSelectedRMSGBtn: Failure in renaming file: {ex.Message}");
                 }
             }
         }
