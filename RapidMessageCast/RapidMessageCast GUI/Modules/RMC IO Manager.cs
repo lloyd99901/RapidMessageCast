@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using static System.Collections.Specialized.BitVector32;
 
 //--RapidMessageCast Software--
 //RMC_IO_Manager.cs - RapidMessageCast Manager
@@ -96,8 +95,8 @@ namespace RapidMessageCast_Manager.Modules
             catch (Exception ex)
             {
                 // Return an error message along with the exception
-                MessageBox.Show("Error - RMC_IO_Manager: Failure in loading RMSG file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return ["Error: " + ex.ToString()];
+                MessageBox.Show($"Error - RMC_IO_Manager: Failure in loading RMSG file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return [$"Error: {ex}"];
             }
         }
 
@@ -169,10 +168,12 @@ namespace RapidMessageCast_Manager.Modules
                 if (directoriesCreated) //If the directories were created, show a welcome message to the user.
                 {
                     // Show a welcome message to the user and prompt them to agree to the MIT License.
-                    MessageBox.Show("Welcome to RapidMessageCast!\r\n\r\nBy using this software, you agree to the MIT License.\r\n\r\n" +
-                                    "This software is provided as-is, without any warranty or guarantee of any kind.\r\n\r\n" +
-                                    "Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.",
-                                    "Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    MessageBox.Show($"Welcome to RapidMessageCast!\r\n\r\nBy using this software, you agree to the MIT License.\r\n\r\n" +
+                                    $"This software is provided as-is, without any warranty or guarantee of any kind.\r\n\r\n" +
+                                    $"Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.",
+                                    $"Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     return "Info - RMC_IO_Manager: Required directories created. (RMSGFiles, RMC Runtime Logs, BroadcastHistory)";
                 }
                 
@@ -180,7 +181,7 @@ namespace RapidMessageCast_Manager.Modules
             }
             catch (Exception ex)
             {
-                return "Error - RMC_IO_Manager: Failure in creating required directories: " + ex.Message;
+                return $"Error - RMC_IO_Manager: Failure in creating required directories: {ex.Message}";
             }
         }
 
@@ -198,7 +199,7 @@ namespace RapidMessageCast_Manager.Modules
                 return;
             }
 
-            string broadcastHistoryFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+            string broadcastHistoryFileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt";
             string directoryPath = Path.Combine(Application.StartupPath, "BroadcastHistory");
 
             if (!Directory.Exists(directoryPath))
@@ -211,11 +212,11 @@ namespace RapidMessageCast_Manager.Modules
             try
             {
                 File.WriteAllLines(filePath, broadcastHistoryBuffer);
-                RMCManagerForm.AddTextToLogList("Info - Broadcast: History saved to file: " + broadcastHistoryFileName);
+                RMCManagerForm.AddTextToLogList($"Info - Broadcast: History saved to file: {broadcastHistoryFileName}");
             }
             catch (Exception ex)
             {
-                RMCManagerForm.AddTextToLogList("Error - Broadcast: Failure in saving broadcast history. " + ex.ToString());
+                RMCManagerForm.AddTextToLogList($"Error - Broadcast: Failure in saving broadcast history. {ex}");
                 RetrySaveBroadcastHistory(broadcastHistoryBuffer, filePath, RMCManagerForm);
             }
         }
@@ -228,11 +229,11 @@ namespace RapidMessageCast_Manager.Modules
             try
             {
                 File.WriteAllLines(filePath, broadcastHistoryBuffer);
-                RMCManagerForm.AddTextToLogList("Info - Broadcast: History saved to file after retry: " + Path.GetFileName(filePath));
+                RMCManagerForm.AddTextToLogList($"Info - Broadcast: History saved to file after retry: {Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
             {
-                RMCManagerForm.AddTextToLogList("Error - Broadcast: Failure in saving broadcast history after retry. " + ex.ToString());
+                RMCManagerForm.AddTextToLogList($"Error - Broadcast: Failure in saving broadcast history after retry. {ex}");
             }
         }
 

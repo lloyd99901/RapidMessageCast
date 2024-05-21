@@ -137,6 +137,7 @@
             label1 = new Label();
             logList = new ListBox();
             IconList = new ImageList(components);
+            toolTipHelp = new ToolTip(components);
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -1584,6 +1585,16 @@
             IconList.ImageSize = new Size(16, 16);
             IconList.TransparentColor = Color.Transparent;
             // 
+            // toolTipHelp
+            // 
+            toolTipHelp.AutoPopDelay = 5000;
+            toolTipHelp.InitialDelay = 1000;
+            toolTipHelp.ReshowDelay = 500;
+            toolTipHelp.ShowAlways = true;
+            toolTipHelp.ToolTipIcon = ToolTipIcon.Info;
+            toolTipHelp.UseAnimation = false;
+            toolTipHelp.UseFading = false;
+            // 
             // RMCManager
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1762,5 +1773,6 @@
         private Label label14;
         public Button StartBroadcastBtn;
         public System.Windows.Forms.Timer GreenButtonTimer;
+        private ToolTip toolTipHelp;
     }
 }

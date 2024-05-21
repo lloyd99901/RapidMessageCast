@@ -28,16 +28,13 @@ namespace RapidMessageCast_Manager.Modules
 {
     internal class PCBroadcastModule
     {
-        readonly RMC_IO_Manager RMC_IO_ManagerClass = new();
         readonly List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
         public void BroadcastPCMessage(string message, string PCList, int duration, bool HasThisBeenReattempted, bool emergencyMode, bool isReattemptOnErrorChecked, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)
         {
-            RMCManager RMCManagerForm = (RMCManager)Application.OpenForms[0];
-            //Check if RMCManagerForm is null. If it is, return an error.
-            if (RMCManagerForm == null)
+            if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm) //If this happens, something went really wrong here...
             {
-                MessageBox.Show("Fatal error: The PCBroadcast module reported RMCManagerForm as NULL. Please restart the program.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Fatal Error - RMC Broadcast Module has reported a critical error, it is recommeneded that you restart RapidMessageCast. Details: Error with communicating with RMCManagerForm while attempting to broadcast. RMCManagerForm reported as null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             RMCManagerForm.AddTextToLogList("Info - BroadcastPCMessage: PC Broadcast has been started.");
@@ -49,29 +46,27 @@ namespace RapidMessageCast_Manager.Modules
                 MessageBox.Show("msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //Clear BroadcastHistory list.
             broadcastHistoryBuffer.Clear();
-            //add to broadcast history program name and version.
-            broadcastHistoryBuffer.Add("===RapidMessageCast=== - Version: " + RMCManagerForm.versionNumb);
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - START - Broadcast has started.");
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Broadcast started by: " + Environment.UserName + " - System Name: " + Environment.MachineName);
-            //Add that broadcast has started to the loglist.
+            AddToBroadcastHistory($"===RapidMessageCast=== - Version: {RMCManagerForm.versionNumb}");
+            AddToBroadcastHistory($"START - Broadcast has started. Broadcast started by: {Environment.UserName} - System Name: {Environment.MachineName}");
             RMCManagerForm.AddTextToLogList("Info - BeginPCMessageCast: PC Broadcast has been started.");
+            AddToBroadcastHistory($"Message - Message Content: {message}");
+            AddToBroadcastHistory($"Duration - Message Duration: {duration} seconds");
+            AddToBroadcastHistory($"Reattempt on Error - Reattempt on Error: {isReattemptOnErrorChecked}");
+            AddToBroadcastHistory($"Emergency Mode - Emergency Mode: {emergencyMode}");
+            AddToBroadcastHistory($"Save Broadcast History - Save Broadcast History: {isDontSaveBroadcastHistoryChecked}");
+            AddToBroadcastHistory("============================================");
             //Check if isScheduledBroadcast is true. If it is, add to the broadcast history that it's a scheduled broadcast.
             if (isScheduledBroadcast)
             {
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Info - Scheduled broadcast has started.");
+                AddToBroadcastHistory("Info - Scheduled broadcast has started.");
             }
-            //Add the Message to the broadcast history and also what user it was sent by.
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Message - Message Content: " + message);
-            //Also add the duration of the message to the broadcast history.
-            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Duration - Message Duration: " + duration + " seconds");
             //Add if emergency mode is enabled to the broadcast history.
             if (emergencyMode)
             {
                 //add to loglist that emergency mode is enabled.
                 RMCManagerForm.AddTextToLogList("Notice - BeginPCMessageCast: Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Notice - Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
+                AddToBroadcastHistory("Notice - Emergency mode is enabled. RMC will not wait for the msg processes to exit.");
             }
             string[] pcNames = PCList.Split(PCseparatorArray, StringSplitOptions.RemoveEmptyEntries);
             //Set StartBroadcastBtn text to Starting broadcast.
@@ -82,20 +77,17 @@ namespace RapidMessageCast_Manager.Modules
                     try
                     {
                         RMCManagerForm.AddTextToLogList($"Info - BeginPCMessageCast: Preparing to message PC: {pcName} ...");
-                        var processInfo = new ProcessStartInfo
+                        var process = StartMsgProcess(pcName, message, duration);
+                        //Check if it returns a blank process. If it does, add an error to the broadcast history.
+                        if (process.Id == 0)
                         {
-                            FileName = "C:\\Windows\\System32\\msg.exe",
-                            Arguments = $"* /TIME:{duration} /SERVER:{pcName} \"{message}\"",
-                            CreateNoWindow = true,
-                            UseShellExecute = false
-                        };
-
-                        var process = new Process { StartInfo = processInfo };
-                        // Start the process
-                        process.Start();
-                        //Add the PC to the broadcast history.
-                        //broadcastHistory.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - Attempting to message - " + pcName);
-                        RMCManagerForm.AddTextToLogList($"Info - BeginPCMessageCast: MSG process started for \"{pcName}\". (Process ID: {process.Id})");
+                            AddToBroadcastHistory($"Error - BeginPCMessageCast: The process did not start correctly for PC: {pcName} [Process ID was 0]. Continuing to the next one...");
+                            RMCManagerForm.AddTextToLogList($"Error - BeginPCMessageCast: The process did not start correctly for PC: {pcName}");
+                        }
+                        else
+                        {
+                            RMCManagerForm.AddTextToLogList($"Info - BeginPCMessageCast: MSG process started for \"{pcName}\". (Process ID: {process.Id})");
+                        }
 
                         //Check if emergency mode is enabled. if it is, do not wait for the process to exit.
                         if (!emergencyMode)
@@ -104,58 +96,106 @@ namespace RapidMessageCast_Manager.Modules
                             if (!process.WaitForExit(1500))
                             {
                                 //Add the error to the broadcast history.
-                                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - \"" + pcName + "\" - ERROR - The process did not exit in time.");
+                                AddToBroadcastHistory($"Error - BeginPCMessageCast: The process did not exit in time for PC: {pcName}");
                                 RMCManagerForm.AddTextToLogList($"Error - BeginPCMessageCast: The process did not exit in time for PC: {pcName}");
                             }
                             else
                             {
                                 //Add the success to the broadcast history.
-                                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - \"" + pcName + "\" - SUCCESS - MSG.exe process exited within allocated timelimit.");
+                                AddToBroadcastHistory($"Info - BeginPCMessageCast: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
                                 RMCManagerForm.AddTextToLogList($"Info - BeginPCMessageCast: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
                             }
                         }
                         else
                         {
                             //Add PC name to the broadcast history. But write unknown if message was sent or not.
-                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - (Unknown if successful) MSG process started for \"" + pcName + "\" - Process ID:" + process.Id);
+                            AddToBroadcastHistory($" - Unknown if successful - MSG process started for \"{pcName}\" - Process ID: {process.Id}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - ERROR - " + ex.ToString());
+                        AddToBroadcastHistory($"Critical - BeginPCMessageCast: Broadcast module reported an error. Failure to send command for PC: {pcName} | Error Details: {ex}");
                         RMCManagerForm.AddTextToLogList($"Critical - BeginPCMessageCast: Broadcast module reported an error. Failure to send command for PC: {pcName} | Error Details: {ex}");
                         RMCManagerForm.StartBroadcastBtn.BackColor = Color.DarkRed;
                         if (!HasThisBeenReattempted & isReattemptOnErrorChecked) //If the message has not been reattempted and the reattempt on error checkbox is enabled, reattempt the message.
                         {
-                            broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - " + pcName + " - Attempting to message PC again - ");
+                            AddToBroadcastHistory($"Info - BeginPCMessageCast: Reattempting to message PC again: {pcName}");
                             RMCManagerForm.AddTextToLogList($"Warning - BeginPCMessageCast: Reattempting to message PC again for a final time: {pcName}");
                             BroadcastPCMessage(message, pcName, duration, true, emergencyMode, isReattemptOnErrorChecked, isDontSaveBroadcastHistoryChecked, isScheduledBroadcast);
                         }
                     }
                 });
             }
+            WaitForMSGTasksToFinish(RMCManagerForm, isDontSaveBroadcastHistoryChecked, isScheduledBroadcast);
+            //Set the start broadcast button to green and start the timer to change it back to the original color.
+            RMCManagerForm.StartBroadcastBtn.BackColor = Color.Green;
+            RMCManagerForm.GreenButtonTimer.Start();
+        }
+
+        private void WaitForMSGTasksToFinish(RMCManager RMCManagerForm, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)
+        {
             //Wait for all processes that contain msg.exe to close before saving the broadcast history.
+            RMCManagerForm.AddTextToLogList("Info - BeginPCMessageCast: RMC is now waiting for all MSG processes to close before saving the broadcast history... (max time 120 seconds before force termination of all msg processes)");
             Task.Run(() =>
             {
-                while (Process.GetProcessesByName("msg").Length > 0)
+                const int maxWaitTime = 120; // Maximum wait time in seconds
+                int elapsedWaitTime = 0; // Elapsed wait time in seconds
+
+                while (Process.GetProcessesByName("msg").Length > 0 && elapsedWaitTime < maxWaitTime)
                 {
                     Thread.Sleep(1000);
+                    elapsedWaitTime++;
                 }
+
+                if (elapsedWaitTime >= maxWaitTime)
+                {
+                    RMCManagerForm.AddTextToLogList("Warning - BeginPCMessageCast: RMC detected a possible hung machine. Exiting wait loop and attempting to terminate hung msg processes...");
+                    //Force terminate all msg processes.
+                    foreach (var process in Process.GetProcessesByName("msg"))
+                    {
+                        process.Kill();
+                    }
+                    return;
+                }
+
                 //Add end of broadcast to the broadcast history.
-                broadcastHistoryBuffer.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " - END - Broadcast has ended.");
+                AddToBroadcastHistory("END - PC Broadcast has ended.");
                 RMCManagerForm.AddTextToLogList("Info - BeginPCMessageCast: RMC detected no remaining MSG processes. Broadcast has finished. Saving broadcast log...");
                 RMC_IO_Manager.SaveBroadcastHistory(broadcastHistoryBuffer, isDontSaveBroadcastHistoryChecked);
+
                 if (isScheduledBroadcast)
                 {
                     //Close the program if it's a scheduled broadcast.
                     RMCManagerForm.AddTextToLogList("Info - Automated Broadcast: Scheduled broadcast finished. Closing program.");
                     Application.Exit();
                 }
-                //Set StartBroadcastBtn text to Start Broadcast.
             });
-            //Set the start broadcast button to green and start the timer to change it back to the original color.
-            RMCManagerForm.StartBroadcastBtn.BackColor = Color.Green;
-            RMCManagerForm.GreenButtonTimer.Start();
+        }
+        private void AddToBroadcastHistory(string message)
+        {
+            broadcastHistoryBuffer.Add($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}");
+        }
+        static Process StartMsgProcess(string pcName, string message, int duration)
+        {
+            try
+            {
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = "C:\\Windows\\System32\\msg.exe",
+                    Arguments = $"* /TIME:{duration} /SERVER:{pcName} \"{message}\"",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+
+                var process = new Process { StartInfo = processInfo };
+                process.Start();
+                return process;
+            }
+            catch
+            {
+                //Catch this error but don't pause the program since it may impact emergency broadcasts.
+                return new Process();
+            }
         }
     }
 }

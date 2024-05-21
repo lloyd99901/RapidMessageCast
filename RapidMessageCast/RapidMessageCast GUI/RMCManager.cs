@@ -29,13 +29,13 @@ using System.Text.RegularExpressions;
 //SOFTWARE.
 
 //RMC Todo list:
-//Work on string concatenation for the code. It's not efficient to use the + operator for strings. StringBuilder could work as well.
 //Email and PSExec modules are not implemented yet. They are placeholders for future development.
 //Add a form to select the OU's from the Active Directory. For now, it will just add all computers from the Computers OU.
-//Need to look into how multiple modules can save to the same broadcast history file. It's currently only saving the PC module. Might need to add a bool for each module, showing their status, then saving.
+//Need to look into how multiple modules can save to the same broadcast history file. It's currently only saving the PC module. Might need to add a bool for each module, showing their status, then saving. An idea is that there could be a new class called BroadcastHistoryManager that will handle the saving of the broadcast history that will be imported to all modules.
 //Filters PCList based on custom user regex pattern.
 //WOL added, but testing is needed.
 //Panic Button that activates broadcasting immediately with a predefined message.
+//Test broadcasting with unhandled exceptions, and see if the program can recover from it. If it pauses broadcasting, add a try catch to that function to prevent it from pausing.
 
 namespace RapidMessageCast_Manager
 {
@@ -70,11 +70,38 @@ namespace RapidMessageCast_Manager
             HandleDefaultRMSGFile();
             UpdateUIWithVersionInformation();
             RefreshRMSGFileList();
+            //InitalizeToolTipHelp();
             AddTextToLogList("Info - RMCManager: RMC GUI is now ready.");
         }
-        
+
+
         #region Functions
         //Start of the functions.
+        //private void InitalizeToolTipHelp()
+        //{
+        //    Control[] checkboxes = [EmergencyModeCheckbox, MessagePCcheckBox, MessageEmailcheckBox, MessagePSExecCheckBox, ReattemptOnErrorCheckbox, DontSaveBroadcastHistoryCheckbox];
+        //    Control[] buttons = [StartBroadcastBtn, clearLogBtn, SaveRMCRuntimeLogBtn, SaveRMCFileBTN, QuickSaveRMSGBtn, RefreshRMSGListBtn, DeleteSelectedRMSGFileBtn, RenameSelectedRMSGBtn, LoadSelectedRMSGBtn, SavePCListTxtBtn, SaveMessageTxtBtn, OpenRMCFileBtn, ActiveDirectorySelectBtn];
+        //    Control[] textboxes = [MessageTxt, ComputerSelectList];
+        //    string[] checkboxToolTips = ["Enable emergency mode. This will send the message without checking if it was sent.", "Enable the PC message module.", "Enable the Email message module.", "Enable the PSExec message module.", "Reattempt to send the message if an error occurs.", "Don't save the broadcast history after RMC completes a broadcast."];
+        //    string[] buttonToolTips = ["Start the broadcast.", "Clear the log list.", "Save the log list to a file.", "Save the RMC file.", "Quick save the RMC file.", "Refresh the RMC file list.", "Delete the selected RMC file.", "Rename the selected RMC file.", "Load the selected RMC file.", "Save the PC list to a file.", "Save the message text to a file.", "Open a RMC file.", "Select computers from Active Directory."];
+        //    string[] textboxToolTips = ["Enter the message that you want to send to the computers.", "Enter the list of computers that you want to send the message to."];
+
+        //    for (int i = 0; i < checkboxes.Length; i++)
+        //    {
+        //        ToolTip toolTip = new();
+        //        toolTip.SetToolTip(checkboxes[i], checkboxToolTips[i]);
+        //    }
+        //    for (int i = 0; i < buttons.Length; i++)
+        //    {
+        //        ToolTip toolTip = new();
+        //        toolTip.SetToolTip(buttons[i], buttonToolTips[i]);
+        //    }
+        //    for (int i = 0; i < textboxes.Length; i++)
+        //    {
+        //        ToolTip toolTip = new();
+        //        toolTip.SetToolTip(textboxes[i], textboxToolTips[i]);
+        //    }
+        //}
 
         private void CheckCommandLineArguments()
         {
@@ -237,8 +264,8 @@ namespace RapidMessageCast_Manager
             //Check if the first value in the array is "Error". If it is, report it to the user and add to loglist
             if (RMSGFileValues[0] != "") //If there is something in the first value, it means that there is an error. Break and report it to the user.
             {
-                MessageBox.Show("Error loading message: " + RMSGFileValues[0], "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddTextToLogList("Error - LoadRMSGFileInProgram: loading message returned an error: " + RMSGFileValues[0]);
+                MessageBox.Show($"Error loading message: {RMSGFileValues[0]}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddTextToLogList($"Error - LoadRMSGFileInProgram: loading message returned an error: {RMSGFileValues[0]}");
             }
             else
             {
@@ -255,7 +282,7 @@ namespace RapidMessageCast_Manager
                 SetCheckboxState(ReattemptOnErrorCheckbox, RMSGFileValues[10]);
                 SetCheckboxState(DontSaveBroadcastHistoryCheckbox, RMSGFileValues[11]);
                 //Add to loglist with the name of file that was loaded.
-                AddTextToLogList("Info - LoadRMSGFileInProgram: RMSG File loaded successfully: " + Path.GetFileName(filePath));
+                AddTextToLogList($"Info - LoadRMSGFileInProgram: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
         }
 
@@ -271,11 +298,11 @@ namespace RapidMessageCast_Manager
                     RMSGFileListBox.Items.Add(Path.GetFileName(file));
                 }
                 //Add to loglist that the RMSG files have been loaded. with the amount of files.
-                AddTextToLogList("Info - RefreshRMSGFileList: RMSG list refreshed. Amount of files on the list: " + files.Length);
+                AddTextToLogList($"Info - RefreshRMSGFileList: RMSG list refreshed. Amount of files on the list: {files.Length}");
             }
             catch (Exception ex)
             {
-                AddTextToLogList("Error - RefreshRMSGFileList: Failure in creating QuickLoad folder(s)/Refreshing the RMSGFileList " + ex.ToString());
+                AddTextToLogList($"Error - RefreshRMSGFileList: Failure in creating QuickLoad folder(s)/Refreshing the RMSGFileList {ex}");
             }
         }
 
@@ -303,8 +330,8 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error connecting to Active Directory: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddTextToLogList("Error - Active Directory: Failure in connecting to Active Directory. " + ex.ToString());
+                MessageBox.Show($"Error connecting to Active Directory: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddTextToLogList($"Error - Active Directory: Failure in connecting to Active Directory. {ex}");
             }
 
         }
@@ -314,7 +341,7 @@ namespace RapidMessageCast_Manager
             int remainingCharacters = 255 - MessageTxt.TextLength;
             if (remainingCharacters >= 0)
             {
-                MessageLimitLbl.Text = "Length Remaining: " + remainingCharacters.ToString();
+                MessageLimitLbl.Text = $"Length Remaining: {remainingCharacters}";
                 MessageLimitLbl.ForeColor = Color.White;
             }
             else
@@ -356,12 +383,12 @@ namespace RapidMessageCast_Manager
                     string filePath = openFileDialog.FileName;
                     string fileContents = File.ReadAllText(filePath);
                     MessageTxt.Text = fileContents;
-                    AddTextToLogList("Info - Message text loaded from file: " + Path.GetFileName(filePath));
+                    AddTextToLogList($"Info - Message text loaded from file: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error reading the file: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - OpenMessage: Failure in reading the message txt file: " + ex.ToString());
+                    MessageBox.Show($"Error reading the file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - OpenMessage: Failure in reading the message txt file: {ex}");
                 }
             }
         }
@@ -388,12 +415,12 @@ namespace RapidMessageCast_Manager
 
                     // Display the filtered contents in the TextBox
                     ComputerSelectList.Text = filteredContents;
-                    AddTextToLogList("Info - PC list loaded from file: " + Path.GetFileName(filePath));
+                    AddTextToLogList($"Info - PC list loaded from file: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error - Error reading the PC list file: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - OpenPCList: Failure in reading the PC list file: " + ex.ToString());
+                    MessageBox.Show($"Error reading the file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - OpenPCList: Failure in reading the PC list file: {ex}");
                 }
             }
         }
@@ -448,12 +475,12 @@ namespace RapidMessageCast_Manager
                     File.WriteAllText(filePath, ComputerSelectList.Text);
 
                     MessageBox.Show("PC list saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    AddTextToLogList("Info - PC list saved successfully.");
+                    AddTextToLogList($"Info - SavePCList: PC list saved successfully: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error - Error saving PC list: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - SavePCList: Failure in saving PC list: " + ex.ToString());
+                    MessageBox.Show($"Error saving PC list: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - SavePCList: Failure in saving PC list: {ex}");
                 }
             }
         }
@@ -478,12 +505,12 @@ namespace RapidMessageCast_Manager
                     File.WriteAllText(filePath, MessageTxt.Text);
 
                     MessageBox.Show("Message text saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    AddTextToLogList("Info - SaveMessageBtn: Message text saved successfully.");
+                    AddTextToLogList($"Info - SaveMessageBtn: Message text saved successfully: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error saving message text: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - SaveMessageBtn: Failure in saving message text: " + ex.ToString());
+                    MessageBox.Show($"Error saving message text: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - SaveMessageBtn: Failure in saving message text: {ex}");
                 }
             }
         }
@@ -566,7 +593,7 @@ namespace RapidMessageCast_Manager
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                AddTextToLogList("Info - SaveRMSGBtn: Saving RMSG file: " + saveFileDialog.FileName);
+                AddTextToLogList($"Info - SaveRMSGBtn: Saving RMSG file: {saveFileDialog.FileName}");
                 RMC_IO_Manager.SaveRMSGFile(saveFileDialog.FileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
                 RefreshRMSGFileList();
             }
@@ -577,7 +604,7 @@ namespace RapidMessageCast_Manager
             //Save a quick save file name based on the current date and time.
             string quickSaveFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".rmsg";
 
-            AddTextToLogList("Info - QuickSaveBtn: Quick saving RMSG file: " + quickSaveFileName);
+            AddTextToLogList($"Info - QuickSaveBtn: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
             RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
             RefreshRMSGFileList();
@@ -598,7 +625,7 @@ namespace RapidMessageCast_Manager
                 try
                 {
                     //Ask the user if they are sure they want to delete the file. If yes, delete it.
-                    DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the file: " + selectedFile + "?", "Delete File", MessageBoxButtons.YesNo);
+                    DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the file: {selectedFile}?", "Delete File", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
                         File.Delete(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile));
@@ -608,7 +635,7 @@ namespace RapidMessageCast_Manager
                 }
                 catch (Exception ex)
                 {
-                    AddTextToLogList("Error - DeleteSelectedRMSGFile: Failure in deleting file: " + ex.ToString());
+                    AddTextToLogList($"Error - DeleteSelectedRMSGFile: Failure in deleting file: {ex}");
                 }
             }
         }
@@ -707,7 +734,7 @@ namespace RapidMessageCast_Manager
         {
             //For each line, count it on the PCCountLBL.
             int pcCount = ComputerSelectList.Lines.Length;
-            PCCountLbl.Text = "PC Count: " + pcCount.ToString();
+            PCCountLbl.Text = $"PC Count: {pcCount}";
         }
 
         private void GreenButtonTimer_Tick(object sender, EventArgs e)
@@ -783,18 +810,10 @@ namespace RapidMessageCast_Manager
         private void ToggleRMSGListBtn_Click(object sender, EventArgs e)
         {
             //Set the ModulesTabControl dock style to fill. If it's already fill, set it back to right. Also change icon
-            if (ModulesTabControl.Dock == DockStyle.Fill)
-            {
-                ModulesTabControl.Dock = DockStyle.Right;
-                ToggleRMSGListBtn.Image = Properties.Resources.icons8_hide_24;
-                ToggleRMSGListBtn.Text = "Hide RMSG List";
-            }
-            else
-            {
-                ModulesTabControl.Dock = DockStyle.Fill;
-                ToggleRMSGListBtn.Image = Properties.Resources.icons8_expand_24;
-                ToggleRMSGListBtn.Text = "Show RMSG List";
-            }
+            bool isFill = ModulesTabControl.Dock == DockStyle.Fill;
+            ModulesTabControl.Dock = isFill ? DockStyle.Right : DockStyle.Fill;
+            ToggleRMSGListBtn.Image = isFill ? Properties.Resources.icons8_hide_24 : Properties.Resources.icons8_expand_24;
+            ToggleRMSGListBtn.Text = isFill ? "Hide RMSG List" : "Show RMSG List";
         }
 
         private void ScheduleBroadcastBtn_Click(object sender, EventArgs e)
@@ -814,16 +833,16 @@ namespace RapidMessageCast_Manager
         private void SaveRMCRuntimeLogBtn_Click(object sender, EventArgs e)
         {
             //Save the loglist to a file in the application startup path / the folder called RMCRuntimeLogFiles. With the name of the file being the current date and time and before that "RMC_Runtime_Log_"
-            string logFileName = "RMC_Runtime_Log_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+            string logFileName = $"RMC_Runtime_Log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt";
             try
             {
                 File.WriteAllLines(Application.StartupPath + "\\RMC Runtime Logs\\" + logFileName, logList.Items.Cast<string>().ToArray());
-                AddTextToLogList("Runtime log saved to file: " + logFileName);
+                AddTextToLogList($"Runtime log saved to file: {logFileName}");
             }
             catch (Exception ex)
             {
-                AddTextToLogList("Error - RuntimeSaveLog: Failure in saving runtime log. " + ex.ToString());
-                MessageBox.Show("Error saving runtime log: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddTextToLogList($"Error - RuntimeSaveLog: Failure in saving runtime log. {ex}");
+                MessageBox.Show($"Error saving runtime log: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
         }
@@ -888,10 +907,10 @@ namespace RapidMessageCast_Manager
                 if (!WakeOnLANModule.IsValidMacAddress(macAddress))
                 {
                     //MessageBox.Show("Invalid MAC address: " + macAddress, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - SendWOLPacket: Invalid MAC address: " + macAddress);
+                    AddTextToLogList($"Error - SendWOLPacket: Invalid MAC address: {macAddress}");
                     return;
                 }
-                AddTextToLogList("Info - SendWOLPacket: Sending WOL packet to MAC address: " + macAddress);
+                AddTextToLogList($"Info - SendWOLPacket: Sending WOL packet to MAC address: {macAddress}");
                 await
                 WakeOnLANModule.WakeOnLan(macAddress, (int)MagicPortNumberBox.Value);
             }
@@ -919,12 +938,12 @@ namespace RapidMessageCast_Manager
 
                     // Display the filtered contents in the TextBox
                     WOLTextbox.Text = filteredContents;
-                    AddTextToLogList("Info - MacAddressfromTxt: Mac addresses loaded from file: " + Path.GetFileName(filePath));
+                    AddTextToLogList($"Info - MacAddressfromTxt: Mac addresses loaded from file: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error - Error reading the MAC address file: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - OpenMacAddressfromTxt: Failure in reading the MAC address file: " + ex.ToString());
+                    MessageBox.Show($"Error - Error reading the MAC address file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - OpenMacAddressfromTxt: Failure in reading the MAC address file: {ex}");
                 }
             }
         }
@@ -952,8 +971,8 @@ namespace RapidMessageCast_Manager
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error saving mac addresses: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - SaveMacAddressesAsTXTBtn: Failure in saving mac addresses: " + ex.ToString());
+                    MessageBox.Show($"Error saving mac addresses: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - SaveMacAddressesAsTXTBtn: Failure in saving mac addresses: {ex}");
                 }
             }
         }
@@ -961,6 +980,7 @@ namespace RapidMessageCast_Manager
         private void MagicPortNumberBox_ValueChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.MagicPortNumber = MagicPortNumberBox.Value;
+            Properties.Settings.Default.Save();
         }
 
         private void ReattemptonErrorHelpLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
