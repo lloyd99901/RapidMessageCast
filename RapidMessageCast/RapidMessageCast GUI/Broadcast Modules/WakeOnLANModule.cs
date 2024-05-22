@@ -27,7 +27,7 @@ using System.Text.RegularExpressions;
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-namespace RapidMessageCast_Manager.Modules
+namespace RapidMessageCast_Manager.BroadcastModules
 {
     internal class WakeOnLANModule
     {

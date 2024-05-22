@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-
-//--RapidMessageCast Software--
-//PsExecModule.cs - RapidMessageCast Manager
+﻿//--RapidMessageCast Software--
+//OutlookModule.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -24,29 +22,9 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-namespace RapidMessageCast_Manager.Modules
+namespace RapidMessageCast_Manager.BroadcastModules
 {
-    internal class PSExecModule
+    internal class OutlookModule
     {
-        public static bool IsPSExecPresent()
-        {
-            //Check if PSexec is present and has get the Product Name Sysinternals PsExec
-            if (File.Exists("PsExec.exe"))
-            {
-                FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo("PsExec.exe");
-                if (myFileVersionInfo.ProductName == "Sysinternals PsExec")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
     }
 }

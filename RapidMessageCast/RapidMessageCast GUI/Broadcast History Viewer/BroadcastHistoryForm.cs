@@ -94,7 +94,7 @@ namespace RapidMessageCast_Manager
             //Get the selected item from the HistoryListBox and open a new ChildBroadcastViewer form with the selected file
             try
             {
-                string selectedFile = HistoryListBox.SelectedItem.ToString();
+                string? selectedFile = HistoryListBox.SelectedItem?.ToString();
                 Broadcast_History_Viewer.ChildBroadcastViewer childForm = new(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile)
                 {
                     MdiParent = this

@@ -25,7 +25,7 @@ using System.Text.RegularExpressions;
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-namespace RapidMessageCast_Manager.Modules
+namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     internal class RMC_IO_Manager
     {
@@ -182,58 +182,6 @@ namespace RapidMessageCast_Manager.Modules
             catch (Exception ex)
             {
                 return $"Error - RMC_IO_Manager: Failure in creating required directories: {ex.Message}";
-            }
-        }
-
-        public static void SaveBroadcastHistory(List<string> broadcastHistoryBuffer, bool dontSave)
-        {
-            if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm) //If this happens, something went really wrong here...
-            {
-                MessageBox.Show("Fatal Error - RMC IO Manager has reported a critical error, it is recommeneded that you restart RapidMessageCast. Details: Error with communicating with RMCManagerForm while attempting to save broadcast history. RMCManagerForm reported as null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (dontSave) //If the user has checked the "Don't save history" checkbox, don't save the history.
-            {
-                RMCManagerForm.AddTextToLogList("Info - Broadcast: Broadcast history save halted. Don't save history checkbox is checked.");
-                return;
-            }
-
-            string broadcastHistoryFileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt";
-            string directoryPath = Path.Combine(Application.StartupPath, "BroadcastHistory");
-
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            string filePath = Path.Combine(directoryPath, broadcastHistoryFileName);
-
-            try
-            {
-                File.WriteAllLines(filePath, broadcastHistoryBuffer);
-                RMCManagerForm.AddTextToLogList($"Info - Broadcast: History saved to file: {broadcastHistoryFileName}");
-            }
-            catch (Exception ex)
-            {
-                RMCManagerForm.AddTextToLogList($"Error - Broadcast: Failure in saving broadcast history. {ex}");
-                RetrySaveBroadcastHistory(broadcastHistoryBuffer, filePath, RMCManagerForm);
-            }
-        }
-
-        private static void RetrySaveBroadcastHistory(List<string> broadcastHistoryBuffer, string filePath, RMCManager RMCManagerForm)
-        {
-            int retryDelay = new Random().Next(1000, 5000);
-            Thread.Sleep(retryDelay);
-
-            try
-            {
-                File.WriteAllLines(filePath, broadcastHistoryBuffer);
-                RMCManagerForm.AddTextToLogList($"Info - Broadcast: History saved to file after retry: {Path.GetFileName(filePath)}");
-            }
-            catch (Exception ex)
-            {
-                RMCManagerForm.AddTextToLogList($"Error - Broadcast: Failure in saving broadcast history after retry. {ex}");
             }
         }
 

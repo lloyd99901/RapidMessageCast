@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="RMCIcon (1).ico" />
+    <Content Include="RMCIcon %281%29.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -22,7 +22,9 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-namespace RapidMessageCast_Manager.Modules
+using RapidMessageCast_Manager.BroadcastModules;
+
+namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     public class SystemCheckModule(Action<string> logAction)
     {
@@ -41,7 +43,7 @@ namespace RapidMessageCast_Manager.Modules
         {
             if (!IsAdministrator())
             {
-                _logAction("Notice - System Status Check: The program is not running as an administrator. If broadcasting a message doesn't work, try running this program as administrator.");
+                _logAction("Notice - [CheckSystemState]: The program is not running as an administrator. If broadcasting a message doesn't work, try running this program as administrator.");
             }
         }
 
@@ -51,7 +53,7 @@ namespace RapidMessageCast_Manager.Modules
             {
                 string warningMessage = "The system has less than 1GB of RAM. Running the broadcast may freeze your computer or take longer to finish if your RAM continues to lower.";
                 MessageBox.Show(warningMessage, "Notice", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                _logAction("Warning - System Status Check: " + warningMessage);
+                _logAction("Warning - [CheckSystemState]: " + warningMessage);
             }
         }
 
@@ -59,11 +61,11 @@ namespace RapidMessageCast_Manager.Modules
         {
             if (System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
             {
-                _logAction("Info - System Status Check: Network is available. The program is able to send messages.");
+                _logAction("Info - [CheckSystemState]: Network is available. The program is able to send messages.");
             }
             else
             {
-                _logAction("Error - System Status Check: System network connectivity state is not available. Sending messages may not be possible.");
+                _logAction("Error - [CheckSystemState]: System network connectivity state is not available. Sending messages may not be possible.");
                 MessageBox.Show("RMC has detected that your computer's network is not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -87,7 +89,7 @@ namespace RapidMessageCast_Manager.Modules
         {
             if (!PSExecModule.IsPSExecPresent())
             {
-                _logAction("Warning - System Status Check: PsExec.exe is not present or valid in the program directory. Please ensure that PsExec is present and that the Product Name of the PsExec.exe program contains 'Sysinternals PsExec'.");
+                _logAction("Warning - [CheckSystemState]: PsExec.exe is not present or valid in the program directory. In order for the PsExec module to work, please ensure that PsExec is present and that the Product Name of the PsExec.exe program contains 'Sysinternals PsExec'.");
             }
         }
 
