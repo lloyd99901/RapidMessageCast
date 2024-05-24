@@ -1,4 +1,6 @@
-﻿//--RapidMessageCast Software--
+﻿using RapidMessageCast_Manager.BroadcastModules;
+
+//--RapidMessageCast Software--
 //SystemCheckModule.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
@@ -21,8 +23,6 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-
-using RapidMessageCast_Manager.BroadcastModules;
 
 namespace RapidMessageCast_Manager.Internal_RMC_Components
 {

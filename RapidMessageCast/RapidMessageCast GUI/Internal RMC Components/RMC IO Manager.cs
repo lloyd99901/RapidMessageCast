@@ -174,14 +174,14 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                                     $"Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.",
                                     $"Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    return "Info - RMC_IO_Manager: Required directories created. (RMSGFiles, RMC Runtime Logs, BroadcastHistory)";
+                    return "Info - [RMC_IO_Manager]: Required directories created. (RMSGFiles, RMC Runtime Logs, BroadcastHistory)";
                 }
                 
-                return "Info - RMC_IO_Manager: Loading list of RMSG files."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
+                return "Info - [RMC_IO_Manager]: Loading list of RMSG files."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
             }
             catch (Exception ex)
             {
-                return $"Error - RMC_IO_Manager: Failure in creating required directories: {ex.Message}";
+                return $"Error - [RMC_IO_Manager]: Failure in creating required directories: {ex.Message}";
             }
         }
 

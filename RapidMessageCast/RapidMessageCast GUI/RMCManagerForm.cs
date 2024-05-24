@@ -5,7 +5,7 @@ using System.DirectoryServices;
 using System.Text.RegularExpressions;
 
 //--RapidMessageCast Software--
-//RMCManager.cs - RapidMessageCast Manager
+//RMCManagerForm.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -31,7 +31,6 @@ using System.Text.RegularExpressions;
 //RMC Todo list:
 //Email and PSExec modules are not implemented yet. They are placeholders for future development.
 //Add a form to select the OU's from the Active Directory. For now, it will just add all computers from the Computers OU.
-//Need to look into how multiple modules can save to the same broadcast history file. It's currently only saving the PC module. Might need to add a bool for each module, showing their status, then saving. An idea is that there could be a new class called BroadcastHistoryManager that will handle the saving of the broadcast history that will be imported to all modules.
 //Filters PCList based on custom user regex pattern.
 //WOL added, but testing is needed.
 //Panic Button that activates broadcasting immediately with a predefined message.
@@ -45,7 +44,7 @@ namespace RapidMessageCast_Manager
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
         readonly ImageList tabControlImageList = new(); //Used for the icons on the tabs.
         private bool isScheduledBroadcast = false; //Used for scheduled broadcasts. If true, the program will close after the broadcast has finished.
-        readonly PCBroadcastModule pcBroadcastModule = new(); //Create a new instance of the PCBroadcastModule class.
+        readonly BroadcastController broadcastController = new(); //Create a new instance of the BroadcastController class.
         public RMCManager()
         {
             //Add images to the tabcontrol. Used for the icons on the tabs.
@@ -140,7 +139,7 @@ namespace RapidMessageCast_Manager
             Text = $"RapidMessageCast GUI - {versionNumb}";
         }
 
-        private void RunScheduledBroastcast(string RMSGFile)
+        private async void RunScheduledBroastcast(string RMSGFile)
         {
             LoadRMSGFileInProgram(RMSGFile); //Load the RMSG file into the program.
             //Check if modules are selected. If not, close the program.
@@ -155,7 +154,9 @@ namespace RapidMessageCast_Manager
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             //BeginPCMessageCast(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false); //Start the message cast.
-            pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+            //pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+            await
+            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, ComputerSelectList.Text, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
         }
 
         private void CheckSystemState()
@@ -514,11 +515,10 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void StartBroadcastBtn_Click(object sender, EventArgs e)
+        private async void StartBroadcastBtn_Click(object sender, EventArgs e)
         {
             AddTextToLogList("Info - [InitBroadcast]: Broadcast triggered, checking what modules are turned on, then will start the modules.");
             //If nothing is enabled, display a message to the user.
-            RuntimeModuleManager LocalRuntimeManager = new(); //Create a new instance of the RuntimeModuleManager class. It's so great using static classes, isn't it?
             if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !MessagePSExecCheckBox.Checked)
             {
                 AddTextToLogList("Error - [InitBroadcast]: No modules are enabled. Unable to broadcast.");
@@ -539,9 +539,9 @@ namespace RapidMessageCast_Manager
                 }
                 //Broadcast the message to the PC's.
                 int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value;
-                pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, ComputerSelectList.Text, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
-                //set module to running //who the hell designed this.. oh yeah it's me. why does static and non static have to be so annoying.
-                LocalRuntimeManager.SetModuleRunning(RMCEnums.PC, true);
+                await
+                broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, ComputerSelectList.Text, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+                //who the hell designed this.. oh yeah it's me. why does static and non static method declarations have to be so annoying.
             }
             //Check if Email module is enabled. If it is, start the Email cast.
             if (MessageEmailcheckBox.Checked)
@@ -550,7 +550,7 @@ namespace RapidMessageCast_Manager
                 //Start the Email cast.
                 //send test messagebox to the user.
                 MessageBox.Show("Email module is not implemented yet. This is a placeholder message.", "Email Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LocalRuntimeManager.SetModuleRunning(RMCEnums.Email, true);
+
             }
             //Check if PSExec module is enabled. If it is, start the PSExec cast.
             if (MessagePSExecCheckBox.Checked)
@@ -559,7 +559,6 @@ namespace RapidMessageCast_Manager
                 //Start the PSExec cast.
                 //send test messagebox to the user.
                 MessageBox.Show("PSExec module is not implemented yet. This is a placeholder message.", "PSExec Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LocalRuntimeManager.SetModuleRunning(RMCEnums.PSExec, true);
             }
         }
 
@@ -879,7 +878,7 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void TestBroadcastMessageToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void TestBroadcastMessageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Broadcast the message to just the computer that the program is running on.
             if (MessageTxt.Text == "" || ComputerSelectList.Text == "")
@@ -889,8 +888,9 @@ namespace RapidMessageCast_Manager
                 return;
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
-            //BeginPCMessageCast(MessageTxt.Text, Environment.MachineName, totalSeconds, false);
-            pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, Environment.MachineName, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+            //pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, Environment.MachineName, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+            await
+            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, Environment.MachineName, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
         }
 
         private async void SendWOLPacketBtn_Click(object sender, EventArgs e)
