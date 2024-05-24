@@ -175,6 +175,17 @@ namespace RapidMessageCast_Manager
                 "RMC has detected that your computer's TCP port 445 is closed. This port is required for msg broadcasting.");
             systemChecker.CheckPSExecPresence();
             AddTextToLogList("Info - [CheckSystemState]: System state check completed.");
+            //Check for RMC program updates
+            AddTextToLogList("Info - [RMCUpdate]: Checking for RMC program updates...");
+            if (RMCUpdateChecker.CheckForUpdates())
+            {
+                AddTextToLogList("Info - [RMCUpdate]: An update is available. Please download the latest version from the GitHub repository to ensure stability.");
+                MessageBox.Show("An update is available. Please download the latest version from the GitHub repository to ensure stability.", "Update Available", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                AddTextToLogList("Info - [RMCUpdate]: No RMC updates available or no connection is detected.");
+            }
         }
 
         private void AddIconsToTabControls()
