@@ -2,7 +2,8 @@
 
 ## Supported Versions
 
-Right now, this project is in development with no released binary yet, but security updates will be applied to the following versions:
+Due to the fact that RMC uses other tools (msg.exe and psexec.exe) to message computers, security updates for the RMC program itself will be rare.
+Right now, this project is in development with no released binary yet, but updates (including security updates) will be applied to the following versions:
 
 | Version    | Supported          |
 | -------    | ------------------ |
