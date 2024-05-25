@@ -8,6 +8,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/issues)
 [![GitHub stars](https://img.shields.io/github/stars/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/stargazers)
 [![GitHub license](https://img.shields.io/github/license/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/blob/master/LICENSE)
+[![CodeFactor](https://www.codefactor.io/repository/github/lloyd99901/rapidmessagecast/badge)](https://www.codefactor.io/repository/github/lloyd99901/rapidmessagecast)
 
 RapidMessageCast is a messaging tool designed to help with rapid communication to computers across a network. This program enables users to send messages to multiple computers simultaneously, ensuring swift dissemination of critical information, like in emergency scenarios.
 
