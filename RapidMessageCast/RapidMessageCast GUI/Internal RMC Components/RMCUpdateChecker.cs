@@ -41,11 +41,9 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             string latestRelease = "";
             try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", "RapidMessageCast");
-                    latestRelease = client.GetStringAsync("https://api.github.com/repos/lloyd99901/RapidMessageCast/releases/latest").Result;
-                }
+                using HttpClient client = new();
+                client.DefaultRequestHeaders.Add("User-Agent", "RapidMessageCast");
+                latestRelease = client.GetStringAsync("https://api.github.com/repos/lloyd99901/RapidMessageCast/releases/latest").Result;
             }
             catch (Exception)
             {
@@ -56,7 +54,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             string latestVersion = latestRelease.Split(separator, StringSplitOptions.None)[1].Split('"')[0];
 
             //Get the current version
-            string currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName()?.Version?.ToString() ?? "0.0.0.0";
 
             //Check if the latest version is newer than the current version
             if (new Version(latestVersion) > new Version(currentVersion))

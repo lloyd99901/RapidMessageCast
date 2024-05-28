@@ -377,11 +377,10 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenFileAndProcessContents(TextBox targetTextBox, string logInfo, string logError, Func<string, string>? processFileContents = null)
         {
             OpenFileDialog openFileDialog = new()
             {
-                // Set the initial directory and file filter
                 InitialDirectory = Application.StartupPath,
                 Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
             };
@@ -390,50 +389,109 @@ namespace RapidMessageCast_Manager
             {
                 try
                 {
-                    // Read the selected file and display its contents in the TextBox
                     string filePath = openFileDialog.FileName;
                     string fileContents = File.ReadAllText(filePath);
-                    MessageTxt.Text = fileContents;
-                    AddTextToLogList($"Info - [OpenMessageAsTxt]: Message text loaded from file: {Path.GetFileName(filePath)}");
+
+                    if (processFileContents != null)
+                    {
+                        fileContents = processFileContents(fileContents);
+                    }
+
+                    targetTextBox.Text = fileContents;
+                    AddTextToLogList($"Info - [{logInfo}]: Loaded from file: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error reading the file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [OpenMessageAsTxt]: Failure in reading the message txt file: {ex}");
+                    AddTextToLogList($"Error - [{logError}]: Failure in reading the file: {ex}");
                 }
             }
         }
 
-        private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveFileFromTextBox(TextBox sourceTextBox, string logInfo, string logError)
         {
-            OpenFileDialog openFileDialog = new()
+            SaveFileDialog saveFileDialog = new()
             {
-                // Set the initial directory and file filter
                 InitialDirectory = Application.StartupPath,
                 Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
             };
 
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    // Read the selected file and filter out invalid characters
-                    string filePath = openFileDialog.FileName;
-                    string fileContents = File.ReadAllText(filePath);
+                    string filePath = saveFileDialog.FileName;
+                    File.WriteAllText(filePath, sourceTextBox.Text);
 
-                    // Filter out invalid characters
-                    string filteredContents = FilterInvalidCharacters(fileContents);
-
-                    // Display the filtered contents in the TextBox
-                    ComputerSelectList.Text = filteredContents;
-                    AddTextToLogList($"Info - [OpenPCList]: PC list loaded from file: {Path.GetFileName(filePath)}");
+                    MessageBox.Show($"{logInfo} saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    AddTextToLogList($"Info - [{logInfo}]: {logInfo} saved successfully: {Path.GetFileName(filePath)}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error reading the file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [OpenPCList]: Failure in reading the PC list file: {ex}");
+                    MessageBox.Show($"Error saving {logError}: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    AddTextToLogList($"Error - [{logError}]: Failure in saving {logError}: {ex}");
                 }
             }
+        }
+
+        private void OpenRMCFileBtn_Click(object sender, EventArgs e)
+        {
+            using OpenFileDialog openFileDialog = new()
+            {
+                InitialDirectory = Application.StartupPath,
+                Filter = "Rapid Message Files (*.rmsg)|*.rmsg|All Files (*.*)|*.*"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                LoadRMSGFileInProgram(openFileDialog.FileName);
+            }
+        }
+        private void SaveRMCFileBTN_Click(object sender, EventArgs e)
+        {
+            using SaveFileDialog saveFileDialog = new()
+            {
+                InitialDirectory = Application.StartupPath,
+                Filter = "Rapid Message Files (*.rmsg)|*.rmsg|All Files (*.*)|*.*"
+            };
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = saveFileDialog.FileName;
+                AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
+                RMC_IO_Manager.SaveRMSGFile(fileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+                RefreshRMSGFileList();
+            }
+        }
+
+        private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileAndProcessContents(MessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt");
+        }
+
+        private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileAndProcessContents(ComputerSelectList, "OpenPCList", "OpenPCList", FilterInvalidCharacters);
+        }
+
+        private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
+        {
+            OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", FilterInvalidCharacters);
+        }
+
+        private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
+        {
+            SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
+        }
+
+        private void SaveComputerListBtn_Click(object sender, EventArgs e)
+        {
+            SaveFileFromTextBox(ComputerSelectList, "SavePCList", "SavePCList");
+        }
+
+        private void SaveMessageBtn_Click(object sender, EventArgs e)
+        {
+            SaveFileFromTextBox(MessageTxt, "SaveMessageBtn", "SaveMessageBtn");
         }
 
         private void ComputerSelectList_KeyPress(object sender, KeyPressEventArgs e)
@@ -451,124 +509,49 @@ namespace RapidMessageCast_Manager
                 e.Handled = true;
             }
         }
-        private void OpenRMSGFileBtn_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new()
-            {
-                // Set the initial directory and file filter
-                InitialDirectory = Application.StartupPath,
-                Filter = "Rapid Message Files (*.rmsg)|*.rmsg|All Files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                LoadRMSGFileInProgram(openFileDialog.FileName);
-            }
-        }
-
-        private void SaveComputerListBtn_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new()
-            {
-                // Set the initial directory and file filter
-                InitialDirectory = Application.StartupPath,
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    // Get the file path selected by the user
-                    string filePath = saveFileDialog.FileName;
-
-                    // Write the PC list text to the file
-                    File.WriteAllText(filePath, ComputerSelectList.Text);
-
-                    MessageBox.Show("PC list saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    AddTextToLogList($"Info - [SavePCList]: PC list saved successfully: {Path.GetFileName(filePath)}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error saving PC list: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [SavePCList]: Failure in saving PC list: {ex}");
-                }
-            }
-        }
-
-        private void SaveMessageBtn_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new()
-            {
-                // Set the initial directory and file filter
-                InitialDirectory = Application.StartupPath,
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    // Get the file path selected by the user
-                    string filePath = saveFileDialog.FileName;
-
-                    // Write the message text to the file
-                    File.WriteAllText(filePath, MessageTxt.Text);
-
-                    MessageBox.Show("Message text saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    AddTextToLogList($"Info - [SaveMessageBtn]: Message text saved successfully: {Path.GetFileName(filePath)}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error saving message text: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [SaveMessageBtn]: Failure in saving message text: {ex}");
-                }
-            }
-        }
 
         private async void StartBroadcastBtn_Click(object sender, EventArgs e)
         {
             AddTextToLogList("Info - [InitBroadcast]: Broadcast triggered, checking what modules are turned on, then will start the modules.");
-            //If nothing is enabled, display a message to the user.
-            if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !MessagePSExecCheckBox.Checked)
+
+            bool isMessagePCChecked = MessagePCcheckBox.Checked;
+            bool isMessageEmailChecked = MessageEmailcheckBox.Checked;
+            bool isMessagePSExecChecked = MessagePSExecCheckBox.Checked;
+
+            if (!isMessagePCChecked && !isMessageEmailChecked && !isMessagePSExecChecked)
             {
                 AddTextToLogList("Error - [InitBroadcast]: No modules are enabled. Unable to broadcast.");
                 MessageBox.Show("No modules are enabled. Please enable at least one module before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (MessagePCcheckBox.Checked)
+            if (isMessagePCChecked)
             {
                 AddTextToLogList("Info - [InitBroadcast]: Message module is enabled. Starting message cast.");
 
-                // Check if message or PC list is empty
-                if (string.IsNullOrWhiteSpace(MessageTxt.Text) || string.IsNullOrWhiteSpace(ComputerSelectList.Text))
+                string messageText = MessageTxt.Text;
+                string computerSelectListText = ComputerSelectList.Text;
+
+                if (string.IsNullOrWhiteSpace(messageText) || string.IsNullOrWhiteSpace(computerSelectListText))
                 {
                     MessageBox.Show("Message or PC list is empty. Please fill in the message and PC list before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     AddTextToLogList("Error - [InitBroadcast]: Message or PC list is empty. Broadcast halted.");
                     return;
                 }
-                //Broadcast the message to the PC's.
+
                 int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value;
-                await
-                broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, ComputerSelectList.Text, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
-                //who the hell designed this.. oh yeah it's me. why does static and non static method declarations have to be so annoying.
+                await broadcastController.StartBroadcastModule(RMCEnums.PC, messageText, computerSelectListText, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
             }
-            //Check if Email module is enabled. If it is, start the Email cast.
-            if (MessageEmailcheckBox.Checked)
+
+            if (isMessageEmailChecked)
             {
                 AddTextToLogList("Info - [InitBroadcast]: Email module is enabled. Starting email cast.");
-                //Start the Email cast.
-                //send test messagebox to the user.
                 MessageBox.Show("Email module is not implemented yet. This is a placeholder message.", "Email Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
-            //Check if PSExec module is enabled. If it is, start the PSExec cast.
-            if (MessagePSExecCheckBox.Checked)
+
+            if (isMessagePSExecChecked)
             {
                 AddTextToLogList("Info - [InitBroadcast]: PSExec module is enabled. Starting PSExec cast.");
-                //Start the PSExec cast.
-                //send test messagebox to the user.
                 MessageBox.Show("PSExec module is not implemented yet. This is a placeholder message.", "PSExec Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -591,23 +574,6 @@ namespace RapidMessageCast_Manager
             if (selectedFile != null)
             {
                 LoadRMSGFileInProgram(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile));
-            }
-        }
-
-        private void SaveRMSGBttn(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new()
-            {
-                // Set the initial directory and file filter
-                InitialDirectory = Application.StartupPath,
-                Filter = "Rapid Message Files (*.rmsg)|*.rmsg|All Files (*.*)|*.*"
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {saveFileDialog.FileName}");
-                RMC_IO_Manager.SaveRMSGFile(saveFileDialog.FileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
-                RefreshRMSGFileList();
             }
         }
 
@@ -929,73 +895,11 @@ namespace RapidMessageCast_Manager
             }
         }
 
-        private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
-        {
-            //Open a file dialog to select a txt file, then load that into the wol textbox.
-            OpenFileDialog openFileDialog = new()
-            {
-                // Set the initial directory and file filter
-                InitialDirectory = Application.StartupPath,
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-            };
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    // Read the selected file and filter out invalid characters
-                    string filePath = openFileDialog.FileName;
-                    string fileContents = File.ReadAllText(filePath);
-
-                    // Filter out invalid characters
-                    string filteredContents = FilterInvalidCharacters(fileContents);
-
-                    // Display the filtered contents in the TextBox
-                    WOLTextbox.Text = filteredContents;
-                    AddTextToLogList($"Info - [MacAddressfromTxt]: Mac addresses loaded from file: {Path.GetFileName(filePath)}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error - Error reading the MAC address file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [OpenMacAddressfromTxt]: Failure in reading the MAC address file: {ex}");
-                }
-            }
-        }
-
-        private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
-        {
-            //Save the mac addresses in the wol textbox to a txt file.
-            SaveFileDialog saveFileDialog = new()
-            {
-                // Set the initial directory and file filter
-                InitialDirectory = Application.StartupPath,
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    // Get the file path selected by the user
-                    string filePath = saveFileDialog.FileName;
-
-                    // Write the message text to the file
-                    File.WriteAllText(filePath, WOLTextbox.Text);
-
-                    AddTextToLogList("Info - [SaveMacAddressesAsTXTBtn]: Mac addresses saved successfully.");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error saving mac addresses: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [SaveMacAddressesAsTXTBtn]: Failure in saving mac addresses: {ex}");
-                }
-            }
-        }
-
         private void MagicPortNumberBox_ValueChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.MagicPortNumber = MagicPortNumberBox.Value;
             Properties.Settings.Default.Save();
         }
-
         private void ReattemptonErrorHelpLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             MessageBox.Show("If the program fails to send a message to a PC, it will reattempt to send the message to the PC. This will only happen once per PC. If it fails again, it will not reattempt to send the message.");

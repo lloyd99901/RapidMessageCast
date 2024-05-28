@@ -292,7 +292,7 @@
             OpenRMCFileBtn.Text = "Open";
             OpenRMCFileBtn.TextAlign = ContentAlignment.MiddleRight;
             OpenRMCFileBtn.UseVisualStyleBackColor = false;
-            OpenRMCFileBtn.Click += OpenRMSGFileBtn_Click;
+            OpenRMCFileBtn.Click += OpenRMCFileBtn_Click;
             // 
             // SaveRMCFileBTN
             // 
@@ -312,7 +312,7 @@
             SaveRMCFileBTN.Text = "Save as...";
             SaveRMCFileBTN.TextAlign = ContentAlignment.MiddleRight;
             SaveRMCFileBTN.UseVisualStyleBackColor = false;
-            SaveRMCFileBTN.Click += SaveRMSGBttn;
+            SaveRMCFileBTN.Click += SaveRMCFileBTN_Click;
             // 
             // QuickSaveRMSGBtn
             // 

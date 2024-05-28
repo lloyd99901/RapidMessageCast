@@ -34,14 +34,12 @@ RapidMessageCast is a messaging tool designed to help with rapid communication t
 
 ### Speed.
 RapidMessageCast is great at sending messages to multiple computers. By leveraging the native msg.exe utility in Windows, it bypasses the need for complex setups or installations of remote access software, allowing for immediate message broadcasting. This also means that computers that have non-responding remote access software still get the message.
+RapidMessageCast offers an interface that allows the user to be quick with their broadcast. Users can quickly initiate message broadcasts with minimal effort, making it an ideal choice for urgent communication needs.
+It also prioritizes functionality over frills, omitting flashy startup animations. When sending a message is your priority, it's primed for immediate action without delay.
 
 ### Automation.
 Automation tools or scheduling frameworks can leverage RapidMessageCast to schedule message broadcasts at predefined intervals or times. This capability is particularly useful for sending routine notifications, reminders, or updates to users or system administrators without manual intervention.
 RapidMessageCast can be integrated with monitoring and alerting systems to automate the messaging of alerts and notifications. When monitoring systems detect anomalies, performance issues, or security breaches, they can automatically trigger RapidMessageCast to notify relevant personnel or teams.
-
-### Broadcast fast.
-RapidMessageCast offers an interface that allows the user to be quick with their broadcast. Users can quickly initiate message broadcasts with minimal effort, making it an ideal choice for urgent communication needs.
-It also prioritizes functionality over frills, omitting flashy startup animations. When sending a message is your priority, it's primed for immediate action without delay.
 
 ### Free forever and open-source
 This program is free and open source; that will never change. If you have an issue with the program and you know how to fix it, this code is ready to be modified.

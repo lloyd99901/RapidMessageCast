@@ -85,6 +85,10 @@ namespace RapidMessageCast_Manager
             string[] files = Directory.GetFiles(Application.StartupPath + "\\BroadcastHistory");
             foreach (string file in files)
             {
+                if (new FileInfo(file).Length == 0 || Path.GetExtension(file) != ".txt")
+                {
+                    continue;
+                }
                 HistoryListBox.Items.Add(Path.GetFileName(file));
             }
         }
@@ -95,6 +99,12 @@ namespace RapidMessageCast_Manager
             try
             {
                 string? selectedFile = HistoryListBox.SelectedItem?.ToString();
+                //check if the file exists before opening the form...
+                if (selectedFile == null || !File.Exists(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile))
+                {
+                    MessageBox.Show("The selected file does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 Broadcast_History_Viewer.ChildBroadcastViewer childForm = new(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile)
                 {
                     MdiParent = this
@@ -121,6 +131,5 @@ namespace RapidMessageCast_Manager
             };
             Process.Start(startInfo);
         }
-
     }
 }
