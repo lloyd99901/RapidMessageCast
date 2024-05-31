@@ -20,5 +20,13 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // Replace invalid characters with empty string
             return Regex.Replace(text, pattern, "");
         }
+        public static string FilterInvalidMACAddresses(string text)
+        {
+            // Regular expression to match characters that are not allowed in MAC addresses
+            string pattern = @"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$";
+
+            // Replace invalid characters with empty string
+            return Regex.Replace(text, pattern, "");
+        }
     }
 }

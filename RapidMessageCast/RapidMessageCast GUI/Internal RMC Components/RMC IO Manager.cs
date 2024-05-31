@@ -84,7 +84,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 
                 // Get WOL list and port
                 string WOLlist = GetValueFromSection(sections, "[WOL]");
-                string WOLPort = GetValueFromSection(sections, "Port:");
+                string WOLPort = GetValueFromSection(sections, "[WOLPort]");
 
                 // Return the extracted values via an array
                 return
@@ -155,7 +155,11 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             rmcFileContent.AppendLine();
             rmcFileContent.AppendLine("[WOL]");
             rmcFileContent.AppendLine(WOLlist);
-            rmcFileContent.AppendLine($"Port: {WOLPort}");
+
+            //Add WOL port
+            rmcFileContent.AppendLine();
+            rmcFileContent.AppendLine("[WOLPort]");
+            rmcFileContent.AppendLine(WOLPort.ToString());
 
             // Write the contents to the specified file
             File.WriteAllText(filePath, rmcFileContent.ToString());
@@ -214,6 +218,15 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     if (sectionHeader == "[PCList]")
                     {
                         value = InternalRegexFilters.FilterInvalidPCNames(value);
+                    }
+                    if (sectionHeader == "[Message]")
+                    {
+                        value = InternalRegexFilters.FilterInvalidMessage(value);
+                    }
+                    if (sectionHeader == "[WOL]")
+                    {
+                        value = InternalRegexFilters.FilterInvalidMACAddresses(value);
+                        value = value.Split("Port:")[0];
                     }
 
                     return value;

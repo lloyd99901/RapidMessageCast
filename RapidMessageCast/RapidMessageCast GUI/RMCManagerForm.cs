@@ -36,6 +36,9 @@ using System.Text.RegularExpressions;
 //Panic Button that activates broadcasting immediately with a predefined message.
 //Test broadcasting with unhandled exceptions, and see if the program can recover from it. If it pauses broadcasting, add a try catch to that function to prevent it from pausing. This can be done closer to completion.
 //It might be an idea to disable all msgbox popups during startup, also check if there are msgboxes during the broadcast. Remove those.
+//Can the private readonly Action<string> _logAction = logAction; be put on all external classes instead of using the RMCForm every time to call the AddTextToLogList function? This will make the code cleaner and may also prevent instabilities. Investigate this.
+//Add a function to check if the message is too long for the msg command. If it is, split the message into multiple messages. (This is a low priority task, but might be a good idea in the future)
+//Add icons (like x or tick boxes) to the broadcast History list.
 
 namespace RapidMessageCast_Manager
 {
@@ -79,20 +82,27 @@ namespace RapidMessageCast_Manager
         //Start of the functions.
         private void InitalizeToolTipHelp()
         {
-            Control[] checkboxes = [EmergencyModeCheckbox, MessagePCcheckBox, MessageEmailcheckBox, MessagePSExecCheckBox, ReattemptOnErrorCheckbox, DontSaveBroadcastHistoryCheckbox];
-            Control[] buttons = [StartBroadcastBtn, clearLogBtn, SaveRMCRuntimeLogBtn, SaveRMCFileBTN, QuickSaveRMSGBtn, RefreshRMSGListBtn, DeleteSelectedRMSGFileBtn, RenameSelectedRMSGBtn, LoadSelectedRMSGBtn, SavePCListTxtBtn, SaveMessageTxtBtn, OpenRMCFileBtn, ActiveDirectorySelectBtn, MessageOpenTxtBtn, ComputerListLoadFromFileBtn];
-            string[] checkboxToolTips = ["Enable emergency mode. This will send the message without checking if it was sent.", "Enable the PC message module.", "Enable the Email message module.", "Enable the PSExec message module.", "Reattempt to send the message if an error occurs.", "Don't save the broadcast history after RMC completes a broadcast."];
-            string[] buttonToolTips = ["Start the broadcast.", "Clear the log list.", "Save the log list to a file.", "Save the RMC file.", "Quick save the RMC file.", "Refresh the RMC file list.", "Delete the selected RMC file.", "Rename the selected RMC file.", "Load the selected RMC file.", "Save the PC list to a file.", "Save the message text to a file.", "Open a RMC file.", "Select computers from Active Directory.", "Open a message text file.", "Open a computer list file."];
+            try
+            {
+                Control[] checkboxes = [EmergencyModeCheckbox, MessagePCcheckBox, MessageEmailcheckBox, MessagePSExecCheckBox, ReattemptOnErrorCheckbox, DontSaveBroadcastHistoryCheckbox];
+                Control[] buttons = [StartBroadcastBtn, clearLogBtn, SaveRMCRuntimeLogBtn, SaveRMCFileBTN, QuickSaveRMSGBtn, RefreshRMSGListBtn, DeleteSelectedRMSGFileBtn, RenameSelectedRMSGBtn, LoadSelectedRMSGBtn, SavePCListTxtBtn, SaveMessageTxtBtn, OpenRMCFileBtn, ActiveDirectorySelectBtn, MessageOpenTxtBtn, ComputerListLoadFromFileBtn];
+                string[] checkboxToolTips = ["Enable emergency mode. This will send the message without checking if it was sent.", "Enable the PC message module.", "Enable the Email message module.", "Enable the PSExec message module.", "Reattempt to send the message if an error occurs.", "Don't save the broadcast history after RMC completes a broadcast."];
+                string[] buttonToolTips = ["Start the broadcast.", "Clear the log list.", "Save the log list to a file.", "Save the RMC file.", "Quick save the RMC file.", "Refresh the RMC file list.", "Delete the selected RMC file.", "Rename the selected RMC file.", "Load the selected RMC file.", "Save the PC list to a file.", "Save the message text to a file.", "Open a RMC file.", "Select computers from Active Directory.", "Open a message text file.", "Open a computer list file."];
 
-            for (int i = 0; i < checkboxes.Length; i++)
-            {
-                ToolTip toolTip = new();
-                toolTip.SetToolTip(checkboxes[i], checkboxToolTips[i]);
+                for (int i = 0; i < checkboxes.Length; i++)
+                {
+                    ToolTip toolTip = new();
+                    toolTip.SetToolTip(checkboxes[i], checkboxToolTips[i]);
+                }
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    ToolTip toolTip = new();
+                    toolTip.SetToolTip(buttons[i], buttonToolTips[i]);
+                }
             }
-            for (int i = 0; i < buttons.Length; i++)
+            catch (Exception ex)
             {
-                ToolTip toolTip = new();
-                toolTip.SetToolTip(buttons[i], buttonToolTips[i]);
+                AddTextToLogList($"Error - [ToolTipHelp]: Failed to initalize the tooltip help, this is not a critical error: {ex}"); //This error isn't critical, so it can be ignored tbh.
             }
         }
 
@@ -235,8 +245,15 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                //This exception has to be caught, otherwise the program will crash if an error occurs in the loglist.
-                Console.WriteLine($"Critical - [LogWriter] Error! An exception occurred when adding an item to the loglist: {ex}");
+                try
+                {
+                    //This exception has to be caught, otherwise the program will crash if an error occurs in the loglist.
+                    Console.WriteLine($"Critical - [LogWriter] Error! An exception occurred when adding an item to the loglist: {ex}");
+                }
+                catch
+                {
+                    //If the program throws an error here, then something went disastrously wrong. This will prevent the program from crashing, but at this point if we can't even write to the console then we are in trouble.
+                }
             }
         }
 
@@ -258,6 +275,7 @@ namespace RapidMessageCast_Manager
         }
         private void LoadRMSGFileInProgram(string filePath)
         {
+            AddTextToLogList($"Info - [LoadRMSGFileInProgram]: Loading RMSG file: {Path.GetFileName(filePath)}");
             string[] RMSGFileValues = RMC_IO_Manager.LoadRMSGFile(filePath);
 
             if (!string.IsNullOrEmpty(RMSGFileValues[0]))
@@ -266,7 +284,7 @@ namespace RapidMessageCast_Manager
                 AddTextToLogList($"Error - [LoadRMSGFileInProgram]: loading message returned an error: {RMSGFileValues[0]}");
                 return;
             }
-
+            AddTextToLogList($"Info - [LoadRMSGFileInProgram]: Parsing RMSG file: {Path.GetFileName(filePath)}");
             try
             {
                 MessageTxt.Text = RMSGFileValues[1];
