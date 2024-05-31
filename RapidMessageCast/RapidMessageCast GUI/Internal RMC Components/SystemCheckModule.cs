@@ -85,12 +85,14 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        public void CheckPSExecPresence()
+        public bool CheckPSExecPresence()
         {
             if (!PSExecModule.IsPSExecPresent())
             {
                 _logAction("Warning - [CheckSystemState]: PsExec.exe is not present or valid in the program directory. In order for the PsExec module to work, please ensure that PsExec is present and that the Product Name of the PsExec.exe program contains 'Sysinternals PsExec'.");
+                return false;
             }
+            return true;
         }
 
         private static bool IsAdministrator()

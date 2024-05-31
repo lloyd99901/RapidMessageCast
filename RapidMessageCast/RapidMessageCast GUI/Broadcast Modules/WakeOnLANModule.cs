@@ -78,7 +78,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
         {
             using UdpClient client = new(new IPEndPoint(localIpAddress, 0));
             await client.SendAsync(magicPacket, magicPacket.Length, new IPEndPoint(multicastIpAddress, port));
-
         }
 
         public static bool IsValidMacAddress(string macAddress)

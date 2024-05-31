@@ -122,7 +122,7 @@
             label11 = new Label();
             tabPage3 = new TabPage();
             pictureBox8 = new PictureBox();
-            label13 = new Label();
+            PsExecLabel = new Label();
             MessagePSExecCheckBox = new CheckBox();
             AboutTab = new TabPage();
             pictureBox2 = new PictureBox();
@@ -561,7 +561,7 @@
             // 
             // MessageDurationHelpLink
             // 
-            MessageDurationHelpLink.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            MessageDurationHelpLink.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             MessageDurationHelpLink.AutoSize = true;
             MessageDurationHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
             MessageDurationHelpLink.Location = new Point(170, 271);
@@ -574,7 +574,7 @@
             // 
             // SaveMessageTxtBtn
             // 
-            SaveMessageTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SaveMessageTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SaveMessageTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
             SaveMessageTxtBtn.FlatStyle = FlatStyle.Flat;
             SaveMessageTxtBtn.Font = new Font("Arial", 9F);
@@ -592,14 +592,14 @@
             // 
             // MessageOpenTxtBtn
             // 
-            MessageOpenTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            MessageOpenTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             MessageOpenTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
             MessageOpenTxtBtn.FlatStyle = FlatStyle.Flat;
             MessageOpenTxtBtn.Font = new Font("Arial", 9F);
             MessageOpenTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
             MessageOpenTxtBtn.Image = Properties.Resources.icons8_external_link_24;
             MessageOpenTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            MessageOpenTxtBtn.Location = new Point(5, 178);
+            MessageOpenTxtBtn.Location = new Point(5, 179);
             MessageOpenTxtBtn.Margin = new Padding(3, 2, 3, 2);
             MessageOpenTxtBtn.Name = "MessageOpenTxtBtn";
             MessageOpenTxtBtn.Size = new Size(181, 32);
@@ -610,7 +610,7 @@
             // 
             // expirySecondsTime
             // 
-            expirySecondsTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            expirySecondsTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             expirySecondsTime.BackColor = Color.FromArgb(48, 48, 48);
             expirySecondsTime.BorderStyle = BorderStyle.FixedSingle;
             expirySecondsTime.Font = new Font("Arial", 9F);
@@ -624,7 +624,7 @@
             // 
             // expiryMinutesTime
             // 
-            expiryMinutesTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            expiryMinutesTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             expiryMinutesTime.BackColor = Color.FromArgb(48, 48, 48);
             expiryMinutesTime.BorderStyle = BorderStyle.FixedSingle;
             expiryMinutesTime.Font = new Font("Arial", 9F);
@@ -638,7 +638,7 @@
             // 
             // expiryHourTime
             // 
-            expiryHourTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            expiryHourTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             expiryHourTime.BackColor = Color.FromArgb(48, 48, 48);
             expiryHourTime.BorderStyle = BorderStyle.FixedSingle;
             expiryHourTime.Font = new Font("Arial", 9F);
@@ -652,7 +652,7 @@
             // 
             // label3
             // 
-            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label3.AutoSize = true;
             label3.Font = new Font("Arial", 8F);
             label3.ForeColor = Color.White;
@@ -739,7 +739,7 @@
             // 
             // FilterPCListBtn
             // 
-            FilterPCListBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            FilterPCListBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             FilterPCListBtn.BackColor = Color.FromArgb(48, 48, 48);
             FilterPCListBtn.FlatStyle = FlatStyle.Flat;
             FilterPCListBtn.Font = new Font("Arial", 9F);
@@ -776,7 +776,7 @@
             // 
             // SavePCListTxtBtn
             // 
-            SavePCListTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SavePCListTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SavePCListTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
             SavePCListTxtBtn.FlatStyle = FlatStyle.Flat;
             SavePCListTxtBtn.Font = new Font("Arial", 9F);
@@ -794,7 +794,7 @@
             // 
             // ComputerListLoadFromFileBtn
             // 
-            ComputerListLoadFromFileBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            ComputerListLoadFromFileBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             ComputerListLoadFromFileBtn.BackColor = Color.FromArgb(48, 48, 48);
             ComputerListLoadFromFileBtn.FlatStyle = FlatStyle.Flat;
             ComputerListLoadFromFileBtn.Font = new Font("Arial", 9F);
@@ -909,7 +909,7 @@
             // 
             // ActiveDirectorySelectBtn
             // 
-            ActiveDirectorySelectBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            ActiveDirectorySelectBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             ActiveDirectorySelectBtn.BackColor = Color.FromArgb(48, 48, 48);
             ActiveDirectorySelectBtn.BackgroundImageLayout = ImageLayout.None;
             ActiveDirectorySelectBtn.FlatStyle = FlatStyle.Flat;
@@ -960,7 +960,7 @@
             // 
             // SaveMacAddressesAsTXTBtn
             // 
-            SaveMacAddressesAsTXTBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SaveMacAddressesAsTXTBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SaveMacAddressesAsTXTBtn.BackColor = Color.FromArgb(48, 48, 48);
             SaveMacAddressesAsTXTBtn.FlatStyle = FlatStyle.Flat;
             SaveMacAddressesAsTXTBtn.Font = new Font("Arial", 9F);
@@ -978,7 +978,7 @@
             // 
             // OpenMacAddressfromTxtBtn
             // 
-            OpenMacAddressfromTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            OpenMacAddressfromTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             OpenMacAddressfromTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
             OpenMacAddressfromTxtBtn.FlatStyle = FlatStyle.Flat;
             OpenMacAddressfromTxtBtn.Font = new Font("Arial", 9F);
@@ -1029,7 +1029,7 @@
             // 
             // SendWOLPacketBtn
             // 
-            SendWOLPacketBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SendWOLPacketBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SendWOLPacketBtn.BackColor = Color.FromArgb(48, 48, 48);
             SendWOLPacketBtn.FlatStyle = FlatStyle.Flat;
             SendWOLPacketBtn.Font = new Font("Arial", 9F);
@@ -1365,7 +1365,7 @@
             // 
             tabPage3.BackColor = Color.FromArgb(30, 30, 30);
             tabPage3.Controls.Add(pictureBox8);
-            tabPage3.Controls.Add(label13);
+            tabPage3.Controls.Add(PsExecLabel);
             tabPage3.Controls.Add(MessagePSExecCheckBox);
             tabPage3.Location = new Point(4, 29);
             tabPage3.Name = "tabPage3";
@@ -1384,17 +1384,17 @@
             pictureBox8.TabIndex = 104;
             pictureBox8.TabStop = false;
             // 
-            // label13
+            // PsExecLabel
             // 
-            label13.AutoSize = true;
-            label13.Font = new Font("Arial", 10F);
-            label13.ForeColor = Color.White;
-            label13.Location = new Point(36, 7);
-            label13.Name = "label13";
-            label13.Size = new Size(64, 19);
-            label13.TabIndex = 103;
-            label13.Text = "PsExec";
-            label13.TextAlign = ContentAlignment.TopRight;
+            PsExecLabel.AutoSize = true;
+            PsExecLabel.Font = new Font("Arial", 10F);
+            PsExecLabel.ForeColor = Color.White;
+            PsExecLabel.Location = new Point(36, 7);
+            PsExecLabel.Name = "PsExecLabel";
+            PsExecLabel.Size = new Size(64, 19);
+            PsExecLabel.TabIndex = 103;
+            PsExecLabel.Text = "PsExec";
+            PsExecLabel.TextAlign = ContentAlignment.TopRight;
             // 
             // MessagePSExecCheckBox
             // 
@@ -1587,10 +1587,10 @@
             // 
             // toolTipHelp
             // 
+            toolTipHelp.AutomaticDelay = 1000;
             toolTipHelp.AutoPopDelay = 5000;
             toolTipHelp.InitialDelay = 1000;
-            toolTipHelp.ReshowDelay = 500;
-            toolTipHelp.ShowAlways = true;
+            toolTipHelp.ReshowDelay = 200;
             toolTipHelp.ToolTipIcon = ToolTipIcon.Info;
             toolTipHelp.UseAnimation = false;
             toolTipHelp.UseFading = false;
@@ -1766,7 +1766,7 @@
         private Button SaveMacAddressesAsTXTBtn;
         private Button OpenMacAddressfromTxtBtn;
         private PictureBox pictureBox8;
-        private Label label13;
+        private Label PsExecLabel;
         private PictureBox pictureBox9;
         private CheckBox ReattemptOnErrorCheckbox;
         private LinkLabel ReattemptonErrorHelpLbl;

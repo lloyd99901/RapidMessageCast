@@ -141,9 +141,6 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // Write the contents to the specified file
             File.WriteAllText(filePath, rmcFileContent.ToString());
         }
-
-
-
         public static string AttemptToCreateRMCDirectories()
         {
             string[] directories = [

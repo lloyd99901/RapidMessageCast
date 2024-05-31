@@ -55,7 +55,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 return;
             }
 
-            RMCManagerForm.AddTextToLogList($"Info - [BroadcastController]: Starting Broadcast Module: {module}...");
+            RMCManagerForm.AddTextToLogList($"Info - [BroadcastController]: Running Broadcast Module: {module}...");
 
             switch (module)
             {
@@ -64,16 +64,17 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     moduleRunning[Module.PC] = true;
                     break;
                 case RMCEnums.Email:
+                    //Insert Email Module Here
                     moduleRunning[Module.Email] = true;
                     break;
                 case RMCEnums.PSExec:
+                    //Insert PSExec Module Here
                     moduleRunning[Module.PSExec] = true;
                     break;
                 default:
-                    RMCManagerForm.AddTextToLogList("Error - [BroadcastController] - An error occurred while trying to set the module running status to BroadcastController. The module specified was not found.");
+                    RMCManagerForm.AddTextToLogList($"Error - [BroadcastController] - An error occurred while trying to set the module running status to BroadcastController. The module specified was not found. Module name that was attempted: {module}");
                     break;
             }
-
             await RunModuleWatchdog();
         }
 
@@ -85,7 +86,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 return;
             }
 
-            RMCManagerForm.AddTextToLogList($"Info - [BroadcastController]: Setting status of: {module} to the following run state: {running}...");
+            RMCManagerForm.AddTextToLogList($"Info - [BroadcastController]: Setting status of {module} module to the following state: {running}...");
 
             switch (module)
             {
@@ -104,7 +105,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        private async Task RunModuleWatchdog()
+        private static async Task RunModuleWatchdog()
         {
             if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm)
             {
