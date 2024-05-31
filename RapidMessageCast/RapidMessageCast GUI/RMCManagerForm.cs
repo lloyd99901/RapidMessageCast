@@ -267,18 +267,28 @@ namespace RapidMessageCast_Manager
                 return;
             }
 
-            MessageTxt.Text = RMSGFileValues[1];
-            ComputerSelectList.Text = RMSGFileValues[2];
-            expiryHourTime.Value = Convert.ToDecimal(RMSGFileValues[3]);
-            expiryMinutesTime.Value = Convert.ToDecimal(RMSGFileValues[4]);
-            expirySecondsTime.Value = Convert.ToDecimal(RMSGFileValues[5]);
-            SetCheckboxState(EmergencyModeCheckbox, RMSGFileValues[6]);
-            SetCheckboxState(MessagePCcheckBox, RMSGFileValues[7]);
-            SetCheckboxState(MessageEmailcheckBox, RMSGFileValues[8]);
-            SetCheckboxState(MessagePSExecCheckBox, RMSGFileValues[9]);
-            SetCheckboxState(ReattemptOnErrorCheckbox, RMSGFileValues[10]);
-            SetCheckboxState(DontSaveBroadcastHistoryCheckbox, RMSGFileValues[11]);
-            AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
+            try
+            {
+                MessageTxt.Text = RMSGFileValues[1];
+                ComputerSelectList.Text = RMSGFileValues[2];
+                expiryHourTime.Value = Convert.ToDecimal(RMSGFileValues[3]);
+                expiryMinutesTime.Value = Convert.ToDecimal(RMSGFileValues[4]);
+                expirySecondsTime.Value = Convert.ToDecimal(RMSGFileValues[5]);
+                SetCheckboxState(EmergencyModeCheckbox, RMSGFileValues[6]);
+                SetCheckboxState(MessagePCcheckBox, RMSGFileValues[7]);
+                SetCheckboxState(MessageEmailcheckBox, RMSGFileValues[8]);
+                SetCheckboxState(MessagePSExecCheckBox, RMSGFileValues[9]);
+                SetCheckboxState(ReattemptOnErrorCheckbox, RMSGFileValues[10]);
+                SetCheckboxState(DontSaveBroadcastHistoryCheckbox, RMSGFileValues[11]);
+                WOLTextbox.Text = RMSGFileValues[12];
+                MagicPortNumberBox.Value = Convert.ToDecimal(RMSGFileValues[13]);
+                AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
+            }
+            catch(Exception ex)
+            {
+                AddTextToLogList($"Error - [LoadRMSGFileInProgram]: Attempt to parse RMSG file failed: {ex}");
+                return;
+            }
         }
 
         private void RefreshRMSGFileList()
@@ -360,64 +370,6 @@ namespace RapidMessageCast_Manager
                 e.Handled = true;
             }
         }
-
-        private void OpenFileAndProcessContents(TextBox targetTextBox, string logInfo, string logError, Func<string, string>? processFileContents = null)
-        {
-            OpenFileDialog openFileDialog = new()
-            {
-                InitialDirectory = Application.StartupPath,
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-            };
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    string filePath = openFileDialog.FileName;
-                    string fileContents = File.ReadAllText(filePath);
-
-                    if (processFileContents != null)
-                    {
-                        fileContents = processFileContents(fileContents);
-                    }
-
-                    targetTextBox.Text = fileContents;
-                    AddTextToLogList($"Info - [{logInfo}]: Loaded from file: {Path.GetFileName(filePath)}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error reading the file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [{logError}]: Failure in reading the file: {ex}");
-                }
-            }
-        }
-
-        private void SaveFileFromTextBox(TextBox sourceTextBox, string logInfo, string logError)
-        {
-            SaveFileDialog saveFileDialog = new()
-            {
-                InitialDirectory = Application.StartupPath,
-                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    string filePath = saveFileDialog.FileName;
-                    File.WriteAllText(filePath, sourceTextBox.Text);
-
-                    MessageBox.Show($"{logInfo} saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    AddTextToLogList($"Info - [{logInfo}]: {logInfo} saved successfully: {Path.GetFileName(filePath)}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error saving {logError}: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [{logError}]: Failure in saving {logError}: {ex}");
-                }
-            }
-        }
-
         private void OpenRMCFileBtn_Click(object sender, EventArgs e)
         {
             using OpenFileDialog openFileDialog = new()
@@ -443,39 +395,39 @@ namespace RapidMessageCast_Manager
             {
                 string fileName = saveFileDialog.FileName;
                 AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
-                RMC_IO_Manager.SaveRMSGFile(fileName, MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+                RMC_IO_Manager.SaveRMSGFile(fileName, MessageTxt.Text, ComputerSelectList.Text, WOLTextbox.Text, (int)MagicPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
                 RefreshRMSGFileList();
             }
         }
 
         private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileAndProcessContents(MessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", InternalRegexFilters.FilterInvalidMessage);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(MessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", InternalRegexFilters.FilterInvalidMessage);
         }
 
         private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileAndProcessContents(ComputerSelectList, "OpenPCList", "OpenPCList", InternalRegexFilters.FilterInvalidPCNames);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(ComputerSelectList, "OpenPCList", "OpenPCList", InternalRegexFilters.FilterInvalidPCNames);
         }
 
         private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
         {
-            OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", InternalRegexFilters.FilterInvalidPCNames);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", InternalRegexFilters.FilterInvalidPCNames);
         }
 
         private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
         {
-            SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
+            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
         }
 
         private void SaveComputerListBtn_Click(object sender, EventArgs e)
         {
-            SaveFileFromTextBox(ComputerSelectList, "SavePCList", "SavePCList");
+            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(ComputerSelectList, "SavePCList", "SavePCList");
         }
 
         private void SaveMessageBtn_Click(object sender, EventArgs e)
         {
-            SaveFileFromTextBox(MessageTxt, "SaveMessageBtn", "SaveMessageBtn");
+            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(MessageTxt, "SaveMessageBtn", "SaveMessageBtn");
         }
 
         private void ComputerSelectList_KeyPress(object sender, KeyPressEventArgs e)
@@ -568,7 +520,7 @@ namespace RapidMessageCast_Manager
 
             AddTextToLogList($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
-            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, WOLTextbox.Text, (int)MagicPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), EmergencyModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
             RefreshRMSGFileList();
         }
 
@@ -716,7 +668,7 @@ namespace RapidMessageCast_Manager
         private void EmergencyHelpLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             //Messagebox with Information on what the fast broadcast is. It will not check if the message sent, it will just send it and move on.
-            MessageBox.Show("Fast broadcast is a mode that will not check if the message was sent to the computer. It will just attempt to send the message and move on to the next computer. This is useful if you need to send a message to a lot of computers quickly (e.g. in emergencies).");
+            MessageBox.Show("Fast broadcast is a mode that will not check if the message was sent to the computer successfully. If disabled, the program will send the messages slowly and will check if the message sent successfully. This is useful if you need to send a message to a lot of computers quickly (e.g. in emergencies).");
         }
 
         private void IconsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

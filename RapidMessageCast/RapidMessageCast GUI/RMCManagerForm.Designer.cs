@@ -214,7 +214,7 @@
             ToggleRMSGListBtn.ForeColor = Color.White;
             ToggleRMSGListBtn.Image = Properties.Resources.icons8_hide_24;
             ToggleRMSGListBtn.ImageAlign = ContentAlignment.TopCenter;
-            ToggleRMSGListBtn.Location = new Point(262, 0);
+            ToggleRMSGListBtn.Location = new Point(309, 0);
             ToggleRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
             ToggleRMSGListBtn.Name = "ToggleRMSGListBtn";
             ToggleRMSGListBtn.Size = new Size(96, 46);
@@ -284,7 +284,7 @@
             OpenRMCFileBtn.ForeColor = Color.White;
             OpenRMCFileBtn.Image = Properties.Resources.icons8_external_link_24;
             OpenRMCFileBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            OpenRMCFileBtn.Location = new Point(358, 0);
+            OpenRMCFileBtn.Location = new Point(405, 0);
             OpenRMCFileBtn.Margin = new Padding(3, 2, 3, 2);
             OpenRMCFileBtn.Name = "OpenRMCFileBtn";
             OpenRMCFileBtn.Size = new Size(79, 46);
@@ -304,7 +304,7 @@
             SaveRMCFileBTN.ForeColor = Color.White;
             SaveRMCFileBTN.Image = Properties.Resources.icons8_save_24;
             SaveRMCFileBTN.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveRMCFileBTN.Location = new Point(437, 0);
+            SaveRMCFileBTN.Location = new Point(484, 0);
             SaveRMCFileBTN.Margin = new Padding(3, 2, 3, 2);
             SaveRMCFileBTN.Name = "SaveRMCFileBTN";
             SaveRMCFileBTN.Size = new Size(106, 46);
@@ -324,12 +324,12 @@
             QuickSaveRMSGBtn.ForeColor = Color.White;
             QuickSaveRMSGBtn.Image = Properties.Resources.icons8_save_24;
             QuickSaveRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            QuickSaveRMSGBtn.Location = new Point(543, 0);
+            QuickSaveRMSGBtn.Location = new Point(590, 0);
             QuickSaveRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             QuickSaveRMSGBtn.Name = "QuickSaveRMSGBtn";
-            QuickSaveRMSGBtn.Size = new Size(163, 46);
+            QuickSaveRMSGBtn.Size = new Size(116, 46);
             QuickSaveRMSGBtn.TabIndex = 27;
-            QuickSaveRMSGBtn.Text = "Quick Save .RMSG";
+            QuickSaveRMSGBtn.Text = "Quick Save";
             QuickSaveRMSGBtn.TextAlign = ContentAlignment.MiddleRight;
             QuickSaveRMSGBtn.UseVisualStyleBackColor = false;
             QuickSaveRMSGBtn.Click += QuickSaveRMSGBtn_Clicked;

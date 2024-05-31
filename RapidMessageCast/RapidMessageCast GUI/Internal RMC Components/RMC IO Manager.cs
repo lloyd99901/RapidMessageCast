@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.RegularExpressions;
 
 //--RapidMessageCast Software--
 //RMC_IO_Manager.cs - RapidMessageCast Manager
@@ -27,9 +26,10 @@ using System.Text.RegularExpressions;
 
 namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
-    internal class RMC_IO_Manager
+    internal class RMC_IO_Manager(Action<string> logAction)
     {
         private static readonly string[] RMCseparator = ["\r\n\r\n"]; //Used for RMC file IO parsing.
+        private readonly Action<string> _logAction = logAction;
         public static string[] LoadRMSGFile(string filePath)
         {
             //Here is the return array structure:
@@ -45,6 +45,13 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // [9] = Enable PSExec
             // [10] = Reattempt on error
             // [11] = Dont save history
+            // [12] = WOL list
+            // [13] = WOL port
+            
+            if (filePath == null)
+            {
+                return ["Error: File path is null"];
+            }
 
             try
             {
@@ -75,6 +82,10 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 bool ReattemptOnErrorCheck = IsEnabled("[ReattemptOnError]");
                 bool DontSaveHistoryCheck = IsEnabled("[DontSaveHistory]");
 
+                // Get WOL list and port
+                string WOLlist = GetValueFromSection(sections, "[WOL]");
+                string WOLPort = GetValueFromSection(sections, "Port:");
+
                 // Return the extracted values via an array
                 return
                 [
@@ -89,7 +100,9 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     EnableEmail.ToString(),
                     EnablePSExec.ToString(),
                     ReattemptOnErrorCheck.ToString(),
-                    DontSaveHistoryCheck.ToString()
+                    DontSaveHistoryCheck.ToString(),
+                    WOLlist,
+                    WOLPort
                 ];
             }
             catch (Exception ex)
@@ -100,7 +113,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory)
+        public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string WOLlist, int WOLPort, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory)
         {
             // Create a StringBuilder to store the contents of the RMC file
             var rmcFileContent = new StringBuilder();
@@ -137,6 +150,12 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             AppendSectionIfEnabled("[MessagePSExec]", enablePSExec);
             AppendSectionIfEnabled("[ReattemptOnError]", reattemptOnError);
             AppendSectionIfEnabled("[DontSaveHistory]", dontSaveHistory);
+
+            //Add WOL section
+            rmcFileContent.AppendLine();
+            rmcFileContent.AppendLine("[WOL]");
+            rmcFileContent.AppendLine(WOLlist);
+            rmcFileContent.AppendLine($"Port: {WOLPort}");
 
             // Write the contents to the specified file
             File.WriteAllText(filePath, rmcFileContent.ToString());
@@ -194,7 +213,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     // Filter out invalid characters only for PC list section
                     if (sectionHeader == "[PCList]")
                     {
-                        value = FilterInvalidCharacters(value);
+                        value = InternalRegexFilters.FilterInvalidPCNames(value);
                     }
 
                     return value;
@@ -202,14 +221,60 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
             return string.Empty;
         }
-        private static string FilterInvalidCharacters(string text)
+        public void OpenFileAndProcessContents(TextBox targetTextBox, string logInfo, string logError, Func<string, string>? processFileContents = null)
         {
-            // Regular expression to match characters that are not allowed in NetBIOS or Windows hostnames
-            string pattern = @"[^\p{L}\p{N}\-\._\n\r]";
+            OpenFileDialog openFileDialog = new()
+            {
+                InitialDirectory = Application.StartupPath,
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
 
-            // Replace invalid characters with empty string
-            return Regex.Replace(text, pattern, "");
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string filePath = openFileDialog.FileName;
+                    string fileContents = File.ReadAllText(filePath);
+
+                    if (processFileContents != null)
+                    {
+                        fileContents = processFileContents(fileContents);
+                    }
+
+                    targetTextBox.Text = fileContents;
+                    _logAction($"Info - [{logInfo}]: Loaded from file: {Path.GetFileName(filePath)}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error reading the file: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _logAction($"Error - [{logError}]: Failure in reading the file: {ex}");
+                }
+            }
         }
+        public void SaveFileFromTextBox(TextBox sourceTextBox, string logInfo, string logError)
+        {
+            SaveFileDialog saveFileDialog = new()
+            {
+                InitialDirectory = Application.StartupPath,
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
 
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string filePath = saveFileDialog.FileName;
+                    File.WriteAllText(filePath, sourceTextBox.Text);
+
+                    MessageBox.Show($"{logInfo} saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    _logAction($"Info - [{logInfo}]: {logInfo} saved successfully: {Path.GetFileName(filePath)}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving {logError}: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _logAction($"Error - [{logError}]: Failure in saving {logError}: {ex}");
+                }
+            }
+        }
     }
 }
