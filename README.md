@@ -17,17 +17,15 @@ RapidMessageCast is a messaging tool designed to help with rapid communication t
 > 
 > This program is actively in development. Expect bugs, untidy code, and missing features since this is in indev phase.
 
-![MainWindow](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/RMCManager.png)
-
 ## Features:
 > - Message multiple PC's fast (msg.exe)
-> - Send automatic emails or prewritten emails. (runs Outlook/email program of choice or uses SMTP)
-> - PSExec Support (Remote Program Execution).
+> - Send automatic emails or prewritten emails. (runs Outlook/email program of choice or uses SMTP) [Not complete]
+> - PSExec Support (Remote Program Execution). [Not complete]
 > - Quick save and loads of RMSG files that allows the user to quickly load and broadcast saved messages. (e.g. reminders, emergency messages, notices, etc).
 > - Quick load message and PC list from a txt file
 > - Load PC list from Active Directory
-> - View broadcast history with a comprehensive broadcast log.
-> - Schedule messages to be broadcasted.
+> - View broadcast history with a comprehensive broadcast log. [In Progress]
+> - Schedule messages to be broadcasted. [Not complete]
 > - Tailored for automation programs.
 
 ## Notices:
