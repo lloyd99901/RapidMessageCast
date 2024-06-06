@@ -33,7 +33,7 @@ using System.Text.RegularExpressions;
 //Add a form to select the OU's from the Active Directory. For now, it will just add all computers from the Computers OU.
 //Filters PCList based on custom user regex pattern.
 //WOL added, but testing is needed.
-//Panic Button that activates broadcasting immediately with a predefined message.
+//Panic Button that activates broadcasting immediately with a predefined message. (AutoHotKey script would work here)
 //Test broadcasting with unhandled exceptions, and see if the program can recover from it. If it pauses broadcasting, add a try catch to that function to prevent it from pausing. This can be done closer to completion.
 //It might be an idea to disable all msgbox popups during startup, also check if there are msgboxes during the broadcast. Remove those.
 //Can the private readonly Action<string> _logAction = logAction; be put on all external classes instead of using the RMCForm every time to call the AddTextToLogList function? This will make the code cleaner and may also prevent instabilities. Investigate this.
