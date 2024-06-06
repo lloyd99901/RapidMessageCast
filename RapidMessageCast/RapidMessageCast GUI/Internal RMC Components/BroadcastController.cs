@@ -29,23 +29,18 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     internal class BroadcastController
     {
-        private enum Module
-        {
-            PC,
-            Email,
-            PSExec
-        }
 
-        private static readonly Dictionary<Module, bool> moduleRunning = new()
+        private static readonly Dictionary<RMCEnums, bool> moduleRunning = new()
         {
-            { Module.PC, false },
-            { Module.Email, false },
-            { Module.PSExec, false }
+            { RMCEnums.PC, false },
+            { RMCEnums.Email, false },
+            { RMCEnums.PSExec, false }
         };
 
         private readonly PCBroadcastModule pcBroadcastModule = new();
 
-        public static bool AreAnyModulesRunning() => moduleRunning.Values.Any(status => status);
+        public bool AreAnyModulesRunning() => moduleRunning.Values.Any(status => status); //I duplicated this bool because it's the simplest way to get around an issue where RMC manager couldn't access this.
+        public static bool AreAnyModulesRunningPrivate() => moduleRunning.Values.Any(status => status);
 
         public async Task StartBroadcastModule(RMCEnums module, string message = "", string computerList = "", int totalSeconds = 0, bool emergencyMode = false, bool reattemptOnError = false, bool dontSaveBroadcastHistory = false, bool isScheduledBroadcast = false)
         {
@@ -61,15 +56,15 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             {
                 case RMCEnums.PC:
                     pcBroadcastModule.BroadcastPCMessage(message, computerList, totalSeconds, false, emergencyMode, reattemptOnError, dontSaveBroadcastHistory, isScheduledBroadcast);
-                    moduleRunning[Module.PC] = true;
+                    moduleRunning[RMCEnums.PC] = true;
                     break;
                 case RMCEnums.Email:
                     //Insert Email Module Here
-                    moduleRunning[Module.Email] = true;
+                    moduleRunning[RMCEnums.Email] = true;
                     break;
                 case RMCEnums.PSExec:
                     //Insert PSExec Module Here
-                    moduleRunning[Module.PSExec] = true;
+                    moduleRunning[RMCEnums.PSExec] = true;
                     break;
                 default:
                     RMCManagerForm.AddTextToLogList($"Error - [BroadcastController] - An error occurred while trying to set the module running status to BroadcastController. The module specified was not found. Module name that was attempted: {module}");
@@ -91,13 +86,13 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             switch (module)
             {
                 case RMCEnums.PC:
-                    moduleRunning[Module.PC] = running;
+                    moduleRunning[RMCEnums.PC] = running;
                     break;
                 case RMCEnums.Email:
-                    moduleRunning[Module.Email] = running;
+                    moduleRunning[RMCEnums.Email] = running;
                     break;
                 case RMCEnums.PSExec:
-                    moduleRunning[Module.PSExec] = running;
+                    moduleRunning[RMCEnums.PSExec] = running;
                     break;
                 default:
                     RMCManagerForm.AddTextToLogList("Error - [BroadcastController] - An error occurred while trying to set the module running status to BroadcastController. The module specified was not found.");
@@ -120,7 +115,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             {
                 await Task.Run(() =>
                 {
-                    while (AreAnyModulesRunning())
+                    while (AreAnyModulesRunningPrivate())
                     {
                         Thread.Sleep(1000);
 

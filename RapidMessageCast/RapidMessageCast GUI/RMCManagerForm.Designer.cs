@@ -125,10 +125,9 @@
             PsExecLabel = new Label();
             MessagePSExecCheckBox = new CheckBox();
             AboutTab = new TabPage();
+            IconsLinkLabel = new LinkLabel();
             pictureBox2 = new PictureBox();
             AboutText = new TextBox();
-            IconsLinkLabel = new LinkLabel();
-            label6 = new Label();
             verNumbLblAboutLbl = new Label();
             LogTab = new TabPage();
             pictureBox9 = new PictureBox();
@@ -138,6 +137,7 @@
             logList = new ListBox();
             IconList = new ImageList(components);
             toolTipHelp = new ToolTip(components);
+            label6 = new Label();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -1412,10 +1412,10 @@
             // AboutTab
             // 
             AboutTab.BackColor = Color.FromArgb(30, 30, 30);
-            AboutTab.Controls.Add(pictureBox2);
-            AboutTab.Controls.Add(AboutText);
             AboutTab.Controls.Add(IconsLinkLabel);
             AboutTab.Controls.Add(label6);
+            AboutTab.Controls.Add(pictureBox2);
+            AboutTab.Controls.Add(AboutText);
             AboutTab.Controls.Add(verNumbLblAboutLbl);
             AboutTab.Location = new Point(4, 29);
             AboutTab.Name = "AboutTab";
@@ -1423,9 +1423,21 @@
             AboutTab.TabIndex = 3;
             AboutTab.Text = "About";
             // 
+            // IconsLinkLabel
+            // 
+            IconsLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            IconsLinkLabel.AutoSize = true;
+            IconsLinkLabel.LinkColor = Color.FromArgb(0, 192, 192);
+            IconsLinkLabel.Location = new Point(279, 34);
+            IconsLinkLabel.Name = "IconsLinkLabel";
+            IconsLinkLabel.Size = new Size(109, 20);
+            IconsLinkLabel.TabIndex = 82;
+            IconsLinkLabel.TabStop = true;
+            IconsLinkLabel.Text = "Icons by Icons8";
+            IconsLinkLabel.LinkClicked += IconsLinkLabel_LinkClicked;
+            // 
             // pictureBox2
             // 
-            pictureBox2.Dock = DockStyle.Left;
             pictureBox2.Image = Properties.Resources.RMC_GUI_Icon;
             pictureBox2.Location = new Point(0, 0);
             pictureBox2.Name = "pictureBox2";
@@ -1452,36 +1464,11 @@
             AboutText.Text = resources.GetString("AboutText.Text");
             AboutText.WordWrap = false;
             // 
-            // IconsLinkLabel
-            // 
-            IconsLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            IconsLinkLabel.AutoSize = true;
-            IconsLinkLabel.LinkColor = Color.FromArgb(0, 192, 192);
-            IconsLinkLabel.Location = new Point(283, 3);
-            IconsLinkLabel.Name = "IconsLinkLabel";
-            IconsLinkLabel.Size = new Size(109, 20);
-            IconsLinkLabel.TabIndex = 82;
-            IconsLinkLabel.TabStop = true;
-            IconsLinkLabel.Text = "Icons by Icons8";
-            IconsLinkLabel.LinkClicked += IconsLinkLabel_LinkClicked;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Arial", 12F);
-            label6.ForeColor = Color.FromArgb(224, 224, 224);
-            label6.Location = new Point(78, 9);
-            label6.Name = "label6";
-            label6.Size = new Size(183, 23);
-            label6.TabIndex = 79;
-            label6.Text = "RapidMessageCast\r\n";
-            label6.TextAlign = ContentAlignment.TopRight;
-            // 
             // verNumbLblAboutLbl
             // 
             verNumbLblAboutLbl.Font = new Font("Arial", 10F);
             verNumbLblAboutLbl.ForeColor = Color.Silver;
-            verNumbLblAboutLbl.Location = new Point(78, 27);
+            verNumbLblAboutLbl.Location = new Point(82, 28);
             verNumbLblAboutLbl.Name = "verNumbLblAboutLbl";
             verNumbLblAboutLbl.Size = new Size(309, 32);
             verNumbLblAboutLbl.TabIndex = 80;
@@ -1594,6 +1581,19 @@
             toolTipHelp.ToolTipIcon = ToolTipIcon.Info;
             toolTipHelp.UseAnimation = false;
             toolTipHelp.UseFading = false;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Font = new Font("Arial", 11F);
+            label6.ForeColor = Color.FromArgb(224, 224, 224);
+            label6.Location = new Point(75, 9);
+            label6.Name = "label6";
+            label6.Size = new Size(177, 22);
+            label6.TabIndex = 1;
+            label6.Text = "RapidMessageCast\r\n";
+            label6.TextAlign = ContentAlignment.TopRight;
             // 
             // RMCManager
             // 
@@ -1725,8 +1725,6 @@
         private TextBox AboutText;
         private LinkLabel IconsLinkLabel;
         private PictureBox pictureBox2;
-        private Label label6;
-        private Label verNumbLblAboutLbl;
         private TabPage LogTab;
         private Label label1;
         public ListBox logList;
@@ -1774,5 +1772,7 @@
         public Button StartBroadcastBtn;
         public System.Windows.Forms.Timer GreenButtonTimer;
         private ToolTip toolTipHelp;
+        private Label verNumbLblAboutLbl;
+        private Label label6;
     }
 }

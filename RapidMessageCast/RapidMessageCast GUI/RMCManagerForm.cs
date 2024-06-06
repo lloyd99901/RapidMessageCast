@@ -47,7 +47,7 @@ namespace RapidMessageCast_Manager
         public string versionNumb = "v0.1";
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
         readonly ImageList tabControlImageList = new(); //Used for the icons on the tabs.
-        private bool isScheduledBroadcast = false; //Used for scheduled broadcasts. If true, the program will close after the broadcast has finished.
+        private bool dontPromptClosureMessage = false; //Used for scheduled broadcasts. If true, the program will close after the broadcast has finished without a warning message.
         readonly BroadcastController broadcastController = new(); //Create a new instance of the BroadcastController class.
         public RMCManager()
         {
@@ -121,10 +121,48 @@ namespace RapidMessageCast_Manager
                 else if (args.Length == 3 && args[2] == "schedule")
                 {
                     AddTextToLogList("Info - [RMC Manager]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
-                    isScheduledBroadcast = true;
+                    dontPromptClosureMessage = true;
                     RunScheduledBroastcast(args[1]);
                 }
+                else if (args.Length == 3 && args[2] == "PANIC")
+                {
+                    dontPromptClosureMessage = true;
+                    //Panic button that activates broadcasting immediately with a predefined message.
+                    AddTextToLogList("Info - [RMC Manager]: [PANIC!] Startup detected. Starting emergency alert broadcast...");
+                    //Load PANIC message from a file and start broadcasting.
+                    LoadRMSGFileInProgram($"{Application.StartupPath}\\RMSGFiles\\PANIC.rmsg");
+                    //Check if the message loaded, if it didn't then as a failsafe, set the message to a predefined message.
+                    if (MessageTxt.Text == "")
+                    {
+                        AddTextToLogList("Error - [RMC Manager]: PANIC broadcast - PANIC message not loaded. Using predefined message.");
+                        MessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
+                    }
+                    //Check if the PC list is empty, if it is, then close the program.
+                    if (ComputerSelectList.Text == "")
+                    {
+                        AddTextToLogList("Error - [RMC Manager]: PANIC broadcast - PC list is empty. Closing program.");
+                        Application.Exit();
+                    }
+                    AddTextToLogList("Info - [RMC Manager]: PANIC broadcast - Starting broadcast.");
+                    StartBroadcastBtn_Click(this, EventArgs.Empty);
+                    CloseAfterAllModulesAreFinished();
+                }
             }
+        }
+
+        private void CloseAfterAllModulesAreFinished()
+        {
+            //Check if all modules are finished. If they are, close the program.
+            //use the broadcastController to check if all modules are finished via the AreAnyModulesRunning void func
+            //if they are not finished, then repeat this every 5 seconds until they are.
+            //if they are finished, then close the program. PS. This is the simplest code in this project. :)
+            while (broadcastController.AreAnyModulesRunning())
+            {
+                Thread.Sleep(5000); //broadcastController will handle hung modules so we don't need to worry about that in this function.
+            }
+            dontPromptClosureMessage = true; //Setting this true will prevent the program from asking the user if they want to close.
+            Application.Exit();
+
         }
 
         private void HandleDefaultRMSGFile()
@@ -159,7 +197,8 @@ namespace RapidMessageCast_Manager
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             await
-            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, ComputerSelectList.Text, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, ComputerSelectList.Text, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
+            CloseAfterAllModulesAreFinished();
         }
 
         private void CheckSystemState()
@@ -481,7 +520,7 @@ namespace RapidMessageCast_Manager
 
             if (isMessagePCChecked)
             {
-                AddTextToLogList("Info - [InitBroadcast]: PC message module is enabled. Starting PC message cast...");
+                AddTextToLogList("Info - [InitBroadcast]: PC message module is selected. Starting PC message cast...");
 
                 string messageText = MessageTxt.Text;
                 string computerSelectListText = ComputerSelectList.Text;
@@ -494,7 +533,7 @@ namespace RapidMessageCast_Manager
                 }
 
                 int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value;
-                await broadcastController.StartBroadcastModule(RMCEnums.PC, messageText, computerSelectListText, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+                await broadcastController.StartBroadcastModule(RMCEnums.PC, messageText, computerSelectListText, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
             }
 
             if (isMessageEmailChecked)
@@ -642,10 +681,29 @@ namespace RapidMessageCast_Manager
             //Attempt Save the rmc runtime logfile by clicking the save log button.
             SaveRMCRuntimeLogBtn_Click(sender, e);
             //If isScheduledBroadcast is true, close the program without asking.
-            if (isScheduledBroadcast)
+            if (dontPromptClosureMessage)
             {
-                AddTextToLogList("Warning - [RMC Manager]: Scheduled broadcast is still running! Prohibiting program from closing.");
-                return;
+                if (!broadcastController.AreAnyModulesRunning())
+                {
+                    AddTextToLogList("Info - [RMC Manager]: Scheduled programming has completed. closing...");
+                    return;
+                }
+                else
+                {
+                    AddTextToLogList("Warning - [RMC Manager]: Scheduled programming is still running. Closing the program will stop the broadcast. Rejecting close request.");
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            if (broadcastController.AreAnyModulesRunning()) //User might have clicked close on accident since there is a broadcast in progress. Confirm here.
+            {
+                AddTextToLogList("Warning - [RMC Manager]: Broadcast is still running. Closing the program will stop the broadcast. Confirming close request.");
+                DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? The broadcast is still running. Closing the program will stop the broadcast.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
             }
             //Ask the user if they want to close the program if they press the X button. However, if the MessageTxt and pclist is empty, close the program without asking.
             if (MessageTxt.Text == "" && ComputerSelectList.Text == "")
@@ -658,6 +716,7 @@ namespace RapidMessageCast_Manager
                 if (dialogResult == DialogResult.No)
                 {
                     e.Cancel = true;
+                    return;
                 }
             }
         }
@@ -803,7 +862,7 @@ namespace RapidMessageCast_Manager
         private void RMCManager_Shown(object sender, EventArgs e)
         {
             //check if scheduled broadcast is true. If it is, hide the form.
-            if (isScheduledBroadcast)
+            if (dontPromptClosureMessage)
             {
                 Hide();
             }
@@ -821,7 +880,7 @@ namespace RapidMessageCast_Manager
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             //pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, Environment.MachineName, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
             await
-            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, Environment.MachineName, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
+            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, Environment.MachineName, totalSeconds, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
         }
 
         private async void SendWOLPacketBtn_Click(object sender, EventArgs e)

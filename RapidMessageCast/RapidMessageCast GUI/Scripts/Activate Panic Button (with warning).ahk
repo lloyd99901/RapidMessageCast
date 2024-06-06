@@ -18,11 +18,3 @@
         Run, "C:\Path\To\Your\Program.exe" PANIC
     }
 return
-
-; INSTANT ACTIVATION SCRIPT VERSION:
-
-; For instant activation without confirmation, uncomment the below code and comment out the top code.
-
-;^+Pause::
-;    Run, "C:\Path\To\Your\Program.exe" PANIC
-;return

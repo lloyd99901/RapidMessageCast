@@ -151,10 +151,13 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             AppendSectionIfEnabled("[ReattemptOnError]", reattemptOnError);
             AppendSectionIfEnabled("[DontSaveHistory]", dontSaveHistory);
 
-            //Add WOL section
-            rmcFileContent.AppendLine();
-            rmcFileContent.AppendLine("[WOL]");
-            rmcFileContent.AppendLine(WOLlist);
+            //Add WOL list but if not empty, this fixes a problem where the RMC Manager fails to parse the WOL list if it is empty.
+            if (!string.IsNullOrEmpty(WOLlist))
+            {
+                rmcFileContent.AppendLine();
+                rmcFileContent.AppendLine("[WOL]");
+                rmcFileContent.AppendLine(WOLlist);
+            }
 
             //Add WOL port
             rmcFileContent.AppendLine();
@@ -226,7 +229,6 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     if (sectionHeader == "[WOL]")
                     {
                         value = InternalRegexFilters.FilterInvalidMACAddresses(value);
-                        value = value.Split("Port:")[0];
                     }
 
                     return value;
