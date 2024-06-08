@@ -47,7 +47,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // [11] = Dont save history
             // [12] = WOL list
             // [13] = WOL port
-            
+
             if (filePath == null)
             {
                 return ["Error: File path is null"];
@@ -243,7 +243,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 InitialDirectory = Application.StartupPath,
                 Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
             };
-
+            
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 try

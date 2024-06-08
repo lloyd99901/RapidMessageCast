@@ -29,7 +29,6 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     internal class BroadcastController
     {
-
         private static readonly Dictionary<RMCEnums, bool> moduleRunning = new()
         {
             { RMCEnums.PC, false },
@@ -50,7 +49,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 return;
             }
 
-            RMCManagerForm.AddTextToLogList($"Info - [BroadcastController]: Running Broadcast Module: {module}...");
+            RMCManagerForm.AddTextToLogList($"Info - [BroadcastController]: Starting Broadcast Module: {module}...");
 
             switch (module)
             {

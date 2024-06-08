@@ -53,7 +53,7 @@
             ReattemptOnErrorCheckbox = new CheckBox();
             DontSaveBroadcastHistoryCheckbox = new CheckBox();
             MessagePCcheckBox = new CheckBox();
-            EmergencyModeCheckbox = new CheckBox();
+            FastBroadcastModeCheckbox = new CheckBox();
             ReattemptonErrorHelpLbl = new LinkLabel();
             DontSaveHistoryLinkHelp = new LinkLabel();
             EmergencyHelpLink = new LinkLabel();
@@ -126,6 +126,7 @@
             MessagePSExecCheckBox = new CheckBox();
             AboutTab = new TabPage();
             IconsLinkLabel = new LinkLabel();
+            label6 = new Label();
             pictureBox2 = new PictureBox();
             AboutText = new TextBox();
             verNumbLblAboutLbl = new Label();
@@ -137,7 +138,6 @@
             logList = new ListBox();
             IconList = new ImageList(components);
             toolTipHelp = new ToolTip(components);
-            label6 = new Label();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -421,7 +421,7 @@
             tabPage1.Controls.Add(ReattemptOnErrorCheckbox);
             tabPage1.Controls.Add(DontSaveBroadcastHistoryCheckbox);
             tabPage1.Controls.Add(MessagePCcheckBox);
-            tabPage1.Controls.Add(EmergencyModeCheckbox);
+            tabPage1.Controls.Add(FastBroadcastModeCheckbox);
             tabPage1.Controls.Add(ReattemptonErrorHelpLbl);
             tabPage1.Controls.Add(DontSaveHistoryLinkHelp);
             tabPage1.Controls.Add(EmergencyHelpLink);
@@ -507,18 +507,18 @@
             MessagePCcheckBox.UseVisualStyleBackColor = true;
             MessagePCcheckBox.CheckedChanged += MessagePCcheckBox_CheckedChanged;
             // 
-            // EmergencyModeCheckbox
+            // FastBroadcastModeCheckbox
             // 
-            EmergencyModeCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            EmergencyModeCheckbox.AutoSize = true;
-            EmergencyModeCheckbox.ForeColor = Color.White;
-            EmergencyModeCheckbox.Location = new Point(235, 225);
-            EmergencyModeCheckbox.Name = "EmergencyModeCheckbox";
-            EmergencyModeCheckbox.Size = new Size(126, 24);
-            EmergencyModeCheckbox.TabIndex = 85;
-            EmergencyModeCheckbox.Text = "Fast Broadcast";
-            EmergencyModeCheckbox.UseVisualStyleBackColor = true;
-            EmergencyModeCheckbox.CheckedChanged += EmergencyModeCheckbox_CheckedChanged;
+            FastBroadcastModeCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            FastBroadcastModeCheckbox.AutoSize = true;
+            FastBroadcastModeCheckbox.ForeColor = Color.White;
+            FastBroadcastModeCheckbox.Location = new Point(235, 225);
+            FastBroadcastModeCheckbox.Name = "FastBroadcastModeCheckbox";
+            FastBroadcastModeCheckbox.Size = new Size(126, 24);
+            FastBroadcastModeCheckbox.TabIndex = 85;
+            FastBroadcastModeCheckbox.Text = "Fast Broadcast";
+            FastBroadcastModeCheckbox.UseVisualStyleBackColor = true;
+            FastBroadcastModeCheckbox.CheckedChanged += EmergencyModeCheckbox_CheckedChanged;
             // 
             // ReattemptonErrorHelpLbl
             // 
@@ -1436,6 +1436,19 @@
             IconsLinkLabel.Text = "Icons by Icons8";
             IconsLinkLabel.LinkClicked += IconsLinkLabel_LinkClicked;
             // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Font = new Font("Arial", 11F);
+            label6.ForeColor = Color.FromArgb(224, 224, 224);
+            label6.Location = new Point(75, 9);
+            label6.Name = "label6";
+            label6.Size = new Size(177, 22);
+            label6.TabIndex = 1;
+            label6.Text = "RapidMessageCast\r\n";
+            label6.TextAlign = ContentAlignment.TopRight;
+            // 
             // pictureBox2
             // 
             pictureBox2.Image = Properties.Resources.RMC_GUI_Icon;
@@ -1582,19 +1595,6 @@
             toolTipHelp.UseAnimation = false;
             toolTipHelp.UseFading = false;
             // 
-            // label6
-            // 
-            label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            label6.AutoSize = true;
-            label6.Font = new Font("Arial", 11F);
-            label6.ForeColor = Color.FromArgb(224, 224, 224);
-            label6.Location = new Point(75, 9);
-            label6.Name = "label6";
-            label6.Size = new Size(177, 22);
-            label6.TabIndex = 1;
-            label6.Text = "RapidMessageCast\r\n";
-            label6.TextAlign = ContentAlignment.TopRight;
-            // 
             // RMCManager
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1706,7 +1706,7 @@
         private PictureBox pictureBox1;
         private Label PCCountLbl;
         private Label versionLbl;
-        private CheckBox EmergencyModeCheckbox;
+        private CheckBox FastBroadcastModeCheckbox;
         private LinkLabel EmergencyHelpLink;
         private PictureBox pictureBox3;
         private PictureBox pictureBox4;

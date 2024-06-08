@@ -78,7 +78,7 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 {
                     try
                     {
-                        RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: Preparing to message PC: {pcName} ...");
+                        //RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: Preparing to message PC: {pcName} ...");
                         var process = StartMsgProcess(pcName, message, duration);
                         //Check if it returns a blank process. If it does, add an error to the broadcast history.
                         if (process.Id == 0)
@@ -168,8 +168,8 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 //Add end of broadcast to the broadcast history.
                 broadcastHistoryHandler.AddToHistory(RMCEnums.PC, "END - PC Broadcast has ended.");
                 RMCManagerForm.AddTextToLogList("Info - [PCBroadcastModule]: RMC detected no remaining MSG processes. Broadcast has finished. Saving broadcast log...");
-                BroadcastController.SetStatusOfBroadcastModule(RMCEnums.PC, false); //Tells the broadcast controller that the PC module is no longer running.
                 broadcastHistoryHandler.SaveBroadcastHistory(isDontSaveBroadcastHistoryChecked, RMCEnums.PC);
+                BroadcastController.SetStatusOfBroadcastModule(RMCEnums.PC, false); //Tells the broadcast controller that the PC module is no longer running.
 
                 if (isScheduledBroadcast)
                 {
