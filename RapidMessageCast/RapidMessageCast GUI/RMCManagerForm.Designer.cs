@@ -1438,7 +1438,6 @@
             // 
             // label6
             // 
-            label6.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             label6.AutoSize = true;
             label6.Font = new Font("Arial", 11F);
             label6.ForeColor = Color.FromArgb(224, 224, 224);

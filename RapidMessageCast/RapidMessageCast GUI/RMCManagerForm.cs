@@ -803,6 +803,7 @@ namespace RapidMessageCast_Manager
         {
             //Save the checkbox state to the settings file.
             Properties.Settings.Default.MessagePSExecEnabled = MessagePSExecCheckBox.Checked;
+            Properties.Settings.Default.Save();
         }
 
         private void MessageEmailcheckBox_CheckedChanged(object sender, EventArgs e)

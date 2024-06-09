@@ -118,30 +118,27 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // Create a StringBuilder to store the contents of the RMC file
             var rmcFileContent = new StringBuilder();
 
-            // Append the message content section
-            rmcFileContent.AppendLine("[Message]");
-            rmcFileContent.AppendLine(messageContent);
-            rmcFileContent.AppendLine();
+            //Helper function to append sections
+            void AppendSection(string sectionName, string sectionValue)
+            {
+                rmcFileContent.AppendLine(sectionName);
+                rmcFileContent.AppendLine(sectionValue);
+                rmcFileContent.AppendLine();
+            }
 
-            // Append the PC list section
-            rmcFileContent.AppendLine("[PCList]");
-            rmcFileContent.AppendLine(pcList);
-            rmcFileContent.AppendLine();
-
-            // Append the message duration section
-            rmcFileContent.AppendLine("[MessageDuration]");
-            rmcFileContent.AppendLine($"{expiryHour}:{expiryMinutes}:{expirySeconds}");
-
-            // Helper function to append sections if enabled
+            //Helper function to append sections if enabled
             void AppendSectionIfEnabled(string sectionName, bool isEnabled)
             {
                 if (isEnabled)
                 {
-                    rmcFileContent.AppendLine();
-                    rmcFileContent.AppendLine(sectionName);
-                    rmcFileContent.AppendLine("Enabled");
+                    AppendSection(sectionName, "Enabled");
                 }
             }
+
+            // Message, PC list, and message duration sections
+            AppendSection("[Message]", messageContent);
+            AppendSection("[PCList]", pcList);
+            AppendSection("[MessageDuration]", $"{expiryHour}:{expiryMinutes}:{expirySeconds}");
 
             // Add emergency mode and module states to the file if enabled
             AppendSectionIfEnabled("[EmergencyMode]", emergencyModeEnabled);
@@ -154,15 +151,11 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             //Add WOL list but if not empty, this fixes a problem where the RMC Manager fails to parse the WOL list if it is empty.
             if (!string.IsNullOrEmpty(WOLlist))
             {
-                rmcFileContent.AppendLine();
-                rmcFileContent.AppendLine("[WOL]");
-                rmcFileContent.AppendLine(WOLlist);
+                AppendSection("[WOL]", WOLlist);
             }
 
             //Add WOL port
-            rmcFileContent.AppendLine();
-            rmcFileContent.AppendLine("[WOLPort]");
-            rmcFileContent.AppendLine(WOLPort.ToString());
+            AppendSection("[WOLPort]", WOLPort.ToString());
 
             // Write the contents to the specified file
             File.WriteAllText(filePath, rmcFileContent.ToString());
