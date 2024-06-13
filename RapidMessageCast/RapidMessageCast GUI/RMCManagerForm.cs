@@ -43,7 +43,7 @@ namespace RapidMessageCast_Manager
 {
     public partial class RMCManager : Form
     {
-        public string versionNumb = "v0.1";
+        public string versionNumb = $"v{Application.ProductVersion} indev"; //Get the version number of the program.
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
         readonly ImageList tabControlImageList = new(); //Used for the icons on the tabs.
         private bool dontPromptClosureMessage = false; //Used for scheduled broadcasts. If true, the program will close after the broadcast has finished without a warning message.

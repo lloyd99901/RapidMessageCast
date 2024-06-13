@@ -1428,7 +1428,7 @@
             IconsLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             IconsLinkLabel.AutoSize = true;
             IconsLinkLabel.LinkColor = Color.FromArgb(0, 192, 192);
-            IconsLinkLabel.Location = new Point(279, 34);
+            IconsLinkLabel.Location = new Point(278, 8);
             IconsLinkLabel.Name = "IconsLinkLabel";
             IconsLinkLabel.Size = new Size(109, 20);
             IconsLinkLabel.TabIndex = 82;
@@ -1453,7 +1453,7 @@
             pictureBox2.Image = Properties.Resources.RMC_GUI_Icon;
             pictureBox2.Location = new Point(0, 0);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(72, 61);
+            pictureBox2.Size = new Size(72, 60);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 81;
             pictureBox2.TabStop = false;
