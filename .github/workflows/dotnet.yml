@@ -22,7 +22,6 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: .\RapidMessageCast
     - name: Build
       run: dotnet build --no-restore
       working-directory: .\RapidMessageCast
