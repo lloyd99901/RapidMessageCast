@@ -1,4 +1,5 @@
 ﻿using RapidMessageCast_Manager.BroadcastModules;
+using System.ServiceProcess;
 
 //--RapidMessageCast Software--
 //SystemCheckModule.cs - RapidMessageCast Manager
@@ -93,6 +94,19 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 return false;
             }
             return true;
+        }
+
+        public bool AreCriticalServicesRunning()
+        {
+            string[] criticalServices = { "Dnscache", "TermService", "RpcSs" };
+            //Return message as well as log message and the return value
+            if (SystemServiceManager.AreSpecifiedServicesRunning(criticalServices))
+            {
+                _logAction("Info - [CheckSystemState]: All critical services are running.");
+                return true;
+            }
+            _logAction("Error - [CheckSystemState]: One or more critical services are not running. Please ensure that all critical services are running before broadcasting a message. Please check: Dnscache, TermService, RpcSs.");
+            return false;
         }
 
         private static bool IsAdministrator()

@@ -61,6 +61,7 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 return false; //PsExec not present.
             }
         }
+
         public static string WritePsExecCommand(string remoteComputerTarget,
             CheckBox checkboxNonInteractive, CheckBox checkboxCopyExecutable, CheckBox checkboxDontWait,
             CheckBox checkboxNoProfile, CheckBox checkboxForceCopy, CheckBox checkboxInteractive,
@@ -70,7 +71,7 @@ namespace RapidMessageCast_Manager.BroadcastModules
             CheckBox checkboxUserName, TextBox textBoxUserName, CheckBox checkboxVersionCopy,
             CheckBox checkboxWorkingDirectory, TextBox textBoxWorkingDirectory, CheckBox checkboxSecureDesktop,
             CheckBox checkboxPriority, TextBox textBoxPriority, CheckBox checkboxAcceptEula,
-            CheckBox checkboxNoBanner)
+            CheckBox checkboxNoBanner, TextBox textBoxProgramToRun)
         {
             var options = new Dictionary<CheckBox, Func<string>> //Dictionary of options with the checkbox as the key and a lambda function as the value
             {
@@ -95,6 +96,11 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 { checkboxNoBanner, () => "-nobanner" }
             };
 
+            if (!remoteComputerTarget.StartsWith("\\\\"))
+            {
+                remoteComputerTarget = $"\\\\{remoteComputerTarget}";
+            }
+
             var command = new StringBuilder($"Psexec.exe {remoteComputerTarget}");
             
             foreach (var option in options) //Iterate through the options dictionary
@@ -109,10 +115,26 @@ namespace RapidMessageCast_Manager.BroadcastModules
                     }
                 }
             }
+            command.Append($" {textBoxProgramToRun.Text}");
             return command.ToString();
         }
+        //public static void DebugPsExecWriteCommand()
+        //{
+        //    CheckBox CreateCheckBox(bool isChecked)
+        //    {
+        //        return new CheckBox { Checked = isChecked };
+        //    }
+        //    TextBox CreateTextBox(string text)
+        //    {
+        //        return new TextBox { Text = text };
+        //    }
 
-
+        //    if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm)
+        //    {
+        //        MessageBox.Show("Fatal Error - SetStatusOfBroadcastModule has reported a critical error, it is recommended that you restart RapidMessageCast. BroadcastController reported as null.");
+        //        return;
+        //    }
+        //}
         public static void CreatePsExecInstance(string command)
         {
             ProcessStartInfo startInfo = new() //This could be changed to psexec.exe directly, but this is just a test to see if the command works.

@@ -76,7 +76,6 @@ namespace RapidMessageCast_Manager
             AddTextToLogList("Info - [RMC Startup]: RMC GUI is now ready.");
         }
 
-
         #region Functions
         //Start of the functions.
         private void InitalizeToolTipHelp()
@@ -235,6 +234,7 @@ namespace RapidMessageCast_Manager
                 MessagePSExecCheckBox.Enabled = false;
                 PsExecLabel.Text = "PsExec (Disabled)";
             }
+            systemChecker.AreCriticalServicesRunning();
             AddTextToLogList("Info - [CheckSystemState]: System state check completed.");
             //Check for RMC program updates
             AddTextToLogList("Info - [RMCUpdate]: Checking for RMC program updates...");
@@ -355,7 +355,7 @@ namespace RapidMessageCast_Manager
                 MagicPortNumberBox.Value = Convert.ToDecimal(RMSGFileValues[13]);
                 AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AddTextToLogList($"Error - [LoadRMSGFileInProgram]: Attempt to parse RMSG file failed: {ex}");
                 return;
@@ -936,6 +936,22 @@ namespace RapidMessageCast_Manager
         {
             Properties.Settings.Default.ReattemptOnError = ReattemptOnErrorCheckbox.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void OpenRMCLogFolderBtn_Click(object sender, EventArgs e)
+        {
+            //Create a process 
+            Process process = new()
+            {
+                //Set the startInfo to the process.
+                StartInfo = new ProcessStartInfo("RMC Runtime Logs")
+                {
+                    UseShellExecute = true
+                }
+            };
+            //Start the process.
+            process.Start();
+
         }
     }
 }

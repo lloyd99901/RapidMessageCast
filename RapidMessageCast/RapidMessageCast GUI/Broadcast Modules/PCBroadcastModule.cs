@@ -161,7 +161,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
                         {
                             process.Kill();
                         }
-                        return;
                     }
                 }
 

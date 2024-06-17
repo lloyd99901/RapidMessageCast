@@ -131,6 +131,7 @@
             AboutText = new TextBox();
             verNumbLblAboutLbl = new Label();
             LogTab = new TabPage();
+            OpenRMCLogFolderBtn = new Button();
             pictureBox9 = new PictureBox();
             clearLogBtn = new Button();
             SaveRMCRuntimeLogBtn = new Button();
@@ -1090,7 +1091,7 @@
             RenameSelectedRMSGBtn.ForeColor = Color.FromArgb(224, 224, 224);
             RenameSelectedRMSGBtn.Image = Properties.Resources.icons8_rename_24;
             RenameSelectedRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RenameSelectedRMSGBtn.Location = new Point(107, 386);
+            RenameSelectedRMSGBtn.Location = new Point(108, 386);
             RenameSelectedRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             RenameSelectedRMSGBtn.Name = "RenameSelectedRMSGBtn";
             RenameSelectedRMSGBtn.Size = new Size(105, 32);
@@ -1104,7 +1105,7 @@
             // 
             RMSGHelpLink.AutoSize = true;
             RMSGHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
-            RMSGHelpLink.Location = new Point(207, 50);
+            RMSGHelpLink.Location = new Point(208, 50);
             RMSGHelpLink.Name = "RMSGHelpLink";
             RMSGHelpLink.Size = new Size(16, 20);
             RMSGHelpLink.TabIndex = 81;
@@ -1121,7 +1122,7 @@
             LoadSelectedRMSGBtn.ForeColor = Color.White;
             LoadSelectedRMSGBtn.Image = Properties.Resources.icons8_send_letter_24;
             LoadSelectedRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            LoadSelectedRMSGBtn.Location = new Point(4, 350);
+            LoadSelectedRMSGBtn.Location = new Point(5, 350);
             LoadSelectedRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             LoadSelectedRMSGBtn.Name = "LoadSelectedRMSGBtn";
             LoadSelectedRMSGBtn.Size = new Size(295, 32);
@@ -1138,7 +1139,7 @@
             RMSGFileListBox.ForeColor = Color.White;
             RMSGFileListBox.FormattingEnabled = true;
             RMSGFileListBox.IntegralHeight = false;
-            RMSGFileListBox.Location = new Point(4, 72);
+            RMSGFileListBox.Location = new Point(5, 72);
             RMSGFileListBox.Margin = new Padding(3, 2, 3, 2);
             RMSGFileListBox.Name = "RMSGFileListBox";
             RMSGFileListBox.Size = new Size(295, 274);
@@ -1153,7 +1154,7 @@
             DeleteSelectedRMSGFileBtn.ForeColor = Color.FromArgb(224, 224, 224);
             DeleteSelectedRMSGFileBtn.Image = Properties.Resources.icons8_delete_24;
             DeleteSelectedRMSGFileBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            DeleteSelectedRMSGFileBtn.Location = new Point(217, 386);
+            DeleteSelectedRMSGFileBtn.Location = new Point(218, 386);
             DeleteSelectedRMSGFileBtn.Margin = new Padding(3, 2, 3, 2);
             DeleteSelectedRMSGFileBtn.Name = "DeleteSelectedRMSGFileBtn";
             DeleteSelectedRMSGFileBtn.Size = new Size(82, 32);
@@ -1168,7 +1169,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("Arial", 10F);
             label5.ForeColor = Color.White;
-            label5.Location = new Point(30, 51);
+            label5.Location = new Point(31, 51);
             label5.Name = "label5";
             label5.Size = new Size(180, 19);
             label5.TabIndex = 74;
@@ -1183,7 +1184,7 @@
             RefreshRMSGListBtn.ForeColor = Color.FromArgb(224, 224, 224);
             RefreshRMSGListBtn.Image = Properties.Resources.icons8_refresh_24;
             RefreshRMSGListBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RefreshRMSGListBtn.Location = new Point(4, 386);
+            RefreshRMSGListBtn.Location = new Point(5, 386);
             RefreshRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
             RefreshRMSGListBtn.Name = "RefreshRMSGListBtn";
             RefreshRMSGListBtn.Size = new Size(98, 32);
@@ -1201,7 +1202,7 @@
             // pictureBox5
             // 
             pictureBox5.Image = Properties.Resources.icons8_save_24;
-            pictureBox5.Location = new Point(5, 48);
+            pictureBox5.Location = new Point(6, 48);
             pictureBox5.Name = "pictureBox5";
             pictureBox5.Size = new Size(24, 24);
             pictureBox5.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -1490,6 +1491,7 @@
             // LogTab
             // 
             LogTab.BackColor = Color.FromArgb(30, 30, 30);
+            LogTab.Controls.Add(OpenRMCLogFolderBtn);
             LogTab.Controls.Add(pictureBox9);
             LogTab.Controls.Add(clearLogBtn);
             LogTab.Controls.Add(SaveRMCRuntimeLogBtn);
@@ -1500,6 +1502,24 @@
             LogTab.Size = new Size(395, 341);
             LogTab.TabIndex = 4;
             LogTab.Text = "Logs";
+            // 
+            // OpenRMCLogFolderBtn
+            // 
+            OpenRMCLogFolderBtn.BackColor = Color.FromArgb(48, 48, 48);
+            OpenRMCLogFolderBtn.Dock = DockStyle.Right;
+            OpenRMCLogFolderBtn.FlatStyle = FlatStyle.Flat;
+            OpenRMCLogFolderBtn.Font = new Font("Arial", 6.5F);
+            OpenRMCLogFolderBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            OpenRMCLogFolderBtn.Image = Properties.Resources.icons8_external_link_24;
+            OpenRMCLogFolderBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            OpenRMCLogFolderBtn.Location = new Point(191, 0);
+            OpenRMCLogFolderBtn.Margin = new Padding(3, 2, 3, 2);
+            OpenRMCLogFolderBtn.Name = "OpenRMCLogFolderBtn";
+            OpenRMCLogFolderBtn.Size = new Size(38, 32);
+            OpenRMCLogFolderBtn.TabIndex = 106;
+            OpenRMCLogFolderBtn.TextAlign = ContentAlignment.MiddleRight;
+            OpenRMCLogFolderBtn.UseVisualStyleBackColor = false;
+            OpenRMCLogFolderBtn.Click += OpenRMCLogFolderBtn_Click;
             // 
             // pictureBox9
             // 
@@ -1773,5 +1793,6 @@
         private ToolTip toolTipHelp;
         private Label verNumbLblAboutLbl;
         private Label label6;
+        private Button OpenRMCLogFolderBtn;
     }
 }

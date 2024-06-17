@@ -69,7 +69,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     RMCManagerForm.AddTextToLogList($"Error - [BroadcastController] - An error occurred while trying to set the module running status to BroadcastController. The module specified was not found. Module name that was attempted: {module}");
                     break;
             }
-            await RunModuleWatchdog();
+            await RunModuleWatchdog(false);
         }
 
         public static void SetStatusOfBroadcastModule(RMCEnums module, bool running) //I love static methods. not really.
@@ -99,12 +99,16 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        private static async Task RunModuleWatchdog()
+        private static async Task RunModuleWatchdog(bool IsSecondTimeRunningWatchDog)
         {
             if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm)
             {
                 MessageBox.Show("Fatal Error - RunModuleWatchdog has reported a critical error, it is recommended that you restart RapidMessageCast.");
                 return;
+            }
+            if (IsSecondTimeRunningWatchDog)
+            {
+                RMCManagerForm.AddTextToLogList("Warning - [RunModuleWatchdog] - Running watchdog for the second time.");
             }
 
             int timeout = 180000; // 3 minutes in milliseconds
@@ -127,20 +131,43 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 
                 if (cts.Token.IsCancellationRequested)
                 {
-                    RMCManagerForm.AddTextToLogList("Warning - [RunModuleWatchdog] - A hung broadcast module has been detected. Alerting user.");
-                    MessageBox.Show("The broadcast watchdog has detected that a broadcast module is hung.", "RapidMessageCast - Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected.");
+                    if(MessageBox.Show("A broadcast module has hung. This means that a broadcast module has not finished in the expected time frame. This may be due to a network issue or a computer issue. Do you want to release and renew your connection to recover your system if it's hung?", "RapidMessageCast - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        RMCManagerForm.AddTextToLogList("Info - [RunModuleWatchdog] - Releasing and renewing IP address to recover from hung broadcast module.");
+                        SystemServiceManager.ReleaseAndRenewIP();
+                    }
+                    //Run watchdog again to check if the broadcast module is still hung. UNLESS it's the second time running the watchdog.
+                    if (IsSecondTimeRunningWatchDog)
+                    {
+                        RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected, watchdog will bail since this is the second time the watchdog has checked.");
+                        return;
+                    }
+                    await RunModuleWatchdog(true);
                 }
                 else
                 {
                     RMCManagerForm.AddTextToLogList("Info - [RunModuleWatchdog] - All broadcast modules have finished. RMC Program is now idle.");
+                    return;
                 }
             }
             catch (TaskCanceledException)
             {
-                RMCManagerForm.AddTextToLogList("Warning - [RunModuleWatchdog] - A task canceled exception has been been detected. Alerting user.");
-                MessageBox.Show("The broadcast watchdog has thrown a task cancelled exception. This means a broadcast module is hung.", "RapidMessageCast - Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected. [TaskCanceledException]");
+                if (MessageBox.Show("[Exception] A broadcast module has hung. This means that a broadcast module has not finished in the expected time frame. This may be due to a network issue or a computer issue. Do you want to release and renew your connection to recover your system if it's hung?", "RapidMessageCast - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    RMCManagerForm.AddTextToLogList("Info - [RunModuleWatchdog] - Releasing and renewing IP address to recover from hung broadcast module.");
+                    SystemServiceManager.ReleaseAndRenewIP();
+                }
+                //Run watchdog again to check if the broadcast module is still hung. UNLESS it's the second time running the watchdog.
+                if (IsSecondTimeRunningWatchDog)
+                {
+                    RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected, watchdog will bail since this is the second time the watchdog has checked.");
+                    return;
+                }
+                await RunModuleWatchdog(true);
+                return;
             }
         }
     }
-
 }

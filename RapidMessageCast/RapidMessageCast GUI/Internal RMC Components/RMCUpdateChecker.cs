@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-//--RapidMessageCast Software--
+﻿//--RapidMessageCast Software--
 //UpdateChecker.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
