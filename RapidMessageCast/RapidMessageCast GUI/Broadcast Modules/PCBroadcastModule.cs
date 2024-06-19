@@ -156,6 +156,7 @@ namespace RapidMessageCast_Manager.BroadcastModules
                     if (elapsedWaitTime >= maxWaitTime)
                     {
                         RMCManagerForm.AddTextToLogList("Warning - [PCBroadcastModule]: RMC detected a possible hung module. Exiting wait loop and attempting to terminate hung msg processes...");
+                        broadcastHistoryHandler.AddToHistory(RMCEnums.PC, "Warning - RMC detected a possible hung module. Exiting wait loop and attempting to terminate hung msg processes...");
                         // Force terminate all msg processes.
                         foreach (var process in Process.GetProcessesByName("msg"))
                         {
@@ -173,8 +174,7 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 if (isScheduledBroadcast)
                 {
                     //Close the program if it's a scheduled broadcast.
-                    RMCManagerForm.AddTextToLogList("Info - Automated Broadcast: Scheduled broadcast finished. Closing program.");
-                    Application.Exit();
+                    RMCManagerForm.AddTextToLogList("Info - [PCBroadcastModule]: WaitForMSGTasksToFinish - Scheduled broadcast finished.");
                 }
             });
         }

@@ -40,7 +40,8 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 
         public bool AreAnyModulesRunning() => moduleRunning.Values.Any(status => status); //I duplicated this bool because it's the simplest way to get around an issue where RMC manager couldn't access this.
         public static bool AreAnyModulesRunningPrivate() => moduleRunning.Values.Any(status => status);
-
+        
+        //This may be a bad idea, each module will have multiple variables, so this method will have alot of parameters if all modules are added. May be a better idea to create a void for each module.
         public async Task StartBroadcastModule(RMCEnums module, string message = "", string computerList = "", int totalSeconds = 0, bool emergencyMode = false, bool reattemptOnError = false, bool dontSaveBroadcastHistory = false, bool isScheduledBroadcast = false)
         {
             if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm)

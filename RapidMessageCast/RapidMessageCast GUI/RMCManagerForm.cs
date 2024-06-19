@@ -65,14 +65,18 @@ namespace RapidMessageCast_Manager
         {
             AddTextToLogList($"Info - [RMC Startup]: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
             CheckCommandLineArguments();
-            LoadGlobalSettings();
-            CheckSystemState();
-            AddIconsToTabControls();
-            HandleDefaultRMSGFile();
-            UpdateUIWithVersionInformation();
-            RefreshRMSGFileList();
-            InitalizeToolTipHelp();
-            RMC_IO_Manager.AttemptToCreateRMCDirectories();
+            //This if statement is to prevent the program from loading fully when the program is started with a command line argument (This will prevent slowdowns when doing automatic broadcasting).
+            if (!dontPromptClosureMessage) 
+            {
+                LoadGlobalSettings();
+                CheckSystemState();
+                AddIconsToTabControls();
+                HandleDefaultRMSGFile();
+                UpdateUIWithVersionInformation();
+                RefreshRMSGFileList();
+                InitalizeToolTipHelp();
+                RMC_IO_Manager.AttemptToCreateRMCDirectories();
+            }
             AddTextToLogList("Info - [RMC Startup]: RMC GUI is now ready.");
         }
 
@@ -109,62 +113,64 @@ namespace RapidMessageCast_Manager
             var args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
-                AddTextToLogList("Info - [RMC Manager]: Startup command line arguments detected. Checking for RMSG file.");
+                AddTextToLogList("Info - [CheckCommandLineArguments]: Startup command line arguments detected. Checking for RMSG file.");
+                AddTextToLogList($"Info - [CheckCommandLineArguments]: Command line arguments: {string.Join(" ", args)}");
 
-                if (args.Length == 2)
-                {
-                    AddTextToLogList("Info - [RMC Manager]: Loading RMSG file from command line argument.");
-                    LoadRMSGFileInProgram(args[1]);
-                }
-                else if (args.Length == 3 && args[1].Equals("schedule", StringComparison.CurrentCultureIgnoreCase)) //Arugment 1 is schedule, argument 2 is the RMSG file.
-                {
-                    AddTextToLogList("Info - [RMC Manager]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
-                    dontPromptClosureMessage = true;
-                    RunScheduledBroastcast(args[2]);
-                }
-                else if (args.Length >= 2 && args[1].Equals("panic", StringComparison.CurrentCultureIgnoreCase))
+                if (args.Length >= 2 && args[1].Equals("panic", StringComparison.CurrentCultureIgnoreCase))
                 {
                     try
                     {
                         dontPromptClosureMessage = true;
                         //Panic button that activates broadcasting immediately with a predefined message.
-                        AddTextToLogList("Info - [RMC Manager]: [PANIC!] Startup detected. Starting emergency alert broadcast...");
+                        AddTextToLogList("Info - [CheckCommandLineArguments]: [PANIC!] Panic Startup detected. Loading RMSG file and starting emergency alert broadcast...");
                         //Check if args 2 is vaild or even exists. If it doesn't, use the default panic message.
                         if (args.Length > 2)
                         {
                             LoadRMSGFileInProgram(args[2]);
-                            AddTextToLogList("Info - [RMC Manager]: PANIC broadcast - PANIC message loaded.");
                         }
                         else
                         {
-                            AddTextToLogList("Error - [RMC Manager]: PANIC broadcast - PANIC message not loaded. Attempting to load PANIC.rmsg...");
+                            AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Attempting to load PANIC.rmsg...");
                             LoadRMSGFileInProgram($"{Application.StartupPath}\\RMSGFiles\\PANIC.rmsg");
                         }
                         //Check if the message loaded, if it didn't then as a failsafe, set the message to a predefined message.
                         if (MessageTxt.Text == "")
                         {
-                            AddTextToLogList("Error - [RMC Manager]: PANIC broadcast - PANIC message not loaded. Using predefined message.");
+                            AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Using predefined message.");
                             MessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
                         }
                         //Check if the PC list is empty, if it is, then close the program.
                         if (ComputerSelectList.Text == "")
                         {
-                            AddTextToLogList("Critical - [RMC Manager]: PANIC broadcast - PC list is empty. Closing program.");
+                            AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PC list is empty. Closing program.");
+                            MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             Application.Exit();
                         }
-                        AddTextToLogList("Info - [RMC Manager]: PANIC broadcast - Starting broadcast.");
+                        AddTextToLogList("Info - [CheckCommandLineArguments]: PANIC broadcast - Starting broadcast.");
                         StartBroadcastBtn_Click(this, EventArgs.Empty);
                         CloseAfterAllModulesAreFinished();
                     }
                     catch (Exception ex)
                     {
-                        AddTextToLogList($"Critical - [PANIC]: Error! Panic button failed to broadcast: {ex}");
+                        MessageBox.Show("Critical error! Panic button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        AddTextToLogList($"Critical - [CheckCommandLineArguments]: [PANIC Error!] Panic button failed to broadcast: {ex}");
                     }
+                }
+                else if (args.Length == 2)
+                {
+                    AddTextToLogList("Info - [CheckCommandLineArguments]: Loading RMSG file from command line argument.");
+                    LoadRMSGFileInProgram(args[1]);
+                }
+                else if (args.Length == 3 && args[1].Equals("schedule", StringComparison.CurrentCultureIgnoreCase)) //Arugment 1 is schedule, argument 2 is the RMSG file.
+                {
+                    AddTextToLogList("Info - [CheckCommandLineArguments]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
+                    dontPromptClosureMessage = true;
+                    RunScheduledBroastcast(args[2]);
                 }
             }
         }
 
-        private void CloseAfterAllModulesAreFinished()
+        private async void CloseAfterAllModulesAreFinished()
         {
             //Check if all modules are finished. If they are, close the program.
             //use the broadcastController to check if all modules are finished via the AreAnyModulesRunning void func
@@ -172,7 +178,7 @@ namespace RapidMessageCast_Manager
             //if they are finished, then close the program. PS. This is the simplest code in this project. :)
             while (broadcastController.AreAnyModulesRunning())
             {
-                Thread.Sleep(5000); //broadcastController will handle hung modules so we don't need to worry about that in this function.
+                await Task.Delay(5000); //broadcastController will handle hung modules so we don't need to worry about that in this function.
             }
             dontPromptClosureMessage = true; //Setting this true will prevent the program from asking the user if they want to close.
             Application.Exit();
@@ -184,7 +190,7 @@ namespace RapidMessageCast_Manager
             if (File.Exists(defaultRMSGPath))
             {
                 LoadRMSGFileInProgram(defaultRMSGPath);
-                AddTextToLogList("Info - [RMC Manager]: Default.rmsg file loaded.");
+                AddTextToLogList("Info - [HandleDefaultRMSGFile]: Default.rmsg file loaded.");
             }
         }
 
@@ -270,7 +276,7 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [RMC GUI]: Failed to add images to the form tabcontrol: {ex}");
+                AddTextToLogList($"Error - [AddIconsToTabControls]: Failed to add images to the GUI form tabcontrol: {ex}");
             }
         }
 
@@ -301,7 +307,7 @@ namespace RapidMessageCast_Manager
                 try
                 {
                     //This exception has to be caught, otherwise the program will crash if an error occurs in the loglist.
-                    Console.WriteLine($"Critical - [LogWriter] Error! An exception occurred when adding an item to the loglist: {ex}");
+                    Console.WriteLine($"Critical - [AddTextToLogList] Error! An exception occurred when adding an item to the loglist: {ex}");
                 }
                 catch
                 {
@@ -333,7 +339,7 @@ namespace RapidMessageCast_Manager
 
             if (!string.IsNullOrEmpty(RMSGFileValues[0]))
             {
-                MessageBox.Show($"Error loading message: {RMSGFileValues[0]}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show($"Error loading message: {RMSGFileValues[0]}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 AddTextToLogList($"Error - [LoadRMSGFileInProgram]: Loading message returned an error: {RMSGFileValues[0]}");
                 return;
             }
@@ -690,47 +696,52 @@ namespace RapidMessageCast_Manager
 
         private void RMCManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            AddTextToLogList("Info - [RMC Manager]: Program close has been triggered. Attempting to save log file and then attempt closure.");
-            //Attempt Save the rmc runtime logfile by clicking the save log button.
-            SaveRMCRuntimeLogBtn_Click(sender, e);
-            //If isScheduledBroadcast is true, close the program without asking.
-            if (dontPromptClosureMessage)
+            try
             {
-                if (!broadcastController.AreAnyModulesRunning())
+                AddTextToLogList($"Info - [RMC Manager]: Program closure has been triggered. (Closure Type: {dontPromptClosureMessage}).");
+                // If isScheduledBroadcast is true, close the program without asking.
+                if (dontPromptClosureMessage)
                 {
-                    AddTextToLogList("Info - [RMC Manager]: Scheduled programming has completed. closing...");
-                    return;
+                    if (!broadcastController.AreAnyModulesRunning())
+                    {
+                        AddTextToLogList("Info - [RMC Manager]: Scheduled programming has completed. closing...");
+                        return;
+                    }
+                    else
+                    {
+                        AddTextToLogList("Warning - [RMC Manager]: Scheduled programming is still running. Closing the program will stop the broadcast. Rejecting close request and checking again in 10 seconds...");
+                        e.Cancel = true;
+                        //retry the close after 10 seconds.
+                        Task.Delay(10000).ContinueWith(_ => CloseAfterAllModulesAreFinished());
+                        return;
+                    }
                 }
-                else
+                if (broadcastController.AreAnyModulesRunning()) // User might have clicked close on accident since there is a broadcast in progress. Confirm here.
                 {
-                    AddTextToLogList("Warning - [RMC Manager]: Scheduled programming is still running. Closing the program will stop the broadcast. Rejecting close request.");
-                    e.Cancel = true;
-                    return;
+                    AddTextToLogList("Warning - [RMC Manager]: Broadcast is still running. Closing the program will stop the broadcast. Confirming close request.");
+                    DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? The broadcast is still running. Closing the program will stop the broadcast.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                // Ask the user if they want to close the program if they press the X button. However, if the MessageTxt and pclist is empty, close the program without asking.
+                if (!(MessageTxt.Text == "" && ComputerSelectList.Text == ""))
+                {
+                    DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? Any unsaved data will be lost.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                 }
             }
-            if (broadcastController.AreAnyModulesRunning()) //User might have clicked close on accident since there is a broadcast in progress. Confirm here.
+            finally
             {
-                AddTextToLogList("Warning - [RMC Manager]: Broadcast is still running. Closing the program will stop the broadcast. Confirming close request.");
-                DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? The broadcast is still running. Closing the program will stop the broadcast.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.No)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            //Ask the user if they want to close the program if they press the X button. However, if the MessageTxt and pclist is empty, close the program without asking.
-            if (MessageTxt.Text == "" && ComputerSelectList.Text == "")
-            {
-                return;
-            }
-            else
-            {
-                DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? Any unsaved data will be lost.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.No)
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                // Attempt Save the rmc runtime logfile by clicking the save log button.
+                AddTextToLogList("Info - [RMC Manager]: Saving log file and closing... [END OF LOG]");
+                SaveRMCRuntimeLogBtn_Click(sender, e);
             }
         }
 
