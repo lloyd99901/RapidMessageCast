@@ -7,15 +7,10 @@
 [![GitHub issues](https://img.shields.io/github/issues/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/issues)
 [![GitHub stars](https://img.shields.io/github/stars/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/stargazers)
 [![GitHub license](https://img.shields.io/github/license/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/blob/master/LICENSE)
-[![CodeFactor](https://www.codefactor.io/repository/github/lloyd99901/rapidmessagecast/badge)](https://www.codefactor.io/repository/github/lloyd99901/rapidmessagecast)
 
- > PC Messager, Email, Remote Program Execution (PSExec), and Wake-On-LAN Support
+> PC Messager, Email, Remote Program Execution (PSExec), and Wake-On-LAN Support
 
 RapidMessageCast is a messaging tool designed to help with rapid communication to computers across a network. This program enables users to send messages to multiple computers simultaneously, ensuring swift dissemination of critical information, like in emergency scenarios.
-
-> [!NOTE]
-> 
-> This program is actively in development. Expect bugs, untidy code, and missing features since this is in indev phase.
 
 ## Features:
 > - Message multiple PC's fast (msg.exe)
@@ -32,47 +27,40 @@ RapidMessageCast is a messaging tool designed to help with rapid communication t
 
 > [!IMPORTANT]
 >
-> This program is designed to facilitate messaging in both regular and emergency situations. However, it is provided "as is" without any guarantees or warranties of any kind, either express or implied. Under the MIT License.
+> This program is provided "as is" under the MIT License, without any guarantees or warranties, express or implied.
 >
-> By using this program, you acknowledge that the developers and distributors are not responsible for any failures, delays, errors, or any other issues that may arise from the use of this program. This includes, but is not limited to, situations where messages are not delivered, are delayed, or are incorrect. If there are any errors or problems, the users are encouraged to report them to the GitHub Issues page of this project for support.
-
+> By using this program, you acknowledge that the developers and distributors are not responsible for any failures, delays, errors, or other issues that may arise, including undelivered, delayed, or incorrect messages. Users should report any errors or problems on the GitHub Issues page of this project for support.
 
 > [!CAUTION]
-> For critical emergency communication, always have a backup method in place. Take all necessary precautions and use additional resources as needed. Before relying on this program for emergency communication, users are strongly encouraged to conduct a thorough audit to ensure that the tool meets their specific needs and requirements. This audit should include, but is not limited to, testing the program in various scenarios, verifying compatibility with existing systems, and assessing the program's reliability and performance under different conditions.
+> For critical emergency communication, always have a backup method in place. Use additional resources as needed and conduct a thorough audit to ensure this tool meets your specific needs. This audit should include testing the program in various scenarios, verifying compatibility with existing systems, and assessing its reliability and performance under different conditions.
 >
-> By conducting an audit, users can identify any potential limitations or issues that may affect the program's effectiveness in emergency situations. It is the user's responsibility to verify that the program is appropriate for their intended use and to implement any necessary safeguards or alternative communication methods.
+> Conducting an audit helps identify any potential limitations or issues affecting the program's effectiveness in emergencies. It is the user's responsibility to verify the program's suitability and implement necessary safeguards or alternative communication methods.
 
 
 ## Why use RMC?
 
 ### Speed.
-RapidMessageCast is great at sending messages to multiple computers. By leveraging the native msg.exe utility in Windows, it bypasses the need for complex setups or installations of remote access software, allowing for immediate message broadcasting. This also means that computers that have non-responding remote access software still get the message.
-RapidMessageCast offers an interface that allows the user to be quick with their broadcast. Users can quickly initiate message broadcasts with minimal effort, making it an ideal choice for urgent communication needs.
-It also prioritizes functionality over frills, omitting flashy startup animations. When sending a message is your priority, it's primed for immediate action without delay.
+RapidMessageCast efficiently sends messages to multiple computers using the native Windows utility msg.exe. This avoids the need for complex setups and ensures messages are delivered even if remote access software is unresponsive. Its simple interface allows quick message broadcasts, making it ideal for urgent communications. The focus is on functionality, with no startup animations.
 
 ### Automation.
-Automation tools or scheduling frameworks can leverage RapidMessageCast to schedule message broadcasts at predefined intervals or times. This capability is particularly useful for sending routine notifications, reminders, or updates to users or system administrators without manual intervention.
-RapidMessageCast can be integrated with monitoring and alerting systems to automate the messaging of alerts and notifications. When monitoring systems detect anomalies, performance issues, or security breaches, they can automatically trigger RapidMessageCast to notify relevant personnel or teams.
+RapidMessageCast can be used with automation tools to schedule message broadcasts at specific times, useful for routine notifications and reminders. It integrates with monitoring systems to automatically send alerts and notifications when issues are detected.
 
 ### Free forever and open-source
-This program is, and will always remain, free and open source. If you encounter any issues and have the expertise to resolve them, you are encouraged to modify the code as needed. Contributions to the codebase are welcome, and you can share improvements with the community by submitting pull requests or patches. This ensures continuous enhancement and collaboration, benefiting all users.
+This program is free and open-source. Users can modify the code to fix issues or improve functionality. Contributions are welcome via pull requests or patches, ensuring continuous improvement and collaboration.
 
-### Two ways of using RMC: GUI and CLI
+### Full Control
 RapidMessageCast GUI and CLI are two ways of broadcasting your message.
 
 The GUI gives them the full control over the features of RMC, the user can save their RMSG file and then can transfer it to the CLI.
 
 ![MainWindow](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/RMCManager.png)
 
-Once RapidMessageCast CLI is run, it will then read the RMSG and:
-- It will immediately begin sending messages to all of the saved computer names. 
-- If no arguments are presented to point to a Message file, it will choose the file default.msg. This feature caters to automation programs that lack the functionality to add arguments, ensuring effortless integration of RapidMessageCast.
-- Once done it will close out automatically.
+The CLI will then automatically read the RMSG file and begin broadcasting, this is great for automation/security software that can run actions based on rules (e.g. If a certain door is forced open, run RapidMessageCast CLI and run the AlertSecurityStaff.RMSG).
   
 ![Dispatcher](https://raw.githubusercontent.com/lloyd99901/RapidMessageCast/master/static/images/ExampleRMCDispatcher.png)
 
 ### Platform Compatibility.
-RapidMessageCast is designed specifically for Windows operating systems, ensuring seamless integration and compatibility with existing infrastructure. It provides a reliable solution for organizations that predominantly use Windows environments.
+RapidMessageCast is designed specifically for Windows operating systems, ensuring seamless integration with existing infrastructure. It provides a reliable solution for organizations using Windows environments.
 
 ## Requirements
 > [!NOTE]
@@ -94,7 +82,7 @@ RapidMessageCast is designed specifically for Windows operating systems, ensurin
 - [ ] PsExec Module
 - [ ] Code Refactor
 - [ ] Failsafe Checks (Ensure that the program can resume after errors to ensure the best possible chance of messaging)
-- [ ] Filter PC's via a Regex Form
+- [x] Filter PC's via a Regex Form
 - [ ] Redo the Broadcast History Form so it's more user friendly (add icons like x or tick)
 - [ ] Test WOL class
 - [ ] Create CLI program with the new classes
