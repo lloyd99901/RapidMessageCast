@@ -66,7 +66,7 @@ namespace RapidMessageCast_Manager
             AddTextToLogList($"Info - [RMC Startup]: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
             CheckCommandLineArguments();
             //This if statement is to prevent the program from loading fully when the program is started with a command line argument (This will prevent slowdowns when doing automatic broadcasting).
-            if (!dontPromptClosureMessage) 
+            if (!dontPromptClosureMessage)
             {
                 LoadGlobalSettings();
                 CheckSystemState();
@@ -86,7 +86,7 @@ namespace RapidMessageCast_Manager
         {
             try
             {
-                Control[] checkboxes = [FastBroadcastModeCheckbox, MessagePCcheckBox, MessageEmailcheckBox, MessagePSExecCheckBox, ReattemptOnErrorCheckbox, DontSaveBroadcastHistoryCheckbox];
+                Control[] checkboxes = [FastBroadcastModeCheckbox, MessagePCcheckBox, MessageEmailcheckBox, PSExecModuleEnableCheckBox, ReattemptOnErrorCheckbox, DontSaveBroadcastHistoryCheckbox];
                 Control[] buttons = [StartBroadcastBtn, clearLogBtn, SaveRMCRuntimeLogBtn, SaveRMCFileBTN, QuickSaveRMSGBtn, RefreshRMSGListBtn, DeleteSelectedRMSGFileBtn, RenameSelectedRMSGBtn, LoadSelectedRMSGBtn, SavePCListTxtBtn, SaveMessageTxtBtn, OpenRMCFileBtn, ActiveDirectorySelectBtn, MessageOpenTxtBtn, ComputerListLoadFromFileBtn];
                 string[] checkboxToolTips = ["Enable fast broadcasting mode. This will send the message without checking if it was sent.", "Enable the PC message module.", "Enable the Email message module.", "Enable the PSExec message module.", "Reattempt to send the message if an error occurs.", "Don't save the broadcast history after RMC completes a broadcast."];
                 string[] buttonToolTips = ["Start the broadcast.", "Clear the log list.", "Save the log list to a file.", "Save the RMC file.", "Quick save the RMC file.", "Refresh the RMC file list.", "Delete the selected RMC file.", "Rename the selected RMC file.", "Load the selected RMC file.", "Save the PC list to a file.", "Save the message text to a file.", "Open a RMC file.", "Select computers from Active Directory.", "Open a message text file.", "Open a computer list file."];
@@ -134,13 +134,13 @@ namespace RapidMessageCast_Manager
                             LoadRMSGFileInProgram($"{Application.StartupPath}\\RMSGFiles\\PANIC.rmsg");
                         }
                         //Check if the message loaded, if it didn't then as a failsafe, set the message to a predefined message.
-                        if (MessageTxt.Text == "")
+                        if (PCBroadcastMessageTxt.Text == "")
                         {
                             AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Using predefined message.");
-                            MessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
+                            PCBroadcastMessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
                         }
                         //Check if the PC list is empty, if it is, then close the program.
-                        if (ComputerSelectList.Text == "")
+                        if (MessagePCList.Text == "")
                         {
                             AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PC list is empty. Closing program.");
                             MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -205,18 +205,18 @@ namespace RapidMessageCast_Manager
         {
             LoadRMSGFileInProgram(RMSGFile); //Load the RMSG file into the program.
             //Check if modules are selected. If not, close the program.
-            if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !MessagePSExecCheckBox.Checked)
+            if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !PSExecModuleEnableCheckBox.Checked)
             {
                 Application.Exit();
             }
             //Check if message or pclist is empty. If it is, close the program.
-            if (MessageTxt.Text == "" || ComputerSelectList.Text == "")
+            if (PCBroadcastMessageTxt.Text == "" || MessagePCList.Text == "")
             {
                 Application.Exit();
             }
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             await
-            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, ComputerSelectList.Text, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
+            broadcastController.StartBroadcastModule(RMCEnums.PC, PCBroadcastMessageTxt.Text, MessagePCList.Text, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
             CloseAfterAllModulesAreFinished();
         }
 
@@ -237,7 +237,7 @@ namespace RapidMessageCast_Manager
             if (!systemChecker.CheckPSExecPresence())
             {
                 //Disable checkbox and set text to PSExec (Disabled)
-                MessagePSExecCheckBox.Enabled = false;
+                PSExecModuleEnableCheckBox.Enabled = false;
                 PsExecLabel.Text = "PsExec (Disabled)";
             }
             systemChecker.AreCriticalServicesRunning();
@@ -322,9 +322,9 @@ namespace RapidMessageCast_Manager
             FastBroadcastModeCheckbox.Checked = Properties.Settings.Default.EmergencyMode;
             DontSaveBroadcastHistoryCheckbox.Checked = Properties.Settings.Default.DontSaveBroadcastHistory;
             MessagePCcheckBox.Checked = Properties.Settings.Default.MessagePCEnabled;
-            MessagePSExecCheckBox.Checked = Properties.Settings.Default.MessagePSExecEnabled;
+            PSExecModuleEnableCheckBox.Checked = Properties.Settings.Default.MessagePSExecEnabled;
             MessageEmailcheckBox.Checked = Properties.Settings.Default.MessageEmailEnabled;
-            MagicPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
+            WOLPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
             ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
             AddTextToLogList($"Info - [LoadGlobalSettings]: {Properties.Settings.Default.Properties.Count} Program settings loaded.");
         }
@@ -346,19 +346,19 @@ namespace RapidMessageCast_Manager
             AddTextToLogList($"Info - [LoadRMSGFileInProgram]: Parsing RMSG file: {Path.GetFileName(filePath)}");
             try
             {
-                MessageTxt.Text = RMSGFileValues[1];
-                ComputerSelectList.Text = RMSGFileValues[2];
+                PCBroadcastMessageTxt.Text = RMSGFileValues[1];
+                MessagePCList.Text = RMSGFileValues[2];
                 expiryHourTime.Value = Convert.ToDecimal(RMSGFileValues[3]);
                 expiryMinutesTime.Value = Convert.ToDecimal(RMSGFileValues[4]);
                 expirySecondsTime.Value = Convert.ToDecimal(RMSGFileValues[5]);
                 SetCheckboxState(FastBroadcastModeCheckbox, RMSGFileValues[6]);
                 SetCheckboxState(MessagePCcheckBox, RMSGFileValues[7]);
                 SetCheckboxState(MessageEmailcheckBox, RMSGFileValues[8]);
-                SetCheckboxState(MessagePSExecCheckBox, RMSGFileValues[9]);
+                SetCheckboxState(PSExecModuleEnableCheckBox, RMSGFileValues[9]);
                 SetCheckboxState(ReattemptOnErrorCheckbox, RMSGFileValues[10]);
                 SetCheckboxState(DontSaveBroadcastHistoryCheckbox, RMSGFileValues[11]);
                 WOLTextbox.Text = RMSGFileValues[12];
-                MagicPortNumberBox.Value = Convert.ToDecimal(RMSGFileValues[13]);
+                WOLPortNumberBox.Value = Convert.ToDecimal(RMSGFileValues[13]);
                 AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
@@ -406,7 +406,7 @@ namespace RapidMessageCast_Manager
                 };
                 foreach (SearchResult resEnt in mySearcher.FindAll())
                 {
-                    ComputerSelectList.Text += resEnt.GetDirectoryEntry().Name + "\r\n";
+                    MessagePCList.Text += resEnt.GetDirectoryEntry().Name + "\r\n";
                 }
                 AddTextToLogList("Info - [Active Directory] Computers from Active Directory added to the list.");
             }
@@ -419,7 +419,7 @@ namespace RapidMessageCast_Manager
 
         private void MessageTxt_TextChanged(object sender, EventArgs e)
         {
-            int remainingCharacters = 255 - MessageTxt.TextLength;
+            int remainingCharacters = 255 - PCBroadcastMessageTxt.TextLength;
             if (remainingCharacters >= 0)
             {
                 MessageLimitLbl.Text = $"Length Remaining: {remainingCharacters}";
@@ -428,7 +428,7 @@ namespace RapidMessageCast_Manager
             else
             {
                 // Prevent entering more characters than the limit
-                MessageTxt.Text = MessageTxt.Text[..255];
+                PCBroadcastMessageTxt.Text = PCBroadcastMessageTxt.Text[..255];
             }
             if (remainingCharacters <= 30)
             {
@@ -471,19 +471,19 @@ namespace RapidMessageCast_Manager
             {
                 string fileName = saveFileDialog.FileName;
                 AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
-                RMC_IO_Manager.SaveRMSGFile(fileName, MessageTxt.Text, ComputerSelectList.Text, WOLTextbox.Text, (int)MagicPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+                RMC_IO_Manager.SaveRMSGFile(fileName, PCBroadcastMessageTxt.Text, MessagePCList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
                 RefreshRMSGFileList();
             }
         }
 
         private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(MessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", InternalRegexFilters.FilterInvalidMessage);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", InternalRegexFilters.FilterInvalidMessage);
         }
 
         private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(ComputerSelectList, "OpenPCList", "OpenPCList", InternalRegexFilters.FilterInvalidPCNames);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(MessagePCList, "OpenPCList", "OpenPCList", InternalRegexFilters.FilterInvalidPCNames);
         }
 
         private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
@@ -498,12 +498,12 @@ namespace RapidMessageCast_Manager
 
         private void SaveComputerListBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(ComputerSelectList, "SavePCList", "SavePCList");
+            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(MessagePCList, "SavePCList", "SavePCList");
         }
 
         private void SaveMessageBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(MessageTxt, "SaveMessageBtn", "SaveMessageBtn");
+            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastMessageTxt, "SaveMessageBtn", "SaveMessageBtn");
         }
 
         private void ComputerSelectList_KeyPress(object sender, KeyPressEventArgs e)
@@ -528,7 +528,7 @@ namespace RapidMessageCast_Manager
 
             bool isMessagePCChecked = MessagePCcheckBox.Checked;
             bool isMessageEmailChecked = MessageEmailcheckBox.Checked;
-            bool isMessagePSExecChecked = MessagePSExecCheckBox.Checked;
+            bool isMessagePSExecChecked = PSExecModuleEnableCheckBox.Checked;
 
             if (!isMessagePCChecked && !isMessageEmailChecked && !isMessagePSExecChecked)
             {
@@ -541,8 +541,8 @@ namespace RapidMessageCast_Manager
             {
                 AddTextToLogList("Info - [InitBroadcast]: PC message module is selected. Notifying the broadcast controller to start the PC broadcast.");
 
-                string messageText = MessageTxt.Text;
-                string computerSelectListText = ComputerSelectList.Text;
+                string messageText = PCBroadcastMessageTxt.Text;
+                string computerSelectListText = MessagePCList.Text;
 
                 if (string.IsNullOrWhiteSpace(messageText) || string.IsNullOrWhiteSpace(computerSelectListText))
                 {
@@ -596,7 +596,7 @@ namespace RapidMessageCast_Manager
 
             AddTextToLogList($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
-            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), MessageTxt.Text, ComputerSelectList.Text, WOLTextbox.Text, (int)MagicPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, MessagePSExecCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), PCBroadcastMessageTxt.Text, MessagePCList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
             RefreshRMSGFileList();
         }
 
@@ -727,7 +727,7 @@ namespace RapidMessageCast_Manager
                     }
                 }
                 // Ask the user if they want to close the program if they press the X button. However, if the MessageTxt and pclist is empty, close the program without asking.
-                if (!(MessageTxt.Text == "" && ComputerSelectList.Text == ""))
+                if (!(PCBroadcastMessageTxt.Text == "" && MessagePCList.Text == ""))
                 {
                     DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? Any unsaved data will be lost.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.No)
@@ -748,7 +748,7 @@ namespace RapidMessageCast_Manager
         private void ComputerSelectList_TextChanged(object sender, EventArgs e)
         {
             //For each line, count it on the PCCountLBL.
-            int pcCount = ComputerSelectList.Lines.Length;
+            int pcCount = MessagePCList.Lines.Length;
             PCCountLbl.Text = $"PC Count: {pcCount}";
         }
 
@@ -813,7 +813,7 @@ namespace RapidMessageCast_Manager
         private void MessagePSExecCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             //Save the checkbox state to the settings file.
-            Properties.Settings.Default.MessagePSExecEnabled = MessagePSExecCheckBox.Checked;
+            Properties.Settings.Default.MessagePSExecEnabled = PSExecModuleEnableCheckBox.Checked;
             Properties.Settings.Default.Save();
         }
 
@@ -866,22 +866,22 @@ namespace RapidMessageCast_Manager
         private void AddThisPCToTheListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Get the current pc hostname and add it to the pclist.
-            ComputerSelectList.Text += Environment.MachineName + "\r\n";
+            MessagePCList.Text += Environment.MachineName + "\r\n";
         }
 
         private void ClearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ComputerSelectList.Clear();
+            MessagePCList.Clear();
         }
 
         private void SelectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ComputerSelectList.SelectAll();
+            MessagePCList.SelectAll();
         }
 
         private void UndoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ComputerSelectList.Undo();
+            MessagePCList.Undo();
         }
 
         private void RMCManager_Shown(object sender, EventArgs e)
@@ -896,7 +896,7 @@ namespace RapidMessageCast_Manager
         private async void TestBroadcastMessageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Broadcast the message to just the computer that the program is running on.
-            if (MessageTxt.Text == "" || ComputerSelectList.Text == "")
+            if (PCBroadcastMessageTxt.Text == "" || MessagePCList.Text == "")
             {
                 MessageBox.Show("Message or PC list is empty. Please fill in the message and PC list before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 AddTextToLogList("Error - [InitBroadcast]: Message or PC list is empty. Broadcast halted.");
@@ -905,7 +905,7 @@ namespace RapidMessageCast_Manager
             int totalSeconds = ((int)expiryHourTime.Value * 3600) + ((int)expiryMinutesTime.Value * 60) + (int)expirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             //pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, Environment.MachineName, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
             await
-            broadcastController.StartBroadcastModule(RMCEnums.PC, MessageTxt.Text, Environment.MachineName, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
+            broadcastController.StartBroadcastModule(RMCEnums.PC, PCBroadcastMessageTxt.Text, Environment.MachineName, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
         }
 
         private async void SendWOLPacketBtn_Click(object sender, EventArgs e)
@@ -929,13 +929,13 @@ namespace RapidMessageCast_Manager
                 }
                 AddTextToLogList($"Info - [SendWOLPacket]: Sending WOL packet to MAC address: {macAddress}");
                 await
-                WakeOnLANModule.WakeOnLan(macAddress, (int)MagicPortNumberBox.Value);
+                WakeOnLANModule.WakeOnLan(macAddress, (int)WOLPortNumberBox.Value);
             }
         }
 
         private void MagicPortNumberBox_ValueChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.MagicPortNumber = MagicPortNumberBox.Value;
+            Properties.Settings.Default.MagicPortNumber = WOLPortNumberBox.Value;
             Properties.Settings.Default.Save();
         }
         private void ReattemptonErrorHelpLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -963,6 +963,17 @@ namespace RapidMessageCast_Manager
             //Start the process.
             process.Start();
 
+        }
+
+        private void FilterPCListBtn_Click(object sender, EventArgs e)
+        {
+            //Get the text from the PC list and send it to the filter form.
+            FilterPCListForm filterForm = new(MessagePCList.Text);
+            //Then after the form closes, get the text from the form and set it to the PC list.
+            if (filterForm.ShowDialog() == DialogResult.OK)
+            {
+                MessagePCList.Text = filterForm.MessagePCList.Text;
+            }
         }
     }
 }
