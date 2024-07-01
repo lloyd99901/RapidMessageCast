@@ -2,16 +2,20 @@
 
 ## Supported Versions
 
-Due to the fact that RMC uses other tools (msg.exe and psexec.exe) to message computers, security updates for the RMC program itself will be rare.
-Right now, this project is in development with no released binary yet, but updates (including security updates) will be applied to the following versions:
+Updates (including security updates) will only be applied to the latest version available in the Release tab. Older versions will not receive any updates or support.
+
+Due to the fact that RMC uses other tools (msg.exe and psexec.exe) to message computers, security fixes for the RMC program itself will be rare.
 
 | Version    | Supported          |
 | -------    | ------------------ |
-| v0.1 indev | :white_check_mark: | 
+| v0.0.1 indev | :white_check_mark: | 
+
+Custom builds of RMC will not have support of any kind unless code that is unmodified and used in its intended purpose produces a problem.
 
 ## Reporting a Vulnerability
 
 If you have found a vulnerability in this software, at this time please raise it through GitHub's issues page.
+
 Once reported, the fix will be implemented to the indev build and will be released promptly.
 
 Please include as much of the information listed below as you can to help us better understand and resolve the issue:
@@ -25,3 +29,7 @@ Please include as much of the information listed below as you can to help us bet
     Impact of the issue, including how an attacker might exploit the issue
 
 This information will help us triage your report more quickly.
+
+## Security Advisory
+
+Security advisories will be published on our [GitHub Security Advisories](https://github.com/lloyd99901/RapidMessageCast/security/advisories) page once a vulnerability is fixed.
