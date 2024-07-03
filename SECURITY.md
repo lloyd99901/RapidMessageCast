@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Updates (including security updates) will only be applied to the latest version available in the Release tab. Older versions will not receive any updates or support.
+Updates (including security updates) will only be applied to the latest version available in the Release tab. Older versions will not receive any updates.
 
 Due to the fact that RMC uses other tools (msg.exe and psexec.exe) to message computers, security fixes for the RMC program itself will be rare.
 
@@ -14,7 +14,7 @@ Custom builds of RMC will not have support of any kind unless code that is unmod
 
 ## Reporting a Vulnerability
 
-If you have found a vulnerability in this software, at this time please raise it through GitHub's issues page.
+If you have found a vulnerability in this software, please raise it via emailing thecontrolgroup497@gmail.com
 
 Once reported, the fix will be implemented to the indev build and will be released promptly.
 
