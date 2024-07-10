@@ -242,6 +242,9 @@ namespace RapidMessageCast_Manager
             }
             systemChecker.AreCriticalServicesRunning();
             AddTextToLogList("Info - [CheckSystemState]: System state check completed.");
+        }
+        public void CheckForUpdates()
+        {
             //Check for RMC program updates
             AddTextToLogList("Info - [RMCUpdate]: Checking for RMC program updates...");
             if (RMCUpdateChecker.CheckForUpdates())
@@ -252,6 +255,7 @@ namespace RapidMessageCast_Manager
             else
             {
                 AddTextToLogList("Info - [RMCUpdate]: No RMC updates available or no connection is detected.");
+                MessageBox.Show("No updates available or no connection is detected.", "Update Check", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -974,6 +978,11 @@ namespace RapidMessageCast_Manager
             {
                 MessagePCList.Text = filterForm.MessagePCList.Text;
             }
+        }
+
+        private void CheckforUpdatesLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            CheckForUpdates();
         }
     }
 }

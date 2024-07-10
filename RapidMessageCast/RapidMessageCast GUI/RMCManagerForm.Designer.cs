@@ -111,12 +111,22 @@
             ModulesTabControl = new TabControl();
             PCTab = new TabPage();
             EmailTab = new TabPage();
-            EmailSSLRequiredCheckbox = new CheckBox();
+            button2 = new Button();
+            button1 = new Button();
+            comboBox1 = new ComboBox();
             EmailPortNumber = new NumericUpDown();
             AddressOfSMTPServerTxt = new TextBox();
+            label4 = new Label();
+            label1 = new Label();
+            label5 = new Label();
+            label3 = new Label();
+            label2 = new Label();
             SenderAddressEmailLabel = new Label();
             MessageEmailcheckBox = new CheckBox();
             EmailAddressOfSMTPServerLbl = new Label();
+            textBox3 = new TextBox();
+            textBox2 = new TextBox();
+            textBox1 = new TextBox();
             SenderAddressTxt = new TextBox();
             EmailImage = new PictureBox();
             EmailModuleLabel = new Label();
@@ -125,6 +135,7 @@
             PsExecLabel = new Label();
             PSExecModuleEnableCheckBox = new CheckBox();
             AboutTab = new TabPage();
+            CheckforUpdatesLinkLabel = new LinkLabel();
             Icons8LinkLabel = new LinkLabel();
             RMCTitleLabel = new Label();
             RMCLogoImage2 = new PictureBox();
@@ -1106,7 +1117,7 @@
             // 
             RMSGHelpLink.AutoSize = true;
             RMSGHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
-            RMSGHelpLink.Location = new Point(208, 50);
+            RMSGHelpLink.Location = new Point(123, 49);
             RMSGHelpLink.Name = "RMSGHelpLink";
             RMSGHelpLink.Size = new Size(16, 20);
             RMSGHelpLink.TabIndex = 81;
@@ -1128,7 +1139,7 @@
             LoadSelectedRMSGBtn.Name = "LoadSelectedRMSGBtn";
             LoadSelectedRMSGBtn.Size = new Size(295, 32);
             LoadSelectedRMSGBtn.TabIndex = 79;
-            LoadSelectedRMSGBtn.Text = "Load Selected .RMSG";
+            LoadSelectedRMSGBtn.Text = "Load Selected .RMSG file";
             LoadSelectedRMSGBtn.UseVisualStyleBackColor = false;
             LoadSelectedRMSGBtn.Click += LoadSelectedRMSGBtn_Click;
             // 
@@ -1172,9 +1183,9 @@
             QuickLoadRMSGFileLabel.ForeColor = Color.White;
             QuickLoadRMSGFileLabel.Location = new Point(31, 51);
             QuickLoadRMSGFileLabel.Name = "QuickLoadRMSGFileLabel";
-            QuickLoadRMSGFileLabel.Size = new Size(180, 19);
+            QuickLoadRMSGFileLabel.Size = new Size(97, 19);
             QuickLoadRMSGFileLabel.TabIndex = 74;
-            QuickLoadRMSGFileLabel.Text = "Quick Load RMSG File:";
+            QuickLoadRMSGFileLabel.Text = "Quick Load:";
             QuickLoadRMSGFileLabel.TextAlign = ContentAlignment.TopRight;
             // 
             // RefreshRMSGListBtn
@@ -1240,12 +1251,22 @@
             // EmailTab
             // 
             EmailTab.BackColor = Color.FromArgb(30, 30, 30);
-            EmailTab.Controls.Add(EmailSSLRequiredCheckbox);
+            EmailTab.Controls.Add(button2);
+            EmailTab.Controls.Add(button1);
+            EmailTab.Controls.Add(comboBox1);
             EmailTab.Controls.Add(EmailPortNumber);
             EmailTab.Controls.Add(AddressOfSMTPServerTxt);
+            EmailTab.Controls.Add(label4);
+            EmailTab.Controls.Add(label1);
+            EmailTab.Controls.Add(label5);
+            EmailTab.Controls.Add(label3);
+            EmailTab.Controls.Add(label2);
             EmailTab.Controls.Add(SenderAddressEmailLabel);
             EmailTab.Controls.Add(MessageEmailcheckBox);
             EmailTab.Controls.Add(EmailAddressOfSMTPServerLbl);
+            EmailTab.Controls.Add(textBox3);
+            EmailTab.Controls.Add(textBox2);
+            EmailTab.Controls.Add(textBox1);
             EmailTab.Controls.Add(SenderAddressTxt);
             EmailTab.Controls.Add(EmailImage);
             EmailTab.Controls.Add(EmailModuleLabel);
@@ -1257,16 +1278,50 @@
             EmailTab.TabIndex = 1;
             EmailTab.Text = "Email";
             // 
-            // EmailSSLRequiredCheckbox
+            // button2
             // 
-            EmailSSLRequiredCheckbox.AutoSize = true;
-            EmailSSLRequiredCheckbox.ForeColor = Color.White;
-            EmailSSLRequiredCheckbox.Location = new Point(5, 82);
-            EmailSSLRequiredCheckbox.Name = "EmailSSLRequiredCheckbox";
-            EmailSSLRequiredCheckbox.Size = new Size(361, 24);
-            EmailSSLRequiredCheckbox.TabIndex = 109;
-            EmailSSLRequiredCheckbox.Text = "This server requires an encrypted connection (SSL)";
-            EmailSSLRequiredCheckbox.UseVisualStyleBackColor = true;
+            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button2.BackColor = Color.FromArgb(48, 48, 48);
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Font = new Font("Arial", 9F);
+            button2.ForeColor = Color.FromArgb(224, 224, 224);
+            button2.Image = Properties.Resources.icons8_broadcast_24;
+            button2.ImageAlign = ContentAlignment.MiddleLeft;
+            button2.Location = new Point(306, 246);
+            button2.Margin = new Padding(3, 2, 3, 2);
+            button2.Name = "button2";
+            button2.Size = new Size(80, 28);
+            button2.TabIndex = 111;
+            button2.Text = "Send";
+            button2.TextAlign = ContentAlignment.MiddleRight;
+            button2.UseVisualStyleBackColor = false;
+            // 
+            // button1
+            // 
+            button1.BackColor = Color.FromArgb(48, 48, 48);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Arial", 9F);
+            button1.ForeColor = Color.FromArgb(224, 224, 224);
+            button1.Image = Properties.Resources.icons8_email_24;
+            button1.ImageAlign = ContentAlignment.TopCenter;
+            button1.Location = new Point(291, 287);
+            button1.Margin = new Padding(3, 2, 3, 2);
+            button1.Name = "button1";
+            button1.Size = new Size(104, 54);
+            button1.TabIndex = 110;
+            button1.Text = "Email Editor";
+            button1.TextAlign = ContentAlignment.BottomCenter;
+            button1.UseVisualStyleBackColor = false;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "No Authentication", "Basic Authentication", "SSL Authentication" });
+            comboBox1.Location = new Point(175, 135);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(211, 28);
+            comboBox1.TabIndex = 109;
+            comboBox1.Text = "No Authentication";
             // 
             // EmailPortNumber
             // 
@@ -1291,16 +1346,76 @@
             AddressOfSMTPServerTxt.Size = new Size(282, 27);
             AddressOfSMTPServerTxt.TabIndex = 107;
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Arial", 7F);
+            label4.ForeColor = Color.White;
+            label4.Location = new Point(7, 229);
+            label4.Name = "label4";
+            label4.Size = new Size(362, 15);
+            label4.TabIndex = 106;
+            label4.Text = "Send a test email by entering your email address and click 'Send'";
+            label4.TextAlign = ContentAlignment.TopRight;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Arial", 10F);
+            label1.ForeColor = Color.White;
+            label1.Location = new Point(7, 139);
+            label1.Name = "label1";
+            label1.Size = new Size(162, 19);
+            label1.TabIndex = 106;
+            label1.Text = "Authentication Mode:";
+            label1.TextAlign = ContentAlignment.TopRight;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Arial", 10F);
+            label5.ForeColor = Color.White;
+            label5.Location = new Point(7, 287);
+            label5.Name = "label5";
+            label5.Size = new Size(153, 19);
+            label5.TabIndex = 106;
+            label5.Text = "Selected Email File:";
+            label5.TextAlign = ContentAlignment.TopRight;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Arial", 10F);
+            label3.ForeColor = Color.White;
+            label3.Location = new Point(7, 203);
+            label3.Name = "label3";
+            label3.Size = new Size(85, 19);
+            label3.TabIndex = 106;
+            label3.Text = "Password:";
+            label3.TextAlign = ContentAlignment.TopRight;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Arial", 10F);
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(17, 171);
+            label2.Name = "label2";
+            label2.Size = new Size(74, 19);
+            label2.TabIndex = 106;
+            label2.Text = "Account:";
+            label2.TextAlign = ContentAlignment.TopRight;
+            // 
             // SenderAddressEmailLabel
             // 
             SenderAddressEmailLabel.AutoSize = true;
             SenderAddressEmailLabel.Font = new Font("Arial", 10F);
             SenderAddressEmailLabel.ForeColor = Color.White;
-            SenderAddressEmailLabel.Location = new Point(6, 109);
+            SenderAddressEmailLabel.Location = new Point(6, 80);
             SenderAddressEmailLabel.Name = "SenderAddressEmailLabel";
-            SenderAddressEmailLabel.Size = new Size(290, 19);
+            SenderAddressEmailLabel.Size = new Size(116, 19);
             SenderAddressEmailLabel.TabIndex = 106;
-            SenderAddressEmailLabel.Text = "Sender address for email notifications:";
+            SenderAddressEmailLabel.Text = "From Address:";
             SenderAddressEmailLabel.TextAlign = ContentAlignment.TopRight;
             // 
             // MessageEmailcheckBox
@@ -1328,12 +1443,51 @@
             EmailAddressOfSMTPServerLbl.Text = "FQDN or IP Address of SMTP server:  Port:";
             EmailAddressOfSMTPServerLbl.TextAlign = ContentAlignment.TopRight;
             // 
+            // textBox3
+            // 
+            textBox3.BackColor = Color.FromArgb(45, 45, 45);
+            textBox3.BorderStyle = BorderStyle.FixedSingle;
+            textBox3.ForeColor = Color.White;
+            textBox3.Location = new Point(7, 246);
+            textBox3.Margin = new Padding(3, 2, 3, 2);
+            textBox3.MaxLength = 255;
+            textBox3.Name = "textBox3";
+            textBox3.ScrollBars = ScrollBars.Vertical;
+            textBox3.Size = new Size(293, 27);
+            textBox3.TabIndex = 104;
+            // 
+            // textBox2
+            // 
+            textBox2.BackColor = Color.FromArgb(45, 45, 45);
+            textBox2.BorderStyle = BorderStyle.FixedSingle;
+            textBox2.ForeColor = Color.White;
+            textBox2.Location = new Point(97, 200);
+            textBox2.Margin = new Padding(3, 2, 3, 2);
+            textBox2.MaxLength = 255;
+            textBox2.Name = "textBox2";
+            textBox2.ScrollBars = ScrollBars.Vertical;
+            textBox2.Size = new Size(289, 27);
+            textBox2.TabIndex = 104;
+            // 
+            // textBox1
+            // 
+            textBox1.BackColor = Color.FromArgb(45, 45, 45);
+            textBox1.BorderStyle = BorderStyle.FixedSingle;
+            textBox1.ForeColor = Color.White;
+            textBox1.Location = new Point(97, 168);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
+            textBox1.MaxLength = 255;
+            textBox1.Name = "textBox1";
+            textBox1.ScrollBars = ScrollBars.Vertical;
+            textBox1.Size = new Size(289, 27);
+            textBox1.TabIndex = 104;
+            // 
             // SenderAddressTxt
             // 
             SenderAddressTxt.BackColor = Color.FromArgb(45, 45, 45);
             SenderAddressTxt.BorderStyle = BorderStyle.FixedSingle;
             SenderAddressTxt.ForeColor = Color.White;
-            SenderAddressTxt.Location = new Point(7, 130);
+            SenderAddressTxt.Location = new Point(7, 101);
             SenderAddressTxt.Margin = new Padding(3, 2, 3, 2);
             SenderAddressTxt.MaxLength = 255;
             SenderAddressTxt.Name = "SenderAddressTxt";
@@ -1414,6 +1568,7 @@
             // AboutTab
             // 
             AboutTab.BackColor = Color.FromArgb(30, 30, 30);
+            AboutTab.Controls.Add(CheckforUpdatesLinkLabel);
             AboutTab.Controls.Add(Icons8LinkLabel);
             AboutTab.Controls.Add(RMCTitleLabel);
             AboutTab.Controls.Add(RMCLogoImage2);
@@ -1424,6 +1579,19 @@
             AboutTab.Size = new Size(395, 341);
             AboutTab.TabIndex = 3;
             AboutTab.Text = "About";
+            // 
+            // CheckforUpdatesLinkLabel
+            // 
+            CheckforUpdatesLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            CheckforUpdatesLinkLabel.AutoSize = true;
+            CheckforUpdatesLinkLabel.LinkColor = Color.FromArgb(0, 192, 192);
+            CheckforUpdatesLinkLabel.Location = new Point(257, 29);
+            CheckforUpdatesLinkLabel.Name = "CheckforUpdatesLinkLabel";
+            CheckforUpdatesLinkLabel.Size = new Size(130, 20);
+            CheckforUpdatesLinkLabel.TabIndex = 82;
+            CheckforUpdatesLinkLabel.TabStop = true;
+            CheckforUpdatesLinkLabel.Text = "Check for Updates";
+            CheckforUpdatesLinkLabel.LinkClicked += CheckforUpdatesLinkLabel_LinkClicked;
             // 
             // Icons8LinkLabel
             // 
@@ -1443,7 +1611,7 @@
             RMCTitleLabel.AutoSize = true;
             RMCTitleLabel.Font = new Font("Arial", 11F);
             RMCTitleLabel.ForeColor = Color.FromArgb(224, 224, 224);
-            RMCTitleLabel.Location = new Point(75, 9);
+            RMCTitleLabel.Location = new Point(68, 9);
             RMCTitleLabel.Name = "RMCTitleLabel";
             RMCTitleLabel.Size = new Size(177, 22);
             RMCTitleLabel.TabIndex = 1;
@@ -1455,7 +1623,7 @@
             RMCLogoImage2.Image = Properties.Resources.RMC_GUI_Icon;
             RMCLogoImage2.Location = new Point(0, 0);
             RMCLogoImage2.Name = "RMCLogoImage2";
-            RMCLogoImage2.Size = new Size(72, 56);
+            RMCLogoImage2.Size = new Size(63, 56);
             RMCLogoImage2.SizeMode = PictureBoxSizeMode.Zoom;
             RMCLogoImage2.TabIndex = 81;
             RMCLogoImage2.TabStop = false;
@@ -1472,7 +1640,7 @@
             AboutText.MaxLength = 255;
             AboutText.Multiline = true;
             AboutText.Name = "AboutText";
-            AboutText.ScrollBars = ScrollBars.Vertical;
+            AboutText.ScrollBars = ScrollBars.Both;
             AboutText.Size = new Size(395, 280);
             AboutText.TabIndex = 83;
             AboutText.Text = resources.GetString("AboutText.Text");
@@ -1480,9 +1648,9 @@
             // 
             // verNumbLblAboutLbl
             // 
-            verNumbLblAboutLbl.Font = new Font("Arial", 10F);
+            verNumbLblAboutLbl.Font = new Font("Arial", 8F);
             verNumbLblAboutLbl.ForeColor = Color.Silver;
-            verNumbLblAboutLbl.Location = new Point(82, 28);
+            verNumbLblAboutLbl.Location = new Point(71, 24);
             verNumbLblAboutLbl.Name = "verNumbLblAboutLbl";
             verNumbLblAboutLbl.Size = new Size(309, 32);
             verNumbLblAboutLbl.TabIndex = 80;
@@ -1761,7 +1929,6 @@
         private TabPage PSExecTab;
         private NumericUpDown EmailPortNumber;
         private TextBox AddressOfSMTPServerTxt;
-        private CheckBox EmailSSLRequiredCheckbox;
         private Button SaveRMCRuntimeLogBtn;
         private ContextMenuStrip PCListcontextMenuStrip;
         private ToolStripMenuItem addThisPCToTheListToolStripMenuItem;
@@ -1795,5 +1962,17 @@
         private Label verNumbLblAboutLbl;
         private Label RMCTitleLabel;
         private Button OpenRMCLogFolderBtn;
+        private LinkLabel CheckforUpdatesLinkLabel;
+        private Label label1;
+        private ComboBox comboBox1;
+        private Label label3;
+        private Label label2;
+        private TextBox textBox2;
+        private TextBox textBox1;
+        private Button button1;
+        private Button button2;
+        private Label label4;
+        private TextBox textBox3;
+        private Label label5;
     }
 }
