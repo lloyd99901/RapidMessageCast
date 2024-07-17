@@ -83,7 +83,7 @@
             MessagePCList.Margin = new Padding(3, 2, 3, 2);
             MessagePCList.Multiline = true;
             MessagePCList.Name = "MessagePCList";
-            MessagePCList.ScrollBars = ScrollBars.Vertical;
+            MessagePCList.ScrollBars = ScrollBars.Both;
             MessagePCList.Size = new Size(338, 466);
             MessagePCList.TabIndex = 78;
             // 

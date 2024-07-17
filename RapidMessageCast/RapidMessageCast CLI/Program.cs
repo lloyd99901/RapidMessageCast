@@ -9,7 +9,7 @@ string versionNumb = "v0.1 indev 2024";
 Console.WriteLine("RapidMessageCast CLI Version " + versionNumb);
 Console.WriteLine("--------------------------------------------------");
 Console.ForegroundColor = ConsoleColor.Red;
-Console.WriteLine("IMPORTANT NOTICE: This CLI program might not be compatible with the GUI version at this point in time. Use with caution.");
+Console.WriteLine("IMPORTANT NOTICE: This CLI program might not be compatible with the GUI version at this point in time, and this program is due to be redone. Use with caution.");
 Console.ForegroundColor = ConsoleColor.Gray;
 //Print the starting message to the console
 Console.WriteLine("Starting RapidMessageCast Dispatcher...");

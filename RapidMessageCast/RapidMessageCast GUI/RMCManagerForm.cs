@@ -1,4 +1,3 @@
-using RapidMessageCast_Manager.BroadcastModules;
 using RapidMessageCast_Manager.Internal_RMC_Components;
 using System.Diagnostics;
 using System.DirectoryServices;
@@ -330,6 +329,7 @@ namespace RapidMessageCast_Manager
             MessageEmailcheckBox.Checked = Properties.Settings.Default.MessageEmailEnabled;
             WOLPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
             ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
+            PSExecTabControl.Enabled = PSExecModuleEnableCheckBox.Checked;
             AddTextToLogList($"Info - [LoadGlobalSettings]: {Properties.Settings.Default.Properties.Count} Program settings loaded.");
         }
         private static void SetCheckboxState(CheckBox checkBox, string value)
@@ -363,6 +363,12 @@ namespace RapidMessageCast_Manager
                 SetCheckboxState(DontSaveBroadcastHistoryCheckbox, RMSGFileValues[11]);
                 WOLTextbox.Text = RMSGFileValues[12];
                 WOLPortNumberBox.Value = Convert.ToDecimal(RMSGFileValues[13]);
+                AddressOfSMTPServerTxt.Text = RMSGFileValues[14];
+                EmailPortNumber.Value = Convert.ToDecimal(RMSGFileValues[15]);
+                SenderAddressTxt.Text = RMSGFileValues[16];
+                EmailAuthTypecomboBox.Text = RMSGFileValues[17];
+                EmailAccountTextbox.Text = RMSGFileValues[18];
+                EmailPasswordTextbox.Text = RMSGFileValues[19];
                 AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
@@ -475,7 +481,8 @@ namespace RapidMessageCast_Manager
             {
                 string fileName = saveFileDialog.FileName;
                 AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
-                RMC_IO_Manager.SaveRMSGFile(fileName, PCBroadcastMessageTxt.Text, MessagePCList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+                Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
+                RMC_IO_Manager.SaveRMSGFile(fileName, PCBroadcastMessageTxt.Text, MessagePCList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
                 RefreshRMSGFileList();
             }
         }
@@ -600,7 +607,8 @@ namespace RapidMessageCast_Manager
 
             AddTextToLogList($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
-            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), PCBroadcastMessageTxt.Text, MessagePCList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked);
+            Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
+            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), PCBroadcastMessageTxt.Text, MessagePCList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, expiryHourTime.Value.ToString(), expiryMinutesTime.Value.ToString(), expirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
             RefreshRMSGFileList();
         }
 
@@ -819,6 +827,7 @@ namespace RapidMessageCast_Manager
             //Save the checkbox state to the settings file.
             Properties.Settings.Default.MessagePSExecEnabled = PSExecModuleEnableCheckBox.Checked;
             Properties.Settings.Default.Save();
+            PSExecTabControl.Enabled = PSExecModuleEnableCheckBox.Checked;
         }
 
         private void MessageEmailcheckBox_CheckedChanged(object sender, EventArgs e)
@@ -925,7 +934,7 @@ namespace RapidMessageCast_Manager
             }
             foreach (string macAddress in macAddresses)
             {
-                if (!WakeOnLANModule.IsValidMacAddress(macAddress))
+                if (!WakeOnLANManager.IsValidMacAddress(macAddress))
                 {
                     //MessageBox.Show("Invalid MAC address: " + macAddress, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     AddTextToLogList($"Error - [SendWOLPacket]: Invalid MAC address: {macAddress}");
@@ -933,7 +942,7 @@ namespace RapidMessageCast_Manager
                 }
                 AddTextToLogList($"Info - [SendWOLPacket]: Sending WOL packet to MAC address: {macAddress}");
                 await
-                WakeOnLANModule.WakeOnLan(macAddress, (int)WOLPortNumberBox.Value);
+                WakeOnLANManager.WakeOnLan(macAddress, (int)WOLPortNumberBox.Value);
             }
         }
 
@@ -983,6 +992,12 @@ namespace RapidMessageCast_Manager
         private void CheckforUpdatesLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             CheckForUpdates();
+        }
+
+        private void RenewIPBtn_Click(object sender, EventArgs e)
+        {
+            AddTextToLogList("Info - [RenewIPBtn]: Renewing the IP address of the computer.");
+            SystemServiceManager.ReleaseAndRenewIP();
         }
     }
 }

@@ -111,9 +111,9 @@
             ModulesTabControl = new TabControl();
             PCTab = new TabPage();
             EmailTab = new TabPage();
-            button2 = new Button();
-            button1 = new Button();
-            comboBox1 = new ComboBox();
+            SendTestEmailBtn = new Button();
+            EmailEditBtn = new Button();
+            EmailAuthTypecomboBox = new ComboBox();
             EmailPortNumber = new NumericUpDown();
             AddressOfSMTPServerTxt = new TextBox();
             label4 = new Label();
@@ -124,13 +124,44 @@
             SenderAddressEmailLabel = new Label();
             MessageEmailcheckBox = new CheckBox();
             EmailAddressOfSMTPServerLbl = new Label();
-            textBox3 = new TextBox();
-            textBox2 = new TextBox();
-            textBox1 = new TextBox();
+            TestEmailAddressTextbox = new TextBox();
+            EmailPasswordTextbox = new TextBox();
+            EmailAccountTextbox = new TextBox();
             SenderAddressTxt = new TextBox();
             EmailImage = new PictureBox();
             EmailModuleLabel = new Label();
             PSExecTab = new TabPage();
+            PSExecTabControl = new TabControl();
+            tabPage1 = new TabPage();
+            linkLabel1 = new LinkLabel();
+            button1 = new Button();
+            pictureBox1 = new PictureBox();
+            label6 = new Label();
+            button2 = new Button();
+            button3 = new Button();
+            textBox1 = new TextBox();
+            button4 = new Button();
+            label7 = new Label();
+            tabPage2 = new TabPage();
+            PSExecAcceptEulaCheckbox = new CheckBox();
+            pictureBox2 = new PictureBox();
+            checkBox9 = new CheckBox();
+            checkBox7 = new CheckBox();
+            checkBox6 = new CheckBox();
+            checkBox5 = new CheckBox();
+            checkBox4 = new CheckBox();
+            checkBox3 = new CheckBox();
+            checkBox17 = new CheckBox();
+            checkBox16 = new CheckBox();
+            checkBox15 = new CheckBox();
+            checkBox14 = new CheckBox();
+            checkBox13 = new CheckBox();
+            checkBox12 = new CheckBox();
+            checkBox11 = new CheckBox();
+            checkBox10 = new CheckBox();
+            checkBox8 = new CheckBox();
+            checkBox2 = new CheckBox();
+            checkBox1 = new CheckBox();
             PSEXECImage = new PictureBox();
             PsExecLabel = new Label();
             PSExecModuleEnableCheckBox = new CheckBox();
@@ -150,6 +181,7 @@
             logList = new ListBox();
             IconList = new ImageList(components);
             toolTipHelp = new ToolTip(components);
+            RenewIPBtn = new Button();
             MainTitleBar.SuspendLayout();
             RMCLogoPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage).BeginInit();
@@ -173,6 +205,11 @@
             ((System.ComponentModel.ISupportInitialize)EmailPortNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)EmailImage).BeginInit();
             PSExecTab.SuspendLayout();
+            PSExecTabControl.SuspendLayout();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PSEXECImage).BeginInit();
             AboutTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage2).BeginInit();
@@ -204,6 +241,7 @@
             // 
             MainTitleBar.BackColor = Color.FromArgb(32, 32, 32);
             MainTitleBar.BorderStyle = BorderStyle.FixedSingle;
+            MainTitleBar.Controls.Add(RenewIPBtn);
             MainTitleBar.Controls.Add(ToggleRMSGListBtn);
             MainTitleBar.Controls.Add(RMCLogoPanel);
             MainTitleBar.Controls.Add(OpenRMCFileBtn);
@@ -1251,9 +1289,9 @@
             // EmailTab
             // 
             EmailTab.BackColor = Color.FromArgb(30, 30, 30);
-            EmailTab.Controls.Add(button2);
-            EmailTab.Controls.Add(button1);
-            EmailTab.Controls.Add(comboBox1);
+            EmailTab.Controls.Add(SendTestEmailBtn);
+            EmailTab.Controls.Add(EmailEditBtn);
+            EmailTab.Controls.Add(EmailAuthTypecomboBox);
             EmailTab.Controls.Add(EmailPortNumber);
             EmailTab.Controls.Add(AddressOfSMTPServerTxt);
             EmailTab.Controls.Add(label4);
@@ -1264,9 +1302,9 @@
             EmailTab.Controls.Add(SenderAddressEmailLabel);
             EmailTab.Controls.Add(MessageEmailcheckBox);
             EmailTab.Controls.Add(EmailAddressOfSMTPServerLbl);
-            EmailTab.Controls.Add(textBox3);
-            EmailTab.Controls.Add(textBox2);
-            EmailTab.Controls.Add(textBox1);
+            EmailTab.Controls.Add(TestEmailAddressTextbox);
+            EmailTab.Controls.Add(EmailPasswordTextbox);
+            EmailTab.Controls.Add(EmailAccountTextbox);
             EmailTab.Controls.Add(SenderAddressTxt);
             EmailTab.Controls.Add(EmailImage);
             EmailTab.Controls.Add(EmailModuleLabel);
@@ -1278,50 +1316,50 @@
             EmailTab.TabIndex = 1;
             EmailTab.Text = "Email";
             // 
-            // button2
+            // SendTestEmailBtn
             // 
-            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            button2.BackColor = Color.FromArgb(48, 48, 48);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Font = new Font("Arial", 9F);
-            button2.ForeColor = Color.FromArgb(224, 224, 224);
-            button2.Image = Properties.Resources.icons8_broadcast_24;
-            button2.ImageAlign = ContentAlignment.MiddleLeft;
-            button2.Location = new Point(306, 246);
-            button2.Margin = new Padding(3, 2, 3, 2);
-            button2.Name = "button2";
-            button2.Size = new Size(80, 28);
-            button2.TabIndex = 111;
-            button2.Text = "Send";
-            button2.TextAlign = ContentAlignment.MiddleRight;
-            button2.UseVisualStyleBackColor = false;
+            SendTestEmailBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            SendTestEmailBtn.BackColor = Color.FromArgb(48, 48, 48);
+            SendTestEmailBtn.FlatStyle = FlatStyle.Flat;
+            SendTestEmailBtn.Font = new Font("Arial", 9F);
+            SendTestEmailBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            SendTestEmailBtn.Image = Properties.Resources.icons8_broadcast_24;
+            SendTestEmailBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            SendTestEmailBtn.Location = new Point(306, 246);
+            SendTestEmailBtn.Margin = new Padding(3, 2, 3, 2);
+            SendTestEmailBtn.Name = "SendTestEmailBtn";
+            SendTestEmailBtn.Size = new Size(80, 28);
+            SendTestEmailBtn.TabIndex = 111;
+            SendTestEmailBtn.Text = "Send";
+            SendTestEmailBtn.TextAlign = ContentAlignment.MiddleRight;
+            SendTestEmailBtn.UseVisualStyleBackColor = false;
             // 
-            // button1
+            // EmailEditBtn
             // 
-            button1.BackColor = Color.FromArgb(48, 48, 48);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Font = new Font("Arial", 9F);
-            button1.ForeColor = Color.FromArgb(224, 224, 224);
-            button1.Image = Properties.Resources.icons8_email_24;
-            button1.ImageAlign = ContentAlignment.TopCenter;
-            button1.Location = new Point(291, 287);
-            button1.Margin = new Padding(3, 2, 3, 2);
-            button1.Name = "button1";
-            button1.Size = new Size(104, 54);
-            button1.TabIndex = 110;
-            button1.Text = "Email Editor";
-            button1.TextAlign = ContentAlignment.BottomCenter;
-            button1.UseVisualStyleBackColor = false;
+            EmailEditBtn.BackColor = Color.FromArgb(48, 48, 48);
+            EmailEditBtn.FlatStyle = FlatStyle.Flat;
+            EmailEditBtn.Font = new Font("Arial", 9F);
+            EmailEditBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            EmailEditBtn.Image = Properties.Resources.icons8_email_24;
+            EmailEditBtn.ImageAlign = ContentAlignment.TopCenter;
+            EmailEditBtn.Location = new Point(7, 277);
+            EmailEditBtn.Margin = new Padding(3, 2, 3, 2);
+            EmailEditBtn.Name = "EmailEditBtn";
+            EmailEditBtn.Size = new Size(101, 54);
+            EmailEditBtn.TabIndex = 110;
+            EmailEditBtn.Text = "Email Editor";
+            EmailEditBtn.TextAlign = ContentAlignment.BottomCenter;
+            EmailEditBtn.UseVisualStyleBackColor = false;
             // 
-            // comboBox1
+            // EmailAuthTypecomboBox
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "No Authentication", "Basic Authentication", "SSL Authentication" });
-            comboBox1.Location = new Point(175, 135);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(211, 28);
-            comboBox1.TabIndex = 109;
-            comboBox1.Text = "No Authentication";
+            EmailAuthTypecomboBox.FormattingEnabled = true;
+            EmailAuthTypecomboBox.Items.AddRange(new object[] { "No Authentication", "Basic Authentication", "SSL Authentication", "NTLM Authentication" });
+            EmailAuthTypecomboBox.Location = new Point(175, 135);
+            EmailAuthTypecomboBox.Name = "EmailAuthTypecomboBox";
+            EmailAuthTypecomboBox.Size = new Size(211, 28);
+            EmailAuthTypecomboBox.TabIndex = 109;
+            EmailAuthTypecomboBox.Text = "No Authentication";
             // 
             // EmailPortNumber
             // 
@@ -1375,7 +1413,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("Arial", 10F);
             label5.ForeColor = Color.White;
-            label5.Location = new Point(7, 287);
+            label5.Location = new Point(114, 280);
             label5.Name = "label5";
             label5.Size = new Size(153, 19);
             label5.TabIndex = 106;
@@ -1443,47 +1481,51 @@
             EmailAddressOfSMTPServerLbl.Text = "FQDN or IP Address of SMTP server:  Port:";
             EmailAddressOfSMTPServerLbl.TextAlign = ContentAlignment.TopRight;
             // 
-            // textBox3
+            // TestEmailAddressTextbox
             // 
-            textBox3.BackColor = Color.FromArgb(45, 45, 45);
-            textBox3.BorderStyle = BorderStyle.FixedSingle;
-            textBox3.ForeColor = Color.White;
-            textBox3.Location = new Point(7, 246);
-            textBox3.Margin = new Padding(3, 2, 3, 2);
-            textBox3.MaxLength = 255;
-            textBox3.Name = "textBox3";
-            textBox3.ScrollBars = ScrollBars.Vertical;
-            textBox3.Size = new Size(293, 27);
-            textBox3.TabIndex = 104;
+            TestEmailAddressTextbox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            TestEmailAddressTextbox.BackColor = Color.FromArgb(45, 45, 45);
+            TestEmailAddressTextbox.BorderStyle = BorderStyle.FixedSingle;
+            TestEmailAddressTextbox.ForeColor = Color.White;
+            TestEmailAddressTextbox.Location = new Point(7, 246);
+            TestEmailAddressTextbox.Margin = new Padding(3, 2, 3, 2);
+            TestEmailAddressTextbox.MaxLength = 255;
+            TestEmailAddressTextbox.Name = "TestEmailAddressTextbox";
+            TestEmailAddressTextbox.ScrollBars = ScrollBars.Vertical;
+            TestEmailAddressTextbox.Size = new Size(293, 27);
+            TestEmailAddressTextbox.TabIndex = 104;
             // 
-            // textBox2
+            // EmailPasswordTextbox
             // 
-            textBox2.BackColor = Color.FromArgb(45, 45, 45);
-            textBox2.BorderStyle = BorderStyle.FixedSingle;
-            textBox2.ForeColor = Color.White;
-            textBox2.Location = new Point(97, 200);
-            textBox2.Margin = new Padding(3, 2, 3, 2);
-            textBox2.MaxLength = 255;
-            textBox2.Name = "textBox2";
-            textBox2.ScrollBars = ScrollBars.Vertical;
-            textBox2.Size = new Size(289, 27);
-            textBox2.TabIndex = 104;
+            EmailPasswordTextbox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            EmailPasswordTextbox.BackColor = Color.FromArgb(45, 45, 45);
+            EmailPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
+            EmailPasswordTextbox.ForeColor = Color.White;
+            EmailPasswordTextbox.Location = new Point(97, 200);
+            EmailPasswordTextbox.Margin = new Padding(3, 2, 3, 2);
+            EmailPasswordTextbox.MaxLength = 255;
+            EmailPasswordTextbox.Name = "EmailPasswordTextbox";
+            EmailPasswordTextbox.ScrollBars = ScrollBars.Vertical;
+            EmailPasswordTextbox.Size = new Size(289, 27);
+            EmailPasswordTextbox.TabIndex = 104;
             // 
-            // textBox1
+            // EmailAccountTextbox
             // 
-            textBox1.BackColor = Color.FromArgb(45, 45, 45);
-            textBox1.BorderStyle = BorderStyle.FixedSingle;
-            textBox1.ForeColor = Color.White;
-            textBox1.Location = new Point(97, 168);
-            textBox1.Margin = new Padding(3, 2, 3, 2);
-            textBox1.MaxLength = 255;
-            textBox1.Name = "textBox1";
-            textBox1.ScrollBars = ScrollBars.Vertical;
-            textBox1.Size = new Size(289, 27);
-            textBox1.TabIndex = 104;
+            EmailAccountTextbox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            EmailAccountTextbox.BackColor = Color.FromArgb(45, 45, 45);
+            EmailAccountTextbox.BorderStyle = BorderStyle.FixedSingle;
+            EmailAccountTextbox.ForeColor = Color.White;
+            EmailAccountTextbox.Location = new Point(97, 168);
+            EmailAccountTextbox.Margin = new Padding(3, 2, 3, 2);
+            EmailAccountTextbox.MaxLength = 255;
+            EmailAccountTextbox.Name = "EmailAccountTextbox";
+            EmailAccountTextbox.ScrollBars = ScrollBars.Vertical;
+            EmailAccountTextbox.Size = new Size(289, 27);
+            EmailAccountTextbox.TabIndex = 104;
             // 
             // SenderAddressTxt
             // 
+            SenderAddressTxt.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             SenderAddressTxt.BackColor = Color.FromArgb(45, 45, 45);
             SenderAddressTxt.BorderStyle = BorderStyle.FixedSingle;
             SenderAddressTxt.ForeColor = Color.White;
@@ -1520,6 +1562,7 @@
             // PSExecTab
             // 
             PSExecTab.BackColor = Color.FromArgb(30, 30, 30);
+            PSExecTab.Controls.Add(PSExecTabControl);
             PSExecTab.Controls.Add(PSEXECImage);
             PSExecTab.Controls.Add(PsExecLabel);
             PSExecTab.Controls.Add(PSExecModuleEnableCheckBox);
@@ -1529,6 +1572,421 @@
             PSExecTab.Size = new Size(395, 341);
             PSExecTab.TabIndex = 6;
             PSExecTab.Text = "PsExec";
+            // 
+            // PSExecTabControl
+            // 
+            PSExecTabControl.Controls.Add(tabPage1);
+            PSExecTabControl.Controls.Add(tabPage2);
+            PSExecTabControl.Dock = DockStyle.Bottom;
+            PSExecTabControl.Location = new Point(3, 29);
+            PSExecTabControl.Name = "PSExecTabControl";
+            PSExecTabControl.SelectedIndex = 0;
+            PSExecTabControl.Size = new Size(389, 309);
+            PSExecTabControl.TabIndex = 105;
+            // 
+            // tabPage1
+            // 
+            tabPage1.BackColor = Color.FromArgb(30, 30, 30);
+            tabPage1.Controls.Add(linkLabel1);
+            tabPage1.Controls.Add(button1);
+            tabPage1.Controls.Add(pictureBox1);
+            tabPage1.Controls.Add(label6);
+            tabPage1.Controls.Add(button2);
+            tabPage1.Controls.Add(button3);
+            tabPage1.Controls.Add(textBox1);
+            tabPage1.Controls.Add(button4);
+            tabPage1.Controls.Add(label7);
+            tabPage1.Location = new Point(4, 29);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(381, 276);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Remote Target(s)";
+            // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.LinkColor = Color.FromArgb(0, 192, 0);
+            linkLabel1.Location = new Point(161, 6);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(16, 20);
+            linkLabel1.TabIndex = 96;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "?";
+            // 
+            // button1
+            // 
+            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button1.BackColor = Color.FromArgb(48, 48, 48);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Arial", 9F);
+            button1.ForeColor = Color.FromArgb(224, 224, 224);
+            button1.Image = Properties.Resources.icons8_filter_24;
+            button1.Location = new Point(314, 239);
+            button1.Margin = new Padding(3, 2, 3, 2);
+            button1.Name = "button1";
+            button1.Size = new Size(61, 32);
+            button1.TabIndex = 95;
+            button1.UseVisualStyleBackColor = false;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = Properties.Resources.icons8_pc_24;
+            pictureBox1.Location = new Point(6, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(24, 24);
+            pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox1.TabIndex = 94;
+            pictureBox1.TabStop = false;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label6.Font = new Font("Arial", 9F, FontStyle.Italic);
+            label6.ForeColor = Color.White;
+            label6.Location = new Point(217, 9);
+            label6.Name = "label6";
+            label6.Size = new Size(158, 18);
+            label6.TabIndex = 93;
+            label6.Text = "PC Count: 0";
+            label6.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // button2
+            // 
+            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button2.BackColor = Color.FromArgb(48, 48, 48);
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.Font = new Font("Arial", 9F);
+            button2.ForeColor = Color.FromArgb(224, 224, 224);
+            button2.Image = Properties.Resources.icons8_save_24;
+            button2.ImageAlign = ContentAlignment.MiddleLeft;
+            button2.Location = new Point(194, 203);
+            button2.Margin = new Padding(3, 2, 3, 2);
+            button2.Name = "button2";
+            button2.Size = new Size(181, 32);
+            button2.TabIndex = 91;
+            button2.Text = "Save list as txt";
+            button2.UseVisualStyleBackColor = false;
+            // 
+            // button3
+            // 
+            button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button3.BackColor = Color.FromArgb(48, 48, 48);
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Font = new Font("Arial", 9F);
+            button3.ForeColor = Color.FromArgb(224, 224, 224);
+            button3.Image = Properties.Resources.icons8_external_link_24;
+            button3.ImageAlign = ContentAlignment.MiddleLeft;
+            button3.Location = new Point(5, 203);
+            button3.Margin = new Padding(3, 2, 3, 2);
+            button3.Name = "button3";
+            button3.Size = new Size(183, 32);
+            button3.TabIndex = 89;
+            button3.Text = "Open from .txt";
+            button3.UseVisualStyleBackColor = false;
+            // 
+            // textBox1
+            // 
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBox1.BackColor = Color.FromArgb(45, 45, 45);
+            textBox1.BorderStyle = BorderStyle.FixedSingle;
+            textBox1.ContextMenuStrip = PCListcontextMenuStrip;
+            textBox1.Font = new Font("Segoe UI", 8F);
+            textBox1.ForeColor = Color.White;
+            textBox1.Location = new Point(5, 29);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.ScrollBars = ScrollBars.Vertical;
+            textBox1.Size = new Size(370, 170);
+            textBox1.TabIndex = 92;
+            // 
+            // button4
+            // 
+            button4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            button4.BackColor = Color.FromArgb(48, 48, 48);
+            button4.BackgroundImageLayout = ImageLayout.None;
+            button4.FlatStyle = FlatStyle.Flat;
+            button4.Font = new Font("Arial", 9F);
+            button4.ForeColor = Color.FromArgb(224, 224, 224);
+            button4.Image = Properties.Resources.icons8_directory_24;
+            button4.ImageAlign = ContentAlignment.MiddleLeft;
+            button4.Location = new Point(5, 239);
+            button4.Margin = new Padding(3, 2, 3, 2);
+            button4.Name = "button4";
+            button4.Size = new Size(303, 32);
+            button4.TabIndex = 90;
+            button4.Text = "Load PC names from Active Directory";
+            button4.TextAlign = ContentAlignment.MiddleRight;
+            button4.UseVisualStyleBackColor = false;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Arial", 10F);
+            label7.ForeColor = Color.White;
+            label7.Location = new Point(36, 7);
+            label7.Name = "label7";
+            label7.Size = new Size(126, 19);
+            label7.TabIndex = 88;
+            label7.Text = "Remote Targets:";
+            label7.TextAlign = ContentAlignment.TopRight;
+            // 
+            // tabPage2
+            // 
+            tabPage2.BackColor = Color.FromArgb(30, 30, 30);
+            tabPage2.Controls.Add(PSExecAcceptEulaCheckbox);
+            tabPage2.Controls.Add(pictureBox2);
+            tabPage2.Controls.Add(checkBox9);
+            tabPage2.Controls.Add(checkBox7);
+            tabPage2.Controls.Add(checkBox6);
+            tabPage2.Controls.Add(checkBox5);
+            tabPage2.Controls.Add(checkBox4);
+            tabPage2.Controls.Add(checkBox3);
+            tabPage2.Controls.Add(checkBox17);
+            tabPage2.Controls.Add(checkBox16);
+            tabPage2.Controls.Add(checkBox15);
+            tabPage2.Controls.Add(checkBox14);
+            tabPage2.Controls.Add(checkBox13);
+            tabPage2.Controls.Add(checkBox12);
+            tabPage2.Controls.Add(checkBox11);
+            tabPage2.Controls.Add(checkBox10);
+            tabPage2.Controls.Add(checkBox8);
+            tabPage2.Controls.Add(checkBox2);
+            tabPage2.Controls.Add(checkBox1);
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(381, 276);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Parameters";
+            // 
+            // PSExecAcceptEulaCheckbox
+            // 
+            PSExecAcceptEulaCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            PSExecAcceptEulaCheckbox.AutoSize = true;
+            PSExecAcceptEulaCheckbox.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            PSExecAcceptEulaCheckbox.ForeColor = Color.White;
+            PSExecAcceptEulaCheckbox.Location = new Point(6, 243);
+            PSExecAcceptEulaCheckbox.Name = "PSExecAcceptEulaCheckbox";
+            PSExecAcceptEulaCheckbox.Size = new Size(121, 24);
+            PSExecAcceptEulaCheckbox.TabIndex = 86;
+            PSExecAcceptEulaCheckbox.Text = "Accept EULA";
+            PSExecAcceptEulaCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = Properties.Resources.icons8_run_command_24light;
+            pictureBox2.Location = new Point(351, 6);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(24, 24);
+            pictureBox2.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox2.TabIndex = 104;
+            pictureBox2.TabStop = false;
+            // 
+            // checkBox9
+            // 
+            checkBox9.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox9.AutoSize = true;
+            checkBox9.ForeColor = Color.White;
+            checkBox9.Location = new Point(6, 213);
+            checkBox9.Name = "checkBox9";
+            checkBox9.Size = new Size(101, 24);
+            checkBox9.TabIndex = 86;
+            checkBox9.Text = "No Banner";
+            checkBox9.UseVisualStyleBackColor = true;
+            // 
+            // checkBox7
+            // 
+            checkBox7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox7.AutoSize = true;
+            checkBox7.ForeColor = Color.White;
+            checkBox7.Location = new Point(6, 183);
+            checkBox7.Name = "checkBox7";
+            checkBox7.Size = new Size(114, 24);
+            checkBox7.TabIndex = 86;
+            checkBox7.Text = "Limited User";
+            checkBox7.UseVisualStyleBackColor = true;
+            // 
+            // checkBox6
+            // 
+            checkBox6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox6.AutoSize = true;
+            checkBox6.ForeColor = Color.White;
+            checkBox6.Location = new Point(6, 153);
+            checkBox6.Name = "checkBox6";
+            checkBox6.Size = new Size(131, 24);
+            checkBox6.TabIndex = 86;
+            checkBox6.Text = "Elevated Token";
+            checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // checkBox5
+            // 
+            checkBox5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox5.AutoSize = true;
+            checkBox5.ForeColor = Color.White;
+            checkBox5.Location = new Point(6, 123);
+            checkBox5.Name = "checkBox5";
+            checkBox5.Size = new Size(105, 24);
+            checkBox5.TabIndex = 86;
+            checkBox5.Text = "Force Copy";
+            checkBox5.UseVisualStyleBackColor = true;
+            // 
+            // checkBox4
+            // 
+            checkBox4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox4.AutoSize = true;
+            checkBox4.ForeColor = Color.White;
+            checkBox4.Location = new Point(6, 93);
+            checkBox4.Name = "checkBox4";
+            checkBox4.Size = new Size(101, 24);
+            checkBox4.TabIndex = 86;
+            checkBox4.Text = "Don't Wait";
+            checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // checkBox3
+            // 
+            checkBox3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox3.AutoSize = true;
+            checkBox3.ForeColor = Color.White;
+            checkBox3.Location = new Point(6, 63);
+            checkBox3.Name = "checkBox3";
+            checkBox3.Size = new Size(141, 24);
+            checkBox3.TabIndex = 86;
+            checkBox3.Text = "Copy Executable";
+            checkBox3.UseVisualStyleBackColor = true;
+            // 
+            // checkBox17
+            // 
+            checkBox17.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox17.AutoSize = true;
+            checkBox17.ForeColor = Color.White;
+            checkBox17.Location = new Point(146, 243);
+            checkBox17.Name = "checkBox17";
+            checkBox17.Size = new Size(78, 24);
+            checkBox17.TabIndex = 86;
+            checkBox17.Text = "Priority";
+            checkBox17.UseVisualStyleBackColor = true;
+            // 
+            // checkBox16
+            // 
+            checkBox16.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox16.AutoSize = true;
+            checkBox16.ForeColor = Color.White;
+            checkBox16.Location = new Point(146, 213);
+            checkBox16.Name = "checkBox16";
+            checkBox16.Size = new Size(151, 24);
+            checkBox16.TabIndex = 86;
+            checkBox16.Text = "Working Directory";
+            checkBox16.UseVisualStyleBackColor = true;
+            // 
+            // checkBox15
+            // 
+            checkBox15.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox15.AutoSize = true;
+            checkBox15.ForeColor = Color.White;
+            checkBox15.Location = new Point(146, 183);
+            checkBox15.Name = "checkBox15";
+            checkBox15.Size = new Size(100, 24);
+            checkBox15.TabIndex = 86;
+            checkBox15.Text = "UserName";
+            checkBox15.UseVisualStyleBackColor = true;
+            // 
+            // checkBox14
+            // 
+            checkBox14.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox14.AutoSize = true;
+            checkBox14.ForeColor = Color.White;
+            checkBox14.Location = new Point(146, 153);
+            checkBox14.Name = "checkBox14";
+            checkBox14.Size = new Size(134, 24);
+            checkBox14.TabIndex = 86;
+            checkBox14.Text = "Remote Service";
+            checkBox14.UseVisualStyleBackColor = true;
+            // 
+            // checkBox13
+            // 
+            checkBox13.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox13.AutoSize = true;
+            checkBox13.ForeColor = Color.White;
+            checkBox13.Location = new Point(146, 123);
+            checkBox13.Name = "checkBox13";
+            checkBox13.Size = new Size(92, 24);
+            checkBox13.TabIndex = 86;
+            checkBox13.Text = "Password";
+            checkBox13.UseVisualStyleBackColor = true;
+            // 
+            // checkBox12
+            // 
+            checkBox12.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox12.AutoSize = true;
+            checkBox12.ForeColor = Color.White;
+            checkBox12.Location = new Point(146, 93);
+            checkBox12.Name = "checkBox12";
+            checkBox12.Size = new Size(86, 24);
+            checkBox12.TabIndex = 86;
+            checkBox12.Text = "Timeout";
+            checkBox12.UseVisualStyleBackColor = true;
+            // 
+            // checkBox11
+            // 
+            checkBox11.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox11.AutoSize = true;
+            checkBox11.ForeColor = Color.White;
+            checkBox11.Location = new Point(146, 63);
+            checkBox11.Name = "checkBox11";
+            checkBox11.Size = new Size(134, 24);
+            checkBox11.TabIndex = 86;
+            checkBox11.Text = "Secure Desktop";
+            checkBox11.UseVisualStyleBackColor = true;
+            // 
+            // checkBox10
+            // 
+            checkBox10.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox10.AutoSize = true;
+            checkBox10.ForeColor = Color.White;
+            checkBox10.Location = new Point(146, 33);
+            checkBox10.Name = "checkBox10";
+            checkBox10.Size = new Size(117, 24);
+            checkBox10.TabIndex = 86;
+            checkBox10.Text = "Version Copy";
+            checkBox10.UseVisualStyleBackColor = true;
+            // 
+            // checkBox8
+            // 
+            checkBox8.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox8.AutoSize = true;
+            checkBox8.ForeColor = Color.White;
+            checkBox8.Location = new Point(146, 3);
+            checkBox8.Name = "checkBox8";
+            checkBox8.Size = new Size(136, 24);
+            checkBox8.TabIndex = 86;
+            checkBox8.Text = "System Account";
+            checkBox8.UseVisualStyleBackColor = true;
+            // 
+            // checkBox2
+            // 
+            checkBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox2.AutoSize = true;
+            checkBox2.ForeColor = Color.White;
+            checkBox2.Location = new Point(6, 33);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(100, 24);
+            checkBox2.TabIndex = 86;
+            checkBox2.Text = "Interactive";
+            checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            checkBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBox1.AutoSize = true;
+            checkBox1.ForeColor = Color.White;
+            checkBox1.Location = new Point(6, 3);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(134, 24);
+            checkBox1.TabIndex = 86;
+            checkBox1.Text = "Non-Interactive";
+            checkBox1.UseVisualStyleBackColor = true;
             // 
             // PSEXECImage
             // 
@@ -1783,6 +2241,26 @@
             toolTipHelp.UseAnimation = false;
             toolTipHelp.UseFading = false;
             // 
+            // RenewIPBtn
+            // 
+            RenewIPBtn.BackColor = Color.FromArgb(48, 48, 48);
+            RenewIPBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            RenewIPBtn.Dock = DockStyle.Right;
+            RenewIPBtn.FlatStyle = FlatStyle.Flat;
+            RenewIPBtn.Font = new Font("Arial", 6F);
+            RenewIPBtn.ForeColor = Color.White;
+            RenewIPBtn.Image = Properties.Resources.icons8_ip_24;
+            RenewIPBtn.ImageAlign = ContentAlignment.TopCenter;
+            RenewIPBtn.Location = new Point(247, 0);
+            RenewIPBtn.Margin = new Padding(3, 2, 3, 2);
+            RenewIPBtn.Name = "RenewIPBtn";
+            RenewIPBtn.Size = new Size(62, 46);
+            RenewIPBtn.TabIndex = 80;
+            RenewIPBtn.Text = "Renew IP";
+            RenewIPBtn.TextAlign = ContentAlignment.BottomCenter;
+            RenewIPBtn.UseVisualStyleBackColor = false;
+            RenewIPBtn.Click += RenewIPBtn_Click;
+            // 
             // RMCManager
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1842,6 +2320,13 @@
             ((System.ComponentModel.ISupportInitialize)EmailImage).EndInit();
             PSExecTab.ResumeLayout(false);
             PSExecTab.PerformLayout();
+            PSExecTabControl.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)PSEXECImage).EndInit();
             AboutTab.ResumeLayout(false);
             AboutTab.PerformLayout();
@@ -1964,15 +2449,47 @@
         private Button OpenRMCLogFolderBtn;
         private LinkLabel CheckforUpdatesLinkLabel;
         private Label label1;
-        private ComboBox comboBox1;
+        private ComboBox EmailAuthTypecomboBox;
         private Label label3;
         private Label label2;
-        private TextBox textBox2;
-        private TextBox textBox1;
-        private Button button1;
-        private Button button2;
+        private TextBox EmailPasswordTextbox;
+        private TextBox EmailAccountTextbox;
+        private Button EmailEditBtn;
+        private Button SendTestEmailBtn;
         private Label label4;
-        private TextBox textBox3;
+        private TextBox TestEmailAddressTextbox;
         private Label label5;
+        private TabControl PSExecTabControl;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private LinkLabel linkLabel1;
+        private Button button1;
+        private PictureBox pictureBox1;
+        private Label label6;
+        private Button button2;
+        private Button button3;
+        private TextBox textBox1;
+        private Button button4;
+        private Label label7;
+        private CheckBox checkBox7;
+        private CheckBox checkBox6;
+        private CheckBox checkBox5;
+        private CheckBox checkBox4;
+        private CheckBox checkBox3;
+        private CheckBox checkBox2;
+        private CheckBox checkBox1;
+        private CheckBox PSExecAcceptEulaCheckbox;
+        private CheckBox checkBox9;
+        private CheckBox checkBox8;
+        private CheckBox checkBox11;
+        private CheckBox checkBox10;
+        private PictureBox pictureBox2;
+        private CheckBox checkBox13;
+        private CheckBox checkBox12;
+        private CheckBox checkBox17;
+        private CheckBox checkBox16;
+        private CheckBox checkBox15;
+        private CheckBox checkBox14;
+        private Button RenewIPBtn;
     }
 }

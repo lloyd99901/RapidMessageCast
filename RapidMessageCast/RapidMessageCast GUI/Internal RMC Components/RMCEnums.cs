@@ -6,4 +6,11 @@
         Email,
         PSExec
     }
+    public enum AuthMode
+    {
+        None,
+        Basic,
+        SSL,
+        NTLM
+    }
 }

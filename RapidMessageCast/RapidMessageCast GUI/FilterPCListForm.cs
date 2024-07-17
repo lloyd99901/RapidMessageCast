@@ -58,7 +58,6 @@ namespace RapidMessageCast_Manager
             if (AllRegexFiltersListbox.SelectedIndex != -1)
             {
                 AllRegexFiltersListbox.Items.RemoveAt(AllRegexFiltersListbox.SelectedIndex);
-                //Apply Filters
                 ApplyRegexFilters();
             }
         }

@@ -1,5 +1,10 @@
-﻿//--RapidMessageCast Software--
-//OutlookModule.cs - RapidMessageCast Manager
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Security.Cryptography;
+
+//--RapidMessageCast Software--
+//EncryptionHandler.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -22,9 +27,13 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-namespace RapidMessageCast_Manager.BroadcastModules
+//Research into encryption methods and how to implement them in C# is ongoing. This class will be updated as more information is gathered.
+//The goal is to implement a secure encryption method that can be used to encrypt sensitive data such as passwords and account information.
+//Possible encryption methods are, DPAPI (Data Protection API), AES (Advanced Encryption Standard), RSA (Rivest-Shamir-Adleman), and more.
+
+namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
-    internal class OutlookModule
+    internal class EncryptionHandler
     {
     }
 }

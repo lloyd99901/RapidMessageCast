@@ -47,6 +47,12 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // [11] = Dont save history
             // [12] = WOL list
             // [13] = WOL port
+            // [14] = FQDN Address
+            // [15] = Email Port
+            // [16] = Email From Address
+            // [17] = Auth Mode
+            // [18] = Email Account
+            // [19] = Encrypted Email Password, this will be decrypted when the email module is enabled.
 
             if (filePath == null)
             {
@@ -85,6 +91,23 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 // Get WOL list and port
                 string WOLlist = GetValueFromSection(sections, "[WOL]");
                 string WOLPort = GetValueFromSection(sections, "[WOLPort]");
+                string FQDNAddress = GetValueFromSection(sections, "[FQDNAddress]");
+                string EmailPort = GetValueFromSection(sections, "[EmailPort]");
+                string EmailFromAddress = GetValueFromSection(sections, "[EmailFromAddress]");
+                string AuthMode = GetValueFromSection(sections, "[AuthMode]");
+                string EmailAccount = GetValueFromSection(sections, "[EmailAccount]");
+                string EmailPassword = "";
+
+                //Check if email module is enabled, if it is, decrypt the password and return it. if not enabled, return a blank password.
+                if (EnableEmail)
+                {
+                    //DECRYPT LOGIC HERE
+                    EmailPassword = GetValueFromSection(sections, "[EmailPassword]"); //DECRYPT THIS
+                }
+                else
+                {
+                    EmailPassword = "";
+                }
 
                 // Return the extracted values via an array
                 return
@@ -102,7 +125,13 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     ReattemptOnErrorCheck.ToString(),
                     DontSaveHistoryCheck.ToString(),
                     WOLlist,
-                    WOLPort
+                    WOLPort,
+                    FQDNAddress,
+                    EmailPort,
+                    EmailFromAddress,
+                    AuthMode,
+                    EmailAccount,
+                    EmailPassword
                 ];
             }
             catch (Exception ex)
@@ -113,7 +142,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string WOLlist, int WOLPort, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory)
+        public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string WOLlist, int WOLPort, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory, string FQDNAddress, decimal EmailPort, string EmailFromAddress, AuthMode authMode, string EmailAccount, string EmailPassword)
         {
             // Create a StringBuilder to store the contents of the RMC file
             var rmcFileContent = new StringBuilder();
@@ -156,6 +185,23 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 
             //Add WOL port
             AppendSection("[WOLPort]", WOLPort.ToString());
+
+            //Add Email settings
+            AppendSection("[FQDNAddress]", FQDNAddress);
+            AppendSection("[EmailPort]", EmailPort.ToString());
+            AppendSection("[EmailFromAddress]", EmailFromAddress);
+            AppendSection("[AuthMode]", authMode.ToString());
+            AppendSection("[EmailAccount]", EmailAccount);
+            //Check if email module is enabled, if not, append a blank password
+            if (enableEmail)
+            {
+                //ENCRYPT LOGIC HERE
+                AppendSection("[EmailPassword", ""); //ENCRYPT THIS
+            }
+            else
+            {
+                AppendSection("[EmailPassword", "");
+            }
 
             // Write the contents to the specified file
             File.WriteAllText(filePath, rmcFileContent.ToString());

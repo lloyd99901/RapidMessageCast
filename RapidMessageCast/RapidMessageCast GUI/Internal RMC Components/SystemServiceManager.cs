@@ -61,38 +61,34 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
         {
             try
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe")
+                string[] commands = new[] { "/release", "/renew"};
+                foreach (var command in commands)
                 {
-                    RedirectStandardInput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-
-                using (Process process = new Process { StartInfo = processStartInfo })
-                {
-                    process.Start();
-
-                    using (StreamWriter sw = process.StandardInput)
+                    ProcessStartInfo psi = new ProcessStartInfo("ipconfig", command)
                     {
-                        if (sw.BaseStream.CanWrite)
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    };
+                    Process? process = Process.Start(psi);
+                    if (process != null)
+                    {
+                        //wait for exit but don't halt UI graphic call
+                        process.EnableRaisingEvents = true;
+                        process.Exited += (sender, e) =>
                         {
-                            // Release the IP address for all adapters
-                            sw.WriteLine("ipconfig /release");
-
-                            // Wait for the release to complete
-                            Thread.Sleep(5000); // Adjust the sleep time as necessary
-
-                            // Renew the IP address for all adapters
-                            sw.WriteLine("ipconfig /renew");
-                        }
+                            MessageBox.Show($"IP configuration command '{command}' completed with exit code {process.ExitCode}");
+                            process.Dispose();
+                        };
                     }
-
-                    process.WaitForExit();
+                    else
+                    {
+                        // Handle the case where the process could not be started
+                        MessageBox.Show($"Failed to start the process with command: {command}");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                MessageBox.Show($"An error occurred: {ex.Message}");
             }
         }
 

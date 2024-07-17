@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
 //--RapidMessageCast Software--
-//WakeOnLANModule.cs - RapidMessageCast Manager
+//WakeOnLANManager.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -27,9 +27,9 @@ using System.Text.RegularExpressions;
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-namespace RapidMessageCast_Manager.BroadcastModules
+namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
-    internal class WakeOnLANModule
+    internal class WakeOnLANManager
     {
         //Thanks to Poul Bak on StackOverflow for the following code
         public static async Task WakeOnLan(string macAddress, int port)

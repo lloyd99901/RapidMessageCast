@@ -137,6 +137,8 @@ namespace RapidMessageCast_Manager.BroadcastModules
         private void WaitForMSGTasksToFinish(RMCManager RMCManagerForm, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)
         {
             //Wait for all processes that contain msg.exe to close before saving the broadcast history.
+            //Create a var outside this loop that will be used to count the amount of msg.exe processes.
+            int msgProcesses = 0;
             Task.Run(() =>
             {
                 const int maxWaitTime = 120; // Maximum wait time in seconds
@@ -151,7 +153,9 @@ namespace RapidMessageCast_Manager.BroadcastModules
 
                     Thread.Sleep(1000);
                     elapsedWaitTime++;
-                    RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: RMC is now waiting for all MSG processes to close. Elapsed time: {elapsedWaitTime} seconds. (max time: 120 seconds) If hung, msg processes will be terminated. ");
+                    //Get the amount of msg processes running in count. Store it in msgProcesses.
+                    msgProcesses = Process.GetProcessesByName("msg").Length;
+                    RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: RMC is now waiting for all MSG processes to close. There are {msgProcesses} msg processes running on this system. Elapsed time: {elapsedWaitTime} seconds. (max time: 120 seconds) If hung, msg processes will be terminated. ");
 
                     if (elapsedWaitTime >= maxWaitTime)
                     {
