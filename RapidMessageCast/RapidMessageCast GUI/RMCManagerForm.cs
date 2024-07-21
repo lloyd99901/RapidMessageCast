@@ -30,13 +30,16 @@ using System.Text.RegularExpressions;
 //RMC Todo list:
 //Email and PSExec modules are not implemented yet. They are placeholders for future development.
 //Add a form to select the OU's from the Active Directory. For now, it will just add all computers from the Computers OU.
-//Filters PCList based on custom user regex pattern.
 //WOL added, but testing is needed.
 //Test broadcasting with unhandled exceptions, and see if the program can recover from it. If it pauses broadcasting, add a try catch to that function to prevent it from pausing. This can be done closer to completion.
 //It might be an idea to disable all msgbox popups during startup, also check if there are msgboxes during the broadcast. Remove those.
 //Add a function to check if the message is too long for the msg command. If it is, split the message into multiple messages. (This is a low priority task, but might be a good idea in the future)
-//Add icons (like x or tick boxes) to the broadcast History list.
+//Add icons (like x or tick boxes) to the broadcast History list. In other words, redo the broadcast history window.
 //Test scheduled broadcasts and panic button. Make sure they work as intended.
+//Could make the CLI redundant by checking if a STARTUP.rmsg exists, if it does, load it and start the broadcast. The command line argument function is already in place, so this should be easy to implement.
+//Add PSexec saves to the IO manager.
+//Fix me list:
+//(1) [FIXME] 21/07/24
 
 namespace RapidMessageCast_Manager
 {
@@ -202,6 +205,7 @@ namespace RapidMessageCast_Manager
 
         private async void RunScheduledBroastcast(string RMSGFile)
         {
+            //(1) [FIXME] 21/07/24 - Why is this function only running the PC module? It should check if the other modules are enabled and run them as well. TODO: Fix this.
             LoadRMSGFileInProgram(RMSGFile); //Load the RMSG file into the program.
             //Check if modules are selected. If not, close the program.
             if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !PSExecModuleEnableCheckBox.Checked)
@@ -221,7 +225,7 @@ namespace RapidMessageCast_Manager
 
         private void CheckSystemState()
         {
-            var systemChecker = new SystemCheckModule(AddTextToLogList);
+            var systemChecker = new SystemHealthCheck(AddTextToLogList);
             AddTextToLogList("Info - [CheckSystemState]: Checking system state...");
             systemChecker.CheckFileExistence("C:\\Windows\\System32\\msg.exe",
                 "Critical - [CheckSystemState]: msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.",
@@ -314,7 +318,9 @@ namespace RapidMessageCast_Manager
                 }
                 catch
                 {
-                    //If the program throws an error here, then something went disastrously wrong. This will prevent the program from crashing, but at this point if we can't even write to the console then we are in trouble.
+                    MessageBox.Show("Fatal Error! Unable to write to console! RMC will attempt save the debug log and will terminate.", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    SaveRMCRuntimeLogBtn_Click(this, EventArgs.Empty); //Attempt Save the loglist to a file.
+                    Environment.Exit(713); //Bail out. If we can't even write to the console, then something is seriously wrong. ERROR_FATAL_APP_EXIT
                 }
             }
         }
@@ -329,7 +335,6 @@ namespace RapidMessageCast_Manager
             MessageEmailcheckBox.Checked = Properties.Settings.Default.MessageEmailEnabled;
             WOLPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
             ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
-            PSExecTabControl.Enabled = PSExecModuleEnableCheckBox.Checked;
             AddTextToLogList($"Info - [LoadGlobalSettings]: {Properties.Settings.Default.Properties.Count} Program settings loaded.");
         }
         private static void SetCheckboxState(CheckBox checkBox, string value)
@@ -371,9 +376,17 @@ namespace RapidMessageCast_Manager
                 EmailPasswordTextbox.Text = RMSGFileValues[19];
                 AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
+            catch (FormatException ex1)
+            {
+                AddTextToLogList($"Error - [LoadRMSGFileInProgram]: Format Parse Failure - Format exception when loading RMSG file, RMSG file is not loading correctly! {ex1}");
+                MessageBox.Show("A RMSG format error has occurred. Please check the file for errors.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LoadGlobalSettings(); //If the RMSG file fails to load, then load the global settings instead.
+                return;
+            }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [LoadRMSGFileInProgram]: Attempt to parse RMSG file failed: {ex}");
+                AddTextToLogList($"Error - [LoadRMSGFileInProgram]: General Parse Failure: {ex} - Will now load global settings.");
+                LoadGlobalSettings(); //If the RMSG file fails to load, then load the global settings instead.
                 return;
             }
         }
@@ -489,17 +502,17 @@ namespace RapidMessageCast_Manager
 
         private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", InternalRegexFilters.FilterInvalidMessage);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", RegexFilters.FilterInvalidMessage);
         }
 
         private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(MessagePCList, "OpenPCList", "OpenPCList", InternalRegexFilters.FilterInvalidPCNames);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(MessagePCList, "OpenPCList", "OpenPCList", RegexFilters.FilterInvalidPCNames);
         }
 
         private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", InternalRegexFilters.FilterInvalidPCNames);
+            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", RegexFilters.FilterInvalidPCNames);
         }
 
         private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
@@ -827,7 +840,6 @@ namespace RapidMessageCast_Manager
             //Save the checkbox state to the settings file.
             Properties.Settings.Default.MessagePSExecEnabled = PSExecModuleEnableCheckBox.Checked;
             Properties.Settings.Default.Save();
-            PSExecTabControl.Enabled = PSExecModuleEnableCheckBox.Checked;
         }
 
         private void MessageEmailcheckBox_CheckedChanged(object sender, EventArgs e)
@@ -993,7 +1005,7 @@ namespace RapidMessageCast_Manager
         {
             CheckForUpdates();
         }
-
+        
         private void RenewIPBtn_Click(object sender, EventArgs e)
         {
             AddTextToLogList("Info - [RenewIPBtn]: Renewing the IP address of the computer.");

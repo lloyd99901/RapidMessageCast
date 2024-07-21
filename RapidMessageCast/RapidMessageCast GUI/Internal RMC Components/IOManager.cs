@@ -1,7 +1,7 @@
-﻿using System.Text;
+﻿using System.Xml;
 
 //--RapidMessageCast Software--
-//RMC_IO_Manager.cs - RapidMessageCast Manager
+//IOManager.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -28,8 +28,8 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     internal class RMC_IO_Manager(Action<string> logAction)
     {
-        private static readonly string[] RMCseparator = ["\r\n\r\n"]; //Used for RMC file IO parsing.
         private readonly Action<string> _logAction = logAction;
+
         public static string[] LoadRMSGFile(string filePath)
         {
             //Here is the return array structure:
@@ -54,59 +54,58 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // [18] = Email Account
             // [19] = Encrypted Email Password, this will be decrypted when the email module is enabled.
 
-            if (filePath == null)
+            if (string.IsNullOrEmpty(filePath))
             {
-                return ["Error: File path is null"];
+                return ["Error: File path is null or empty"];
             }
 
             try
             {
-                // Read the contents of the selected file
-                string fileContents = File.ReadAllText(filePath);
+                XmlDocument doc = new();
+                doc.Load(filePath);
 
-                // Split the file contents by section headers
-                string[] sections = fileContents.Split(RMCseparator, StringSplitOptions.RemoveEmptyEntries);
+                // Helper function to get element's inner text by tag name
+                string GetElementValue(string tagName)
+                {
+                    var node = doc.GetElementsByTagName(tagName).Item(0);
+                    return node?.InnerText ?? string.Empty;
+                }
 
-                // Helper function to get section value and check if it is "Enabled"
-                bool IsEnabled(string section) => GetValueFromSection(sections, section) == "Enabled";
+                // Helper function to check if a module is enabled
+                bool IsEnabled(string tagName) => GetElementValue(tagName).Equals("Enabled", StringComparison.OrdinalIgnoreCase);
 
                 // Extract values
-                string message = GetValueFromSection(sections, "[Message]");
-                string pcList = GetValueFromSection(sections, "[PCList]");
-                string messageDuration = GetValueFromSection(sections, "[MessageDuration]");
-                string[] durationParts = messageDuration.Split(':');
+                string message = GetElementValue("Message");
+                string pcList = GetElementValue("PCList");
+                string WOLlist = GetElementValue("WOLList");
+                string WOLPort = GetElementValue("WOLPort");
+                string expiryHour = GetElementValue("ExpiryHour");
+                string expiryMinutes = GetElementValue("ExpiryMinutes");
+                string expirySeconds = GetElementValue("ExpirySeconds");
+                bool emergencyModeEnabled = IsEnabled("EmergencyModeEnabled");
+                bool enableMessagingOfPCs = IsEnabled("EnableMessagingOfPCs");
+                bool enableEmail = IsEnabled("EnableEmail");
+                bool enablePSExec = IsEnabled("EnablePSExec");
+                bool reattemptOnError = IsEnabled("ReattemptOnError");
+                bool dontSaveHistory = IsEnabled("DontSaveHistory");
+                string FQDNAddress = GetElementValue("FQDNAddress");
+                string EmailPort = GetElementValue("EmailPort");
+                string EmailFromAddress = GetElementValue("EmailFromAddress");
+                string AuthMode = GetElementValue("AuthMode");
+                string EmailAccount = GetElementValue("EmailAccount");
+                string EmailPassword = GetElementValue("EmailPassword");
 
-                decimal expiryHourTime = durationParts.Length == 3 ? Convert.ToDecimal(durationParts[0]) : 0;
-                decimal expiryMinutesTime = durationParts.Length == 3 ? Convert.ToDecimal(durationParts[1]) : 0;
-                decimal expirySecondsTime = durationParts.Length == 3 ? Convert.ToDecimal(durationParts[2]) : 0;
-
-                // Check module states
-                bool EmergencyModeEnabled = IsEnabled("[EmergencyMode]");
-                bool EnableMessagingOfPCs = IsEnabled("[MessagePC]");
-                bool EnableEmail = IsEnabled("[MessageEmail]");
-                bool EnablePSExec = IsEnabled("[MessagePSExec]");
-                bool ReattemptOnErrorCheck = IsEnabled("[ReattemptOnError]");
-                bool DontSaveHistoryCheck = IsEnabled("[DontSaveHistory]");
-
-                // Get WOL list and port
-                string WOLlist = GetValueFromSection(sections, "[WOL]");
-                string WOLPort = GetValueFromSection(sections, "[WOLPort]");
-                string FQDNAddress = GetValueFromSection(sections, "[FQDNAddress]");
-                string EmailPort = GetValueFromSection(sections, "[EmailPort]");
-                string EmailFromAddress = GetValueFromSection(sections, "[EmailFromAddress]");
-                string AuthMode = GetValueFromSection(sections, "[AuthMode]");
-                string EmailAccount = GetValueFromSection(sections, "[EmailAccount]");
-                string EmailPassword = "";
-
-                //Check if email module is enabled, if it is, decrypt the password and return it. if not enabled, return a blank password.
-                if (EnableEmail)
+                if(enableEmail && !string.IsNullOrEmpty(EmailPassword))
                 {
-                    //DECRYPT LOGIC HERE
-                    EmailPassword = GetValueFromSection(sections, "[EmailPassword]"); //DECRYPT THIS
-                }
-                else
-                {
-                    EmailPassword = "";
+                    try
+                    {
+                        EmailPassword = EncryptionHandler.DecryptData(EmailPassword);
+                    }
+                    catch (Exception ex)
+                    {
+                        EmailPassword = string.Empty;
+                        return [$"Error - EncryptionHandler: Failure in decrypting email password: {ex.Message}"];
+                    }
                 }
 
                 // Return the extracted values via an array
@@ -115,15 +114,15 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     "",
                     message,
                     pcList,
-                    expiryHourTime.ToString(),
-                    expiryMinutesTime.ToString(),
-                    expirySecondsTime.ToString(),
-                    EmergencyModeEnabled.ToString(),
-                    EnableMessagingOfPCs.ToString(),
-                    EnableEmail.ToString(),
-                    EnablePSExec.ToString(),
-                    ReattemptOnErrorCheck.ToString(),
-                    DontSaveHistoryCheck.ToString(),
+                    expiryHour,
+                    expiryMinutes,
+                    expirySeconds,
+                    emergencyModeEnabled.ToString(),
+                    enableMessagingOfPCs.ToString(),
+                    enableEmail.ToString(),
+                    enablePSExec.ToString(),
+                    reattemptOnError.ToString(),
+                    dontSaveHistory.ToString(),
                     WOLlist,
                     WOLPort,
                     FQDNAddress,
@@ -137,85 +136,75 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             catch (Exception ex)
             {
                 // Return an error message along with the exception
-                MessageBox.Show($"Error - RMC_IO_Manager: Failure in loading RMSG file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return [$"Error: {ex}"];
+                return [$"IO Manager Exception: {ex.Message}"];
             }
         }
 
         public static void SaveRMSGFile(string filePath, string messageContent, string pcList, string WOLlist, int WOLPort, string expiryHour, string expiryMinutes, string expirySeconds, bool emergencyModeEnabled, bool enableMessagingOfPCs, bool enableEmail, bool enablePSExec, bool reattemptOnError, bool dontSaveHistory, string FQDNAddress, decimal EmailPort, string EmailFromAddress, AuthMode authMode, string EmailAccount, string EmailPassword)
         {
-            // Create a StringBuilder to store the contents of the RMC file
-            var rmcFileContent = new StringBuilder();
+            // Create a new XML document
+            XmlDocument doc = new();
+            // Create the root element
+            XmlElement root = doc.CreateElement("RMCSettings");
+            doc.AppendChild(root);
 
-            //Helper function to append sections
-            void AppendSection(string sectionName, string sectionValue)
+            // Helper function to add elements to the root
+            void AddElement(string name, string value)
             {
-                rmcFileContent.AppendLine(sectionName);
-                rmcFileContent.AppendLine(sectionValue);
-                rmcFileContent.AppendLine();
+                XmlElement elem = doc.CreateElement(name);
+                elem.InnerText = value;
+                root.AppendChild(elem);
             }
 
-            //Helper function to append sections if enabled
-            void AppendSectionIfEnabled(string sectionName, bool isEnabled)
+            // Helper function to add boolean elements as "Enabled" or "Disabled"
+            void AddBoolElement(string name, bool value)
             {
-                if (isEnabled)
-                {
-                    AppendSection(sectionName, "Enabled");
-                }
+                AddElement(name, value ? "Enabled" : "Disabled");
             }
 
-            // Message, PC list, and message duration sections
-            AppendSection("[Message]", messageContent);
-            AppendSection("[PCList]", pcList);
-            AppendSection("[MessageDuration]", $"{expiryHour}:{expiryMinutes}:{expirySeconds}");
+            // Add elements to the document
+            AddElement("Message", messageContent);
+            AddElement("PCList", pcList);
+            AddElement("WOLList", WOLlist);
+            AddElement("WOLPort", WOLPort.ToString());
+            AddElement("ExpiryHour", expiryHour);
+            AddElement("ExpiryMinutes", expiryMinutes);
+            AddElement("ExpirySeconds", expirySeconds);
+            AddBoolElement("EmergencyModeEnabled", emergencyModeEnabled);
+            AddBoolElement("EnableMessagingOfPCs", enableMessagingOfPCs);
+            AddBoolElement("EnableEmail", enableEmail);
+            AddBoolElement("EnablePSExec", enablePSExec);
+            AddBoolElement("ReattemptOnError", reattemptOnError);
+            AddBoolElement("DontSaveHistory", dontSaveHistory);
+            AddElement("FQDNAddress", FQDNAddress);
+            AddElement("EmailPort", EmailPort.ToString());
+            AddElement("EmailFromAddress", EmailFromAddress);
+            AddElement("AuthMode", authMode.ToString());
+            AddElement("EmailAccount", EmailAccount);
 
-            // Add emergency mode and module states to the file if enabled
-            AppendSectionIfEnabled("[EmergencyMode]", emergencyModeEnabled);
-            AppendSectionIfEnabled("[MessagePC]", enableMessagingOfPCs);
-            AppendSectionIfEnabled("[MessageEmail]", enableEmail);
-            AppendSectionIfEnabled("[MessagePSExec]", enablePSExec);
-            AppendSectionIfEnabled("[ReattemptOnError]", reattemptOnError);
-            AppendSectionIfEnabled("[DontSaveHistory]", dontSaveHistory);
-
-            //Add WOL list but if not empty, this fixes a problem where the RMC Manager fails to parse the WOL list if it is empty.
-            if (!string.IsNullOrEmpty(WOLlist))
+            // Encrypt and add the email password if email is enabled
+            if (enableEmail && !string.IsNullOrEmpty(EmailPassword))
             {
-                AppendSection("[WOL]", WOLlist);
-            }
-
-            //Add WOL port
-            AppendSection("[WOLPort]", WOLPort.ToString());
-
-            //Add Email settings
-            AppendSection("[FQDNAddress]", FQDNAddress);
-            AppendSection("[EmailPort]", EmailPort.ToString());
-            AppendSection("[EmailFromAddress]", EmailFromAddress);
-            AppendSection("[AuthMode]", authMode.ToString());
-            AppendSection("[EmailAccount]", EmailAccount);
-            //Check if email module is enabled, if not, append a blank password
-            if (enableEmail)
-            {
-                //ENCRYPT LOGIC HERE
-                AppendSection("[EmailPassword", ""); //ENCRYPT THIS
+                string encryptedPassword = EncryptionHandler.EncryptData(EmailPassword);
+                AddElement("EmailPassword", encryptedPassword);
             }
             else
             {
-                AppendSection("[EmailPassword", "");
+                AddElement("EmailPassword", "");
             }
 
-            // Write the contents to the specified file
-            File.WriteAllText(filePath, rmcFileContent.ToString());
+            // Save the document to the specified file path
+            doc.Save(filePath);
         }
+
         public static string AttemptToCreateRMCDirectories()
         {
+            bool directoriesCreated = false;
             string[] directories = [
                 Path.Combine(Application.StartupPath, "BroadcastHistory"),
                 Path.Combine(Application.StartupPath, "RMSGFiles"),
                 Path.Combine(Application.StartupPath, "RMC Runtime Logs")
             ];
-
-            bool directoriesCreated = false;
-
             try
             {
                 foreach (var dir in directories)
@@ -247,34 +236,6 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        private static string GetValueFromSection(string[] sections, string sectionHeader)
-        {
-            foreach (string section in sections)
-            {
-                if (section.StartsWith(sectionHeader))
-                {
-                    // Get the value following the section header
-                    string value = section[sectionHeader.Length..].Trim();
-
-                    // Filter out invalid characters only for PC list section
-                    if (sectionHeader == "[PCList]")
-                    {
-                        value = InternalRegexFilters.FilterInvalidPCNames(value);
-                    }
-                    if (sectionHeader == "[Message]")
-                    {
-                        value = InternalRegexFilters.FilterInvalidMessage(value);
-                    }
-                    if (sectionHeader == "[WOL]")
-                    {
-                        value = InternalRegexFilters.FilterInvalidMACAddresses(value);
-                    }
-
-                    return value;
-                }
-            }
-            return string.Empty;
-        }
         public void OpenFileAndProcessContents(TextBox targetTextBox, string logInfo, string logError, Func<string, string>? processFileContents = null)
         {
             OpenFileDialog openFileDialog = new()

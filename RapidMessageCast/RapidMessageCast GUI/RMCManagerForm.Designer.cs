@@ -173,6 +173,7 @@
             AboutText = new TextBox();
             verNumbLblAboutLbl = new Label();
             LogTab = new TabPage();
+            RenewIPBtn = new Button();
             OpenRMCLogFolderBtn = new Button();
             RMCLogsImage = new PictureBox();
             clearLogBtn = new Button();
@@ -181,7 +182,6 @@
             logList = new ListBox();
             IconList = new ImageList(components);
             toolTipHelp = new ToolTip(components);
-            RenewIPBtn = new Button();
             MainTitleBar.SuspendLayout();
             RMCLogoPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage).BeginInit();
@@ -241,7 +241,6 @@
             // 
             MainTitleBar.BackColor = Color.FromArgb(32, 32, 32);
             MainTitleBar.BorderStyle = BorderStyle.FixedSingle;
-            MainTitleBar.Controls.Add(RenewIPBtn);
             MainTitleBar.Controls.Add(ToggleRMSGListBtn);
             MainTitleBar.Controls.Add(RMCLogoPanel);
             MainTitleBar.Controls.Add(OpenRMCFileBtn);
@@ -2118,6 +2117,7 @@
             // LogTab
             // 
             LogTab.BackColor = Color.FromArgb(30, 30, 30);
+            LogTab.Controls.Add(RenewIPBtn);
             LogTab.Controls.Add(OpenRMCLogFolderBtn);
             LogTab.Controls.Add(RMCLogsImage);
             LogTab.Controls.Add(clearLogBtn);
@@ -2130,6 +2130,25 @@
             LogTab.TabIndex = 4;
             LogTab.Text = "Logs";
             // 
+            // RenewIPBtn
+            // 
+            RenewIPBtn.BackColor = Color.FromArgb(48, 48, 48);
+            RenewIPBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            RenewIPBtn.Dock = DockStyle.Right;
+            RenewIPBtn.FlatStyle = FlatStyle.Flat;
+            RenewIPBtn.Font = new Font("Arial", 6F);
+            RenewIPBtn.ForeColor = Color.White;
+            RenewIPBtn.Image = Properties.Resources.icons8_ip_24;
+            RenewIPBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            RenewIPBtn.Location = new Point(130, 0);
+            RenewIPBtn.Margin = new Padding(3, 2, 3, 2);
+            RenewIPBtn.Name = "RenewIPBtn";
+            RenewIPBtn.Size = new Size(83, 32);
+            RenewIPBtn.TabIndex = 107;
+            RenewIPBtn.Text = "Renew IP";
+            RenewIPBtn.TextAlign = ContentAlignment.MiddleRight;
+            RenewIPBtn.UseVisualStyleBackColor = false;
+            // 
             // OpenRMCLogFolderBtn
             // 
             OpenRMCLogFolderBtn.BackColor = Color.FromArgb(48, 48, 48);
@@ -2139,7 +2158,7 @@
             OpenRMCLogFolderBtn.ForeColor = Color.FromArgb(224, 224, 224);
             OpenRMCLogFolderBtn.Image = Properties.Resources.icons8_external_link_24;
             OpenRMCLogFolderBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            OpenRMCLogFolderBtn.Location = new Point(191, 0);
+            OpenRMCLogFolderBtn.Location = new Point(213, 0);
             OpenRMCLogFolderBtn.Margin = new Padding(3, 2, 3, 2);
             OpenRMCLogFolderBtn.Name = "OpenRMCLogFolderBtn";
             OpenRMCLogFolderBtn.Size = new Size(38, 32);
@@ -2167,12 +2186,12 @@
             clearLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
             clearLogBtn.Image = Properties.Resources.icons8_delete_24;
             clearLogBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            clearLogBtn.Location = new Point(229, 0);
+            clearLogBtn.Location = new Point(251, 0);
             clearLogBtn.Margin = new Padding(3, 2, 3, 2);
             clearLogBtn.Name = "clearLogBtn";
-            clearLogBtn.Size = new Size(81, 32);
+            clearLogBtn.Size = new Size(63, 32);
             clearLogBtn.TabIndex = 58;
-            clearLogBtn.Text = "Clear log";
+            clearLogBtn.Text = "Clear";
             clearLogBtn.TextAlign = ContentAlignment.MiddleRight;
             clearLogBtn.UseVisualStyleBackColor = false;
             clearLogBtn.Click += ClearLogBtn_Click;
@@ -2186,10 +2205,10 @@
             SaveRMCRuntimeLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SaveRMCRuntimeLogBtn.Image = Properties.Resources.icons8_save_24;
             SaveRMCRuntimeLogBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveRMCRuntimeLogBtn.Location = new Point(310, 0);
+            SaveRMCRuntimeLogBtn.Location = new Point(314, 0);
             SaveRMCRuntimeLogBtn.Margin = new Padding(3, 2, 3, 2);
             SaveRMCRuntimeLogBtn.Name = "SaveRMCRuntimeLogBtn";
-            SaveRMCRuntimeLogBtn.Size = new Size(85, 32);
+            SaveRMCRuntimeLogBtn.Size = new Size(81, 32);
             SaveRMCRuntimeLogBtn.TabIndex = 57;
             SaveRMCRuntimeLogBtn.Text = "Save log";
             SaveRMCRuntimeLogBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -2201,11 +2220,11 @@
             RMCLogLabel.AutoSize = true;
             RMCLogLabel.Font = new Font("Arial", 10F);
             RMCLogLabel.ForeColor = Color.White;
-            RMCLogLabel.Location = new Point(36, 7);
+            RMCLogLabel.Location = new Point(30, 7);
             RMCLogLabel.Name = "RMCLogLabel";
-            RMCLogLabel.Size = new Size(146, 19);
+            RMCLogLabel.Size = new Size(94, 19);
             RMCLogLabel.TabIndex = 55;
-            RMCLogLabel.Text = "RMC Runtime Log:";
+            RMCLogLabel.Text = "Debug Log:";
             RMCLogLabel.TextAlign = ContentAlignment.TopRight;
             // 
             // logList
@@ -2241,26 +2260,6 @@
             toolTipHelp.UseAnimation = false;
             toolTipHelp.UseFading = false;
             // 
-            // RenewIPBtn
-            // 
-            RenewIPBtn.BackColor = Color.FromArgb(48, 48, 48);
-            RenewIPBtn.BackgroundImageLayout = ImageLayout.Zoom;
-            RenewIPBtn.Dock = DockStyle.Right;
-            RenewIPBtn.FlatStyle = FlatStyle.Flat;
-            RenewIPBtn.Font = new Font("Arial", 6F);
-            RenewIPBtn.ForeColor = Color.White;
-            RenewIPBtn.Image = Properties.Resources.icons8_ip_24;
-            RenewIPBtn.ImageAlign = ContentAlignment.TopCenter;
-            RenewIPBtn.Location = new Point(247, 0);
-            RenewIPBtn.Margin = new Padding(3, 2, 3, 2);
-            RenewIPBtn.Name = "RenewIPBtn";
-            RenewIPBtn.Size = new Size(62, 46);
-            RenewIPBtn.TabIndex = 80;
-            RenewIPBtn.Text = "Renew IP";
-            RenewIPBtn.TextAlign = ContentAlignment.BottomCenter;
-            RenewIPBtn.UseVisualStyleBackColor = false;
-            RenewIPBtn.Click += RenewIPBtn_Click;
-            // 
             // RMCManager
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2287,7 +2286,7 @@
             MinimumSize = new Size(699, 476);
             Name = "RMCManager";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "RapidMessageCast GUI -";
+            Text = "RapidMessageCast - vx.x.x.x";
             FormClosing += RMCManager_FormClosing;
             Load += Form1_Load;
             Shown += RMCManager_Shown;

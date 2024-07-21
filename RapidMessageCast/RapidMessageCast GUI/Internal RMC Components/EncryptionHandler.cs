@@ -1,7 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Security.Cryptography;
 
 //--RapidMessageCast Software--
 //EncryptionHandler.cs - RapidMessageCast Manager
@@ -27,13 +25,23 @@ using System.Security.Cryptography;
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-//Research into encryption methods and how to implement them in C# is ongoing. This class will be updated as more information is gathered.
-//The goal is to implement a secure encryption method that can be used to encrypt sensitive data such as passwords and account information.
-//Possible encryption methods are, DPAPI (Data Protection API), AES (Advanced Encryption Standard), RSA (Rivest-Shamir-Adleman), and more.
-
 namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     internal class EncryptionHandler
     {
+        //private static readonly byte[] UserEntropy = Encoding.UTF8.GetBytes(Environment.MachineName);
+        public static string EncryptData(string data)
+        {
+            byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+            byte[] protectedBytes = ProtectedData.Protect(dataBytes, null, DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(protectedBytes);
+        }
+
+        public static string DecryptData(string protectedData)
+        {
+            byte[] protectedBytes = Convert.FromBase64String(protectedData);
+            byte[] dataBytes = ProtectedData.Unprotect(protectedBytes, null, DataProtectionScope.CurrentUser);
+            return Encoding.UTF8.GetString(dataBytes);
+        }
     }
 }

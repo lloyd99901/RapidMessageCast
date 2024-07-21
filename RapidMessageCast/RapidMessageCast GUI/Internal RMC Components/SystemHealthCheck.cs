@@ -1,8 +1,7 @@
 ﻿using RapidMessageCast_Manager.BroadcastModules;
-using System.ServiceProcess;
 
 //--RapidMessageCast Software--
-//SystemCheckModule.cs - RapidMessageCast Manager
+//SystemHealthCheck.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -27,7 +26,7 @@ using System.ServiceProcess;
 
 namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
-    public class SystemCheckModule(Action<string> logAction)
+    public class SystemHealthCheck(Action<string> logAction)
     {
         private readonly Action<string> _logAction = logAction;
 

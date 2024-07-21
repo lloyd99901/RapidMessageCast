@@ -1,5 +1,5 @@
 ﻿//--RapidMessageCast Software--
-//BroadcastHistoryHandler.cs - RapidMessageCast Manager
+//HistoryHandler.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 
@@ -25,7 +25,7 @@
 
 namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
-    internal class BroadcastHistoryHandler
+    internal class HistoryManager
     {
         readonly List<string> PCbroadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         readonly List<string> EmailbroadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.

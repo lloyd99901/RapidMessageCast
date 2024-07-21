@@ -1,5 +1,5 @@
 ﻿//--RapidMessageCast Software--
-//UpdateChecker.cs - RapidMessageCast Manager
+//RMCUpdateChecker.cs - RapidMessageCast Manager
 
 //Copyright (c) 2024 Lunar/lloyd99901
 

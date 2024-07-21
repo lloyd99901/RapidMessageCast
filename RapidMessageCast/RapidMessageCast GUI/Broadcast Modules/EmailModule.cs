@@ -40,14 +40,14 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 return;
             }
             //Filter invalid email addresses
-            TargetEmailAddresses = InternalRegexFilters.FilterInvalidEmailAddresses(TargetEmailAddresses);
+            TargetEmailAddresses = RegexFilters.FilterInvalidEmailAddresses(TargetEmailAddresses);
             //Check if there are any valid email addresses
             if (string.IsNullOrWhiteSpace(TargetEmailAddresses))
             {
                 return;
             }
             //Check if FQDN is valid
-            if (!InternalRegexFilters.FilterInvalidFQDN(FQDNServer))
+            if (!RegexFilters.FilterInvalidFQDN(FQDNServer))
             {
                 return;
             }

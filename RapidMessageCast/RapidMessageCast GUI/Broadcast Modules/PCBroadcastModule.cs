@@ -31,7 +31,7 @@ namespace RapidMessageCast_Manager.BroadcastModules
     {
         //readonly List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
-        readonly BroadcastHistoryHandler broadcastHistoryHandler = new(); //Create a new instance of the broadcastHistoryHandler class.
+        readonly HistoryManager broadcastHistoryHandler = new(); //Create a new instance of the broadcastHistoryHandler class.
         public void BroadcastPCMessage(string message, string PCList, int duration, bool HasThisBeenReattempted, bool emergencyMode, bool isReattemptOnErrorChecked, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)
         {
             if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm) //If this happens, something went really wrong here...
