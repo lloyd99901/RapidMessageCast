@@ -72,13 +72,19 @@ namespace RapidMessageCast_Manager.BroadcastModules
             }
             string[] pcNames = PCList.Split(PCseparatorArray, StringSplitOptions.RemoveEmptyEntries);
             //Set StartBroadcastBtn text to Starting broadcast.
-            foreach (string pcName in pcNames)
+            foreach (string pcName in pcNames) //FIXME: it might be an idea to refactor this, the Log and BroadcastHistoryHandler is being called multiple times. just put it in one place.
             {
                 Task.Run(() =>
                 {
                     try
                     {
-                        //RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: Preparing to message PC: {pcName} ...");
+                        //Check if the BroadcastModule is still running. If it's not, stop since something has gone wrong.
+                        if (BroadcastController.AreAnyModulesRunningPrivate() == false)
+                        {
+                            RMCManagerForm.AddTextToLogList("Critical - [PCBroadcastModule]: BREAK! Broadcast module has been ordered to stop. Stopping broadcast...");
+                            broadcastHistoryHandler.AddToHistory(RMCEnums.PC, "Critical - Broadcast module has been set to stop. Stopping broadcast...");
+                            return;
+                        }
                         var process = StartMsgProcess(pcName, message, duration);
                         //Check if it returns a blank process. If it does, add an error to the broadcast history.
                         if (process.Id == 0)

@@ -554,6 +554,12 @@ namespace RapidMessageCast_Manager
 
         private void ComputerSelectList_KeyPress(object sender, KeyPressEventArgs e)
         {
+            // Allow control key combinations (e.g., CTRL + V for paste)
+            if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                return;
+            }
+
             if (e.KeyChar == '\n' || e.KeyChar == '\r' || e.KeyChar == '\b')
             {
                 return;

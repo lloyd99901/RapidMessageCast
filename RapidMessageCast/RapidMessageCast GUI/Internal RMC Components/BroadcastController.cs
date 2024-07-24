@@ -1,4 +1,5 @@
 ﻿using RapidMessageCast_Manager.BroadcastModules;
+using System.Diagnostics;
 
 //--RapidMessageCast Software--
 //BroadcastController.cs - RapidMessageCast Manager
@@ -55,8 +56,8 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             switch (module)
             {
                 case RMCEnums.PC:
-                    pcBroadcastModule.BroadcastPCMessage(message, computerList, totalSeconds, false, emergencyMode, reattemptOnError, dontSaveBroadcastHistory, isScheduledBroadcast);
                     moduleRunning[RMCEnums.PC] = true;
+                    pcBroadcastModule.BroadcastPCMessage(message, computerList, totalSeconds, false, emergencyMode, reattemptOnError, dontSaveBroadcastHistory, isScheduledBroadcast);
                     break;
                 case RMCEnums.Email:
                     //Insert Email Module Here
@@ -70,7 +71,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     RMCManagerForm.AddTextToLogList($"Error - [BroadcastController] - An error occurred while trying to set the module running status to BroadcastController. The module specified was not found. Module name that was attempted: {module}");
                     break;
             }
-            await RunModuleWatchdog(false);
+            await MonitorBroadcastModules(false);
         }
 
         public static void SetStatusOfBroadcastModule(RMCEnums module, bool running) //I love static methods. not really.
@@ -100,16 +101,17 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
         }
 
-        private static async Task RunModuleWatchdog(bool IsSecondTimeRunningWatchDog)
+        private static async Task MonitorBroadcastModules(bool isSecondTimeRunningWatchdog)
         {
             if (Application.OpenForms.Count == 0 || Application.OpenForms[0] is not RMCManager RMCManagerForm)
             {
-                MessageBox.Show("Fatal Error - RunModuleWatchdog has reported a critical error, it is recommended that you restart RapidMessageCast.");
+                MessageBox.Show("Fatal Error - MonitorBroadcastModules has reported a critical error, it is recommended that you restart RapidMessageCast.");
                 return;
             }
-            if (IsSecondTimeRunningWatchDog)
+
+            if (isSecondTimeRunningWatchdog)
             {
-                RMCManagerForm.AddTextToLogList("Warning - [RunModuleWatchdog] - Running watchdog for the second time.");
+                RMCManagerForm.AddTextToLogList("Warning - [MonitorBroadcastModules] - Running watchdog for the second time.");
             }
 
             int timeout = 180000; // 3 minutes in milliseconds
@@ -132,43 +134,71 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 
                 if (cts.Token.IsCancellationRequested)
                 {
-                    RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected.");
-                    if(MessageBox.Show("A broadcast module has hung. This means that a broadcast module has not finished in the expected time frame. This may be due to a network issue or a computer issue. Do you want to release and renew your connection to recover your system if it's hung?", "RapidMessageCast - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    {
-                        RMCManagerForm.AddTextToLogList("Info - [RunModuleWatchdog] - Releasing and renewing IP address to recover from hung broadcast module.");
-                        SystemServiceManager.ReleaseAndRenewIP();
-                    }
-                    //Run watchdog again to check if the broadcast module is still hung. UNLESS it's the second time running the watchdog.
-                    if (IsSecondTimeRunningWatchDog)
-                    {
-                        RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected, watchdog will bail since this is the second time the watchdog has checked.");
-                        return;
-                    }
-                    await RunModuleWatchdog(true);
+                    await HandleHungBroadcastModule(isSecondTimeRunningWatchdog, RMCManagerForm);
                 }
                 else
                 {
-                    RMCManagerForm.AddTextToLogList("Info - [RunModuleWatchdog] - All broadcast modules have finished. RMC Program is now idle.");
-                    return;
+                    RMCManagerForm.AddTextToLogList("Info - [MonitorBroadcastModules] - All broadcast modules have finished. RMC Program is now idle.");
                 }
             }
             catch (TaskCanceledException)
             {
-                RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected. [TaskCanceledException]");
-                if (MessageBox.Show("[Exception] A broadcast module has hung. This means that a broadcast module has not finished in the expected time frame. This may be due to a network issue or a computer issue. Do you want to release and renew your connection to recover your system if it's hung?", "RapidMessageCast - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                {
-                    RMCManagerForm.AddTextToLogList("Info - [RunModuleWatchdog] - Releasing and renewing IP address to recover from hung broadcast module.");
-                    SystemServiceManager.ReleaseAndRenewIP();
-                }
-                //Run watchdog again to check if the broadcast module is still hung. UNLESS it's the second time running the watchdog.
-                if (IsSecondTimeRunningWatchDog)
-                {
-                    RMCManagerForm.AddTextToLogList("Critical - [RunModuleWatchdog] - A hung broadcast module has been detected, watchdog will bail since this is the second time the watchdog has checked.");
-                    return;
-                }
-                await RunModuleWatchdog(true);
-                return;
+                await HandleHungBroadcastModule(isSecondTimeRunningWatchdog, RMCManagerForm);
             }
+        }
+
+        private static async Task HandleHungBroadcastModule(bool isSecondTimeRunningWatchdog, RMCManager RMCManagerForm)
+        {
+            RMCManagerForm.AddTextToLogList("Critical - [MonitorBroadcastModules] - A hung broadcast module has been detected. Prompting user with force module stop request...");
+            if (MessageBox.Show("A broadcast module has hung. This means that a broadcast module has not finished in the expected time frame. Do you want to force stop this broadcast?", "RapidMessageCast - Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                RMCManagerForm.AddTextToLogList("Info - [MonitorBroadcastModules] - User action - Force stopping modules...");
+                RMCManagerForm.AddTextToLogList("Info - [MonitorBroadcastModules] - Detailed log: Module states: " + string.Join(", ", moduleRunning.Select(kv => $"{kv.Key}: {kv.Value}")));
+                //Force stop the running modules.
+                foreach (var module in moduleRunning)
+                {
+                    if (module.Value)
+                    {
+                        SetStatusOfBroadcastModule(module.Key, false); //The internal module class should handle the stopping of the module. It will monitor the status of the BrodcastStatus and stop the module if it's still running.
+                    }
+                }
+            }
+
+            if (isSecondTimeRunningWatchdog)
+            {
+                RMCManagerForm.AddTextToLogList("Critical - [MonitorBroadcastModules] - A hung broadcast module has been detected again. RMC is stuck. Call RMCDebugCall.");
+                RMCDebugCall(RMCManagerForm, "MonitorBroadcastModules");
+                // Alert the user with a more urgent message
+                MessageBox.Show("A broadcast module has hung for the second time. It is recommended that you restart RapidMessageCast. A detailed debug text is on the log tab.", "RapidMessageCast - Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //Find out what module is still running and stop it.
+                foreach (var module in moduleRunning)
+                {
+                    if (module.Value)
+                    {
+                        SetStatusOfBroadcastModule(module.Key, false); //The internal module class should handle the stopping of the module. It will monitor the status of the BrodcastStatus and stop the module if it's still running.
+                    }
+                }
+
+            }
+            else
+            {
+                await MonitorBroadcastModules(true);
+            }
+        }
+
+        private static void RMCDebugCall(RMCManager RMCManagerForm, string classCall)
+        {
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            var threadId = Thread.CurrentThread.ManagedThreadId;
+            RMCManagerForm.AddTextToLogList($"Critical - [RMCDebugCall] - {classCall} has called RMCDebugCall: [{timestamp}] [Thread {threadId}]");
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: BroadcastController module states: " + string.Join(", ", moduleRunning.Select(kv => $"{kv.Key}: {kv.Value}")));
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: OpenForms count: " + Application.OpenForms.Count);
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: OpenForms: " + string.Join(", ", Application.OpenForms.Cast<Form>().Select(f => f.Name)));
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: RMC process memory taken: " + Process.GetCurrentProcess().WorkingSet64);
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: RMC process CPU usage: " + Process.GetCurrentProcess().TotalProcessorTime);
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: RMC process threads: " + Process.GetCurrentProcess().Threads.Count);
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Detailed log: RMC process virtual memory: " + Process.GetCurrentProcess().VirtualMemorySize64);
+            RMCManagerForm.AddTextToLogList("Critical - [RMCDebugCall] - Debug call completed.");
         }
     }
 }
