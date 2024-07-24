@@ -7,6 +7,8 @@
 [![GitHub issues](https://img.shields.io/github/issues/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/issues)
 [![GitHub stars](https://img.shields.io/github/stars/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/stargazers)
 [![GitHub license](https://img.shields.io/github/license/lloyd99901/RapidMessageCast)](https://github.com/lloyd99901/RapidMessageCast/blob/master/LICENSE)
+![GitHub CodeQL](https://github.com/lloyd99901/RapidMessageCast/actions/workflows/codeql.yml/badge.svg)
+![GitHub DOTNET](https://github.com/lloyd99901/RapidMessageCast/actions/workflows/dotnet.yml/badge.svg)
 
 > PC Messager, Email, Remote Program Execution (PSExec), and Wake-On-LAN Support
 
