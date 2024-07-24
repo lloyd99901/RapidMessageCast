@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RMCManager));
             StartBroadcastBtn = new Button();
             MainTitleBar = new Panel();
-            ToggleRMSGListBtn = new Button();
+            ShowRMSGListBtn = new Button();
             RMCLogoPanel = new Panel();
             RMCLogoImage = new PictureBox();
             RMCManagerLbl = new Label();
@@ -43,11 +43,15 @@
             BroadcastHistoryBtn = new Button();
             ScheduleBroadcastBtn = new Button();
             Rmsgcontextstrip = new ContextMenuStrip(components);
-            renameSelectRMSGFileToolStripMenuItem = new ToolStripMenuItem();
-            deleteSelectedItemToolStripMenuItem = new ToolStripMenuItem();
             refreshToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
+            openFolderLocationToolStripMenuItem = new ToolStripMenuItem();
+            renameSelectRMSGFileToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            deleteSelectedItemToolStripMenuItem = new ToolStripMenuItem();
             PCtabControl1 = new TabControl();
             PCMessageTab = new TabPage();
+            pictureBox3 = new PictureBox();
             MessageCheckboxSettingLabel = new Label();
             PCBroadcastImage = new PictureBox();
             ReattemptOnErrorCheckbox = new CheckBox();
@@ -58,23 +62,23 @@
             DontSaveHistoryLinkHelp = new LinkLabel();
             FastBroadcastHelpLink = new LinkLabel();
             MessageDurationHelpLink = new LinkLabel();
-            SaveMessageTxtBtn = new Button();
-            MessageOpenTxtBtn = new Button();
-            expirySecondsTime = new NumericUpDown();
-            expiryMinutesTime = new NumericUpDown();
-            expiryHourTime = new NumericUpDown();
+            PCSaveMessageTxtBtn = new Button();
+            PCMessageOpenTxtBtn = new Button();
+            PCexpirySecondsTime = new NumericUpDown();
+            PCexpiryMinutesTime = new NumericUpDown();
+            PCexpiryHourTime = new NumericUpDown();
             MessageDurationLabel = new Label();
             PCBroadcastMessageTxt = new TextBox();
             TypeMessageHereLabel = new Label();
-            MessageLimitLbl = new Label();
+            PCMessageCharLimitLbl = new Label();
             PCBroadcastToTab = new TabPage();
             MessagePCHelpLabel = new LinkLabel();
             FilterPCListBtn = new Button();
             BroadcastToImage = new PictureBox();
             PCCountLbl = new Label();
             SavePCListTxtBtn = new Button();
-            ComputerListLoadFromFileBtn = new Button();
-            MessagePCList = new TextBox();
+            PCComputerListOpenBtn = new Button();
+            PCBroadcastToList = new TextBox();
             PCListcontextMenuStrip = new ContextMenuStrip(components);
             openToolStripMenuItem = new ToolStripMenuItem();
             saveToolStripMenuItem = new ToolStripMenuItem();
@@ -102,10 +106,10 @@
             RenameSelectedRMSGBtn = new Button();
             RMSGHelpLink = new LinkLabel();
             LoadSelectedRMSGBtn = new Button();
-            RMSGFileListBox = new ListBox();
+            QuickLoadListbox = new ListBox();
             DeleteSelectedRMSGFileBtn = new Button();
             QuickLoadRMSGFileLabel = new Label();
-            RefreshRMSGListBtn = new Button();
+            RefreshQuickLoadListBtn = new Button();
             GreenButtonTimer = new System.Windows.Forms.Timer(components);
             QuickLoadRMSGImage = new PictureBox();
             ModulesTabControl = new TabControl();
@@ -182,16 +186,18 @@
             logList = new ListBox();
             IconList = new ImageList(components);
             toolTipHelp = new ToolTip(components);
+            HideQuickLoadBtn = new Button();
             MainTitleBar.SuspendLayout();
             RMCLogoPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage).BeginInit();
             Rmsgcontextstrip.SuspendLayout();
             PCtabControl1.SuspendLayout();
             PCMessageTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PCBroadcastImage).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)expirySecondsTime).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)expiryMinutesTime).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)expiryHourTime).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PCexpirySecondsTime).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PCexpiryMinutesTime).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)PCexpiryHourTime).BeginInit();
             PCBroadcastToTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)BroadcastToImage).BeginInit();
             PCListcontextMenuStrip.SuspendLayout();
@@ -241,7 +247,7 @@
             // 
             MainTitleBar.BackColor = Color.FromArgb(32, 32, 32);
             MainTitleBar.BorderStyle = BorderStyle.FixedSingle;
-            MainTitleBar.Controls.Add(ToggleRMSGListBtn);
+            MainTitleBar.Controls.Add(ShowRMSGListBtn);
             MainTitleBar.Controls.Add(RMCLogoPanel);
             MainTitleBar.Controls.Add(OpenRMCFileBtn);
             MainTitleBar.Controls.Add(SaveRMCFileBTN);
@@ -253,25 +259,27 @@
             MainTitleBar.Size = new Size(708, 48);
             MainTitleBar.TabIndex = 42;
             // 
-            // ToggleRMSGListBtn
+            // ShowRMSGListBtn
             // 
-            ToggleRMSGListBtn.BackColor = Color.FromArgb(48, 48, 48);
-            ToggleRMSGListBtn.BackgroundImageLayout = ImageLayout.Zoom;
-            ToggleRMSGListBtn.Dock = DockStyle.Right;
-            ToggleRMSGListBtn.FlatStyle = FlatStyle.Flat;
-            ToggleRMSGListBtn.Font = new Font("Arial", 6F);
-            ToggleRMSGListBtn.ForeColor = Color.White;
-            ToggleRMSGListBtn.Image = Properties.Resources.icons8_hide_24;
-            ToggleRMSGListBtn.ImageAlign = ContentAlignment.TopCenter;
-            ToggleRMSGListBtn.Location = new Point(309, 0);
-            ToggleRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
-            ToggleRMSGListBtn.Name = "ToggleRMSGListBtn";
-            ToggleRMSGListBtn.Size = new Size(96, 46);
-            ToggleRMSGListBtn.TabIndex = 79;
-            ToggleRMSGListBtn.Text = "Hide RMSG List";
-            ToggleRMSGListBtn.TextAlign = ContentAlignment.BottomCenter;
-            ToggleRMSGListBtn.UseVisualStyleBackColor = false;
-            ToggleRMSGListBtn.Click += ToggleRMSGListBtn_Click;
+            ShowRMSGListBtn.BackColor = Color.FromArgb(48, 48, 48);
+            ShowRMSGListBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            ShowRMSGListBtn.Dock = DockStyle.Right;
+            ShowRMSGListBtn.FlatAppearance.BorderColor = Color.Gray;
+            ShowRMSGListBtn.FlatStyle = FlatStyle.Flat;
+            ShowRMSGListBtn.Font = new Font("Arial", 6F);
+            ShowRMSGListBtn.ForeColor = Color.White;
+            ShowRMSGListBtn.Image = Properties.Resources.icons8_expand_24;
+            ShowRMSGListBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            ShowRMSGListBtn.Location = new Point(280, 0);
+            ShowRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
+            ShowRMSGListBtn.Name = "ShowRMSGListBtn";
+            ShowRMSGListBtn.Size = new Size(125, 46);
+            ShowRMSGListBtn.TabIndex = 79;
+            ShowRMSGListBtn.Text = "Show Quick Load";
+            ShowRMSGListBtn.TextAlign = ContentAlignment.MiddleRight;
+            ShowRMSGListBtn.UseVisualStyleBackColor = false;
+            ShowRMSGListBtn.Visible = false;
+            ShowRMSGListBtn.Click += ShowRMSGListBtn_Click;
             // 
             // RMCLogoPanel
             // 
@@ -328,6 +336,7 @@
             OpenRMCFileBtn.BackColor = Color.FromArgb(48, 48, 48);
             OpenRMCFileBtn.BackgroundImageLayout = ImageLayout.Zoom;
             OpenRMCFileBtn.Dock = DockStyle.Right;
+            OpenRMCFileBtn.FlatAppearance.BorderColor = Color.Gray;
             OpenRMCFileBtn.FlatStyle = FlatStyle.Flat;
             OpenRMCFileBtn.Font = new Font("Arial", 8F);
             OpenRMCFileBtn.ForeColor = Color.White;
@@ -348,6 +357,7 @@
             SaveRMCFileBTN.BackColor = Color.FromArgb(48, 48, 48);
             SaveRMCFileBTN.BackgroundImageLayout = ImageLayout.Zoom;
             SaveRMCFileBTN.Dock = DockStyle.Right;
+            SaveRMCFileBTN.FlatAppearance.BorderColor = Color.Gray;
             SaveRMCFileBTN.FlatStyle = FlatStyle.Flat;
             SaveRMCFileBTN.Font = new Font("Arial", 8F);
             SaveRMCFileBTN.ForeColor = Color.White;
@@ -356,7 +366,7 @@
             SaveRMCFileBTN.Location = new Point(484, 0);
             SaveRMCFileBTN.Margin = new Padding(3, 2, 3, 2);
             SaveRMCFileBTN.Name = "SaveRMCFileBTN";
-            SaveRMCFileBTN.Size = new Size(106, 46);
+            SaveRMCFileBTN.Size = new Size(105, 46);
             SaveRMCFileBTN.TabIndex = 27;
             SaveRMCFileBTN.Text = "Save as...";
             SaveRMCFileBTN.TextAlign = ContentAlignment.MiddleRight;
@@ -368,15 +378,16 @@
             QuickSaveRMSGBtn.BackColor = Color.FromArgb(48, 48, 48);
             QuickSaveRMSGBtn.BackgroundImageLayout = ImageLayout.Zoom;
             QuickSaveRMSGBtn.Dock = DockStyle.Right;
+            QuickSaveRMSGBtn.FlatAppearance.BorderColor = Color.Gray;
             QuickSaveRMSGBtn.FlatStyle = FlatStyle.Flat;
             QuickSaveRMSGBtn.Font = new Font("Arial", 8F);
             QuickSaveRMSGBtn.ForeColor = Color.White;
             QuickSaveRMSGBtn.Image = Properties.Resources.icons8_save_24;
             QuickSaveRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            QuickSaveRMSGBtn.Location = new Point(590, 0);
+            QuickSaveRMSGBtn.Location = new Point(589, 0);
             QuickSaveRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             QuickSaveRMSGBtn.Name = "QuickSaveRMSGBtn";
-            QuickSaveRMSGBtn.Size = new Size(116, 46);
+            QuickSaveRMSGBtn.Size = new Size(117, 46);
             QuickSaveRMSGBtn.TabIndex = 27;
             QuickSaveRMSGBtn.Text = "Quick Save";
             QuickSaveRMSGBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -387,6 +398,7 @@
             // 
             BroadcastHistoryBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             BroadcastHistoryBtn.BackColor = Color.FromArgb(48, 48, 48);
+            BroadcastHistoryBtn.FlatAppearance.BorderColor = Color.Gray;
             BroadcastHistoryBtn.FlatStyle = FlatStyle.Flat;
             BroadcastHistoryBtn.Font = new Font("Arial", 9F);
             BroadcastHistoryBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -406,6 +418,7 @@
             // 
             ScheduleBroadcastBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             ScheduleBroadcastBtn.BackColor = Color.FromArgb(48, 48, 48);
+            ScheduleBroadcastBtn.FlatAppearance.BorderColor = Color.Gray;
             ScheduleBroadcastBtn.FlatStyle = FlatStyle.Flat;
             ScheduleBroadcastBtn.Font = new Font("Arial", 9F);
             ScheduleBroadcastBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -424,30 +437,51 @@
             // Rmsgcontextstrip
             // 
             Rmsgcontextstrip.ImageScalingSize = new Size(20, 20);
-            Rmsgcontextstrip.Items.AddRange(new ToolStripItem[] { renameSelectRMSGFileToolStripMenuItem, deleteSelectedItemToolStripMenuItem, refreshToolStripMenuItem });
+            Rmsgcontextstrip.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripSeparator4, openFolderLocationToolStripMenuItem, renameSelectRMSGFileToolStripMenuItem, toolStripSeparator3, deleteSelectedItemToolStripMenuItem });
             Rmsgcontextstrip.Name = "Rmsgcontextstrip";
-            Rmsgcontextstrip.Size = new Size(228, 76);
-            // 
-            // renameSelectRMSGFileToolStripMenuItem
-            // 
-            renameSelectRMSGFileToolStripMenuItem.Name = "renameSelectRMSGFileToolStripMenuItem";
-            renameSelectRMSGFileToolStripMenuItem.Size = new Size(227, 24);
-            renameSelectRMSGFileToolStripMenuItem.Text = "Rename Selected Item";
-            renameSelectRMSGFileToolStripMenuItem.Click += RenameSelectedRMSGBtn_Click;
-            // 
-            // deleteSelectedItemToolStripMenuItem
-            // 
-            deleteSelectedItemToolStripMenuItem.Name = "deleteSelectedItemToolStripMenuItem";
-            deleteSelectedItemToolStripMenuItem.Size = new Size(227, 24);
-            deleteSelectedItemToolStripMenuItem.Text = "Delete Selected Item";
-            deleteSelectedItemToolStripMenuItem.Click += DeleteSelectedRMSGFileBtn_Click;
+            Rmsgcontextstrip.Size = new Size(232, 120);
             // 
             // refreshToolStripMenuItem
             // 
+            refreshToolStripMenuItem.Image = Properties.Resources.icons8_refresh_24_black;
             refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            refreshToolStripMenuItem.Size = new Size(227, 24);
+            refreshToolStripMenuItem.Size = new Size(231, 26);
             refreshToolStripMenuItem.Text = "Refresh";
             refreshToolStripMenuItem.Click += RefreshRMSGListBtn_Click;
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(228, 6);
+            // 
+            // openFolderLocationToolStripMenuItem
+            // 
+            openFolderLocationToolStripMenuItem.Image = Properties.Resources.icons8_external_link_24_black;
+            openFolderLocationToolStripMenuItem.Name = "openFolderLocationToolStripMenuItem";
+            openFolderLocationToolStripMenuItem.Size = new Size(231, 26);
+            openFolderLocationToolStripMenuItem.Text = "Open Folder Location";
+            openFolderLocationToolStripMenuItem.Click += OpenSaveLocationBtn_Click;
+            // 
+            // renameSelectRMSGFileToolStripMenuItem
+            // 
+            renameSelectRMSGFileToolStripMenuItem.Image = Properties.Resources.icons8_rename_24_black;
+            renameSelectRMSGFileToolStripMenuItem.Name = "renameSelectRMSGFileToolStripMenuItem";
+            renameSelectRMSGFileToolStripMenuItem.Size = new Size(231, 26);
+            renameSelectRMSGFileToolStripMenuItem.Text = "Rename Selected Item";
+            renameSelectRMSGFileToolStripMenuItem.Click += RenameSelectedRMSGBtn_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(228, 6);
+            // 
+            // deleteSelectedItemToolStripMenuItem
+            // 
+            deleteSelectedItemToolStripMenuItem.Image = Properties.Resources.icons8_delete_24_black;
+            deleteSelectedItemToolStripMenuItem.Name = "deleteSelectedItemToolStripMenuItem";
+            deleteSelectedItemToolStripMenuItem.Size = new Size(231, 26);
+            deleteSelectedItemToolStripMenuItem.Text = "Delete Selected Item";
+            deleteSelectedItemToolStripMenuItem.Click += DeleteSelectedRMSGFileBtn_Click;
             // 
             // PCtabControl1
             // 
@@ -465,6 +499,7 @@
             // PCMessageTab
             // 
             PCMessageTab.BackColor = Color.FromArgb(30, 30, 30);
+            PCMessageTab.Controls.Add(pictureBox3);
             PCMessageTab.Controls.Add(MessageCheckboxSettingLabel);
             PCMessageTab.Controls.Add(PCBroadcastImage);
             PCMessageTab.Controls.Add(ReattemptOnErrorCheckbox);
@@ -475,15 +510,15 @@
             PCMessageTab.Controls.Add(DontSaveHistoryLinkHelp);
             PCMessageTab.Controls.Add(FastBroadcastHelpLink);
             PCMessageTab.Controls.Add(MessageDurationHelpLink);
-            PCMessageTab.Controls.Add(SaveMessageTxtBtn);
-            PCMessageTab.Controls.Add(MessageOpenTxtBtn);
-            PCMessageTab.Controls.Add(expirySecondsTime);
-            PCMessageTab.Controls.Add(expiryMinutesTime);
-            PCMessageTab.Controls.Add(expiryHourTime);
+            PCMessageTab.Controls.Add(PCSaveMessageTxtBtn);
+            PCMessageTab.Controls.Add(PCMessageOpenTxtBtn);
+            PCMessageTab.Controls.Add(PCexpirySecondsTime);
+            PCMessageTab.Controls.Add(PCexpiryMinutesTime);
+            PCMessageTab.Controls.Add(PCexpiryHourTime);
             PCMessageTab.Controls.Add(MessageDurationLabel);
             PCMessageTab.Controls.Add(PCBroadcastMessageTxt);
             PCMessageTab.Controls.Add(TypeMessageHereLabel);
-            PCMessageTab.Controls.Add(MessageLimitLbl);
+            PCMessageTab.Controls.Add(PCMessageCharLimitLbl);
             PCMessageTab.ImageIndex = 2;
             PCMessageTab.Location = new Point(4, 29);
             PCMessageTab.Name = "PCMessageTab";
@@ -492,13 +527,24 @@
             PCMessageTab.TabIndex = 0;
             PCMessageTab.Text = "Message";
             // 
+            // pictureBox3
+            // 
+            pictureBox3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pictureBox3.Image = Properties.Resources.icons8_message_24;
+            pictureBox3.Location = new Point(224, 198);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new Size(24, 24);
+            pictureBox3.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox3.TabIndex = 89;
+            pictureBox3.TabStop = false;
+            // 
             // MessageCheckboxSettingLabel
             // 
             MessageCheckboxSettingLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             MessageCheckboxSettingLabel.AutoSize = true;
             MessageCheckboxSettingLabel.Font = new Font("Arial", 9F);
             MessageCheckboxSettingLabel.ForeColor = Color.White;
-            MessageCheckboxSettingLabel.Location = new Point(247, 205);
+            MessageCheckboxSettingLabel.Location = new Point(247, 201);
             MessageCheckboxSettingLabel.Name = "MessageCheckboxSettingLabel";
             MessageCheckboxSettingLabel.Size = new Size(128, 17);
             MessageCheckboxSettingLabel.TabIndex = 88;
@@ -621,83 +667,85 @@
             MessageDurationHelpLink.Text = "?";
             MessageDurationHelpLink.LinkClicked += MessageDurationHelpLink_LinkClicked;
             // 
-            // SaveMessageTxtBtn
+            // PCSaveMessageTxtBtn
             // 
-            SaveMessageTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            SaveMessageTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
-            SaveMessageTxtBtn.FlatStyle = FlatStyle.Flat;
-            SaveMessageTxtBtn.Font = new Font("Arial", 9F);
-            SaveMessageTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            SaveMessageTxtBtn.Image = Properties.Resources.icons8_save_24;
-            SaveMessageTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveMessageTxtBtn.Location = new Point(5, 214);
-            SaveMessageTxtBtn.Margin = new Padding(3, 2, 3, 2);
-            SaveMessageTxtBtn.Name = "SaveMessageTxtBtn";
-            SaveMessageTxtBtn.Size = new Size(181, 32);
-            SaveMessageTxtBtn.TabIndex = 75;
-            SaveMessageTxtBtn.Text = "Save as .txt";
-            SaveMessageTxtBtn.UseVisualStyleBackColor = false;
-            SaveMessageTxtBtn.Click += SaveMessageBtn_Click;
+            PCSaveMessageTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PCSaveMessageTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
+            PCSaveMessageTxtBtn.FlatAppearance.BorderColor = Color.Silver;
+            PCSaveMessageTxtBtn.FlatStyle = FlatStyle.Flat;
+            PCSaveMessageTxtBtn.Font = new Font("Arial", 9F);
+            PCSaveMessageTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            PCSaveMessageTxtBtn.Image = Properties.Resources.icons8_save_24;
+            PCSaveMessageTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            PCSaveMessageTxtBtn.Location = new Point(5, 214);
+            PCSaveMessageTxtBtn.Margin = new Padding(3, 2, 3, 2);
+            PCSaveMessageTxtBtn.Name = "PCSaveMessageTxtBtn";
+            PCSaveMessageTxtBtn.Size = new Size(181, 32);
+            PCSaveMessageTxtBtn.TabIndex = 75;
+            PCSaveMessageTxtBtn.Text = "Save as .txt";
+            PCSaveMessageTxtBtn.UseVisualStyleBackColor = false;
+            PCSaveMessageTxtBtn.Click += SaveMessageBtn_Click;
             // 
-            // MessageOpenTxtBtn
+            // PCMessageOpenTxtBtn
             // 
-            MessageOpenTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            MessageOpenTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
-            MessageOpenTxtBtn.FlatStyle = FlatStyle.Flat;
-            MessageOpenTxtBtn.Font = new Font("Arial", 9F);
-            MessageOpenTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            MessageOpenTxtBtn.Image = Properties.Resources.icons8_external_link_24;
-            MessageOpenTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            MessageOpenTxtBtn.Location = new Point(5, 179);
-            MessageOpenTxtBtn.Margin = new Padding(3, 2, 3, 2);
-            MessageOpenTxtBtn.Name = "MessageOpenTxtBtn";
-            MessageOpenTxtBtn.Size = new Size(181, 32);
-            MessageOpenTxtBtn.TabIndex = 76;
-            MessageOpenTxtBtn.Text = "Open from .txt";
-            MessageOpenTxtBtn.UseVisualStyleBackColor = false;
-            MessageOpenTxtBtn.Click += OpenMessageTextToolStripMenuItem_Click;
+            PCMessageOpenTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PCMessageOpenTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
+            PCMessageOpenTxtBtn.FlatAppearance.BorderColor = Color.Silver;
+            PCMessageOpenTxtBtn.FlatStyle = FlatStyle.Flat;
+            PCMessageOpenTxtBtn.Font = new Font("Arial", 9F);
+            PCMessageOpenTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            PCMessageOpenTxtBtn.Image = Properties.Resources.icons8_external_link_24;
+            PCMessageOpenTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            PCMessageOpenTxtBtn.Location = new Point(5, 179);
+            PCMessageOpenTxtBtn.Margin = new Padding(3, 2, 3, 2);
+            PCMessageOpenTxtBtn.Name = "PCMessageOpenTxtBtn";
+            PCMessageOpenTxtBtn.Size = new Size(181, 32);
+            PCMessageOpenTxtBtn.TabIndex = 76;
+            PCMessageOpenTxtBtn.Text = "Open from .txt";
+            PCMessageOpenTxtBtn.UseVisualStyleBackColor = false;
+            PCMessageOpenTxtBtn.Click += OpenMessageTextToolStripMenuItem_Click;
             // 
-            // expirySecondsTime
+            // PCexpirySecondsTime
             // 
-            expirySecondsTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            expirySecondsTime.BackColor = Color.FromArgb(48, 48, 48);
-            expirySecondsTime.BorderStyle = BorderStyle.FixedSingle;
-            expirySecondsTime.Font = new Font("Arial", 9F);
-            expirySecondsTime.ForeColor = Color.White;
-            expirySecondsTime.Location = new Point(117, 269);
-            expirySecondsTime.Margin = new Padding(3, 2, 3, 2);
-            expirySecondsTime.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
-            expirySecondsTime.Name = "expirySecondsTime";
-            expirySecondsTime.Size = new Size(47, 25);
-            expirySecondsTime.TabIndex = 79;
+            PCexpirySecondsTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            PCexpirySecondsTime.BackColor = Color.FromArgb(48, 48, 48);
+            PCexpirySecondsTime.BorderStyle = BorderStyle.FixedSingle;
+            PCexpirySecondsTime.Font = new Font("Arial", 9F);
+            PCexpirySecondsTime.ForeColor = Color.White;
+            PCexpirySecondsTime.Location = new Point(117, 269);
+            PCexpirySecondsTime.Margin = new Padding(3, 2, 3, 2);
+            PCexpirySecondsTime.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
+            PCexpirySecondsTime.Name = "PCexpirySecondsTime";
+            PCexpirySecondsTime.Size = new Size(47, 25);
+            PCexpirySecondsTime.TabIndex = 79;
             // 
-            // expiryMinutesTime
+            // PCexpiryMinutesTime
             // 
-            expiryMinutesTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            expiryMinutesTime.BackColor = Color.FromArgb(48, 48, 48);
-            expiryMinutesTime.BorderStyle = BorderStyle.FixedSingle;
-            expiryMinutesTime.Font = new Font("Arial", 9F);
-            expiryMinutesTime.ForeColor = Color.White;
-            expiryMinutesTime.Location = new Point(64, 269);
-            expiryMinutesTime.Margin = new Padding(3, 2, 3, 2);
-            expiryMinutesTime.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
-            expiryMinutesTime.Name = "expiryMinutesTime";
-            expiryMinutesTime.Size = new Size(47, 25);
-            expiryMinutesTime.TabIndex = 80;
+            PCexpiryMinutesTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            PCexpiryMinutesTime.BackColor = Color.FromArgb(48, 48, 48);
+            PCexpiryMinutesTime.BorderStyle = BorderStyle.FixedSingle;
+            PCexpiryMinutesTime.Font = new Font("Arial", 9F);
+            PCexpiryMinutesTime.ForeColor = Color.White;
+            PCexpiryMinutesTime.Location = new Point(64, 269);
+            PCexpiryMinutesTime.Margin = new Padding(3, 2, 3, 2);
+            PCexpiryMinutesTime.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
+            PCexpiryMinutesTime.Name = "PCexpiryMinutesTime";
+            PCexpiryMinutesTime.Size = new Size(47, 25);
+            PCexpiryMinutesTime.TabIndex = 80;
             // 
-            // expiryHourTime
+            // PCexpiryHourTime
             // 
-            expiryHourTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            expiryHourTime.BackColor = Color.FromArgb(48, 48, 48);
-            expiryHourTime.BorderStyle = BorderStyle.FixedSingle;
-            expiryHourTime.Font = new Font("Arial", 9F);
-            expiryHourTime.ForeColor = Color.White;
-            expiryHourTime.Location = new Point(11, 269);
-            expiryHourTime.Margin = new Padding(3, 2, 3, 2);
-            expiryHourTime.Name = "expiryHourTime";
-            expiryHourTime.Size = new Size(47, 25);
-            expiryHourTime.TabIndex = 81;
-            expiryHourTime.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            PCexpiryHourTime.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            PCexpiryHourTime.BackColor = Color.FromArgb(48, 48, 48);
+            PCexpiryHourTime.BorderStyle = BorderStyle.FixedSingle;
+            PCexpiryHourTime.Font = new Font("Arial", 9F);
+            PCexpiryHourTime.ForeColor = Color.White;
+            PCexpiryHourTime.Location = new Point(11, 269);
+            PCexpiryHourTime.Margin = new Padding(3, 2, 3, 2);
+            PCexpiryHourTime.Name = "PCexpiryHourTime";
+            PCexpiryHourTime.Size = new Size(47, 25);
+            PCexpiryHourTime.TabIndex = 81;
+            PCexpiryHourTime.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // MessageDurationLabel
             // 
@@ -724,7 +772,7 @@
             PCBroadcastMessageTxt.Multiline = true;
             PCBroadcastMessageTxt.Name = "PCBroadcastMessageTxt";
             PCBroadcastMessageTxt.ScrollBars = ScrollBars.Vertical;
-            PCBroadcastMessageTxt.Size = new Size(370, 148);
+            PCBroadcastMessageTxt.Size = new Size(370, 146);
             PCBroadcastMessageTxt.TabIndex = 77;
             PCBroadcastMessageTxt.TextChanged += MessageTxt_TextChanged;
             PCBroadcastMessageTxt.KeyPress += MessageTxt_KeyPress;
@@ -741,18 +789,18 @@
             TypeMessageHereLabel.Text = "Type the message here:";
             TypeMessageHereLabel.TextAlign = ContentAlignment.TopRight;
             // 
-            // MessageLimitLbl
+            // PCMessageCharLimitLbl
             // 
-            MessageLimitLbl.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            MessageLimitLbl.BackColor = Color.FromArgb(30, 30, 30);
-            MessageLimitLbl.Font = new Font("Arial", 9F, FontStyle.Bold | FontStyle.Italic);
-            MessageLimitLbl.ForeColor = Color.White;
-            MessageLimitLbl.Location = new Point(197, 178);
-            MessageLimitLbl.Name = "MessageLimitLbl";
-            MessageLimitLbl.Size = new Size(181, 20);
-            MessageLimitLbl.TabIndex = 74;
-            MessageLimitLbl.Text = "Length Remaining: 255";
-            MessageLimitLbl.TextAlign = ContentAlignment.MiddleCenter;
+            PCMessageCharLimitLbl.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            PCMessageCharLimitLbl.BackColor = Color.FromArgb(30, 30, 30);
+            PCMessageCharLimitLbl.Font = new Font("Arial", 9F, FontStyle.Bold | FontStyle.Italic);
+            PCMessageCharLimitLbl.ForeColor = Color.White;
+            PCMessageCharLimitLbl.Location = new Point(197, 178);
+            PCMessageCharLimitLbl.Name = "PCMessageCharLimitLbl";
+            PCMessageCharLimitLbl.Size = new Size(181, 20);
+            PCMessageCharLimitLbl.TabIndex = 74;
+            PCMessageCharLimitLbl.Text = "Length Remaining: 255";
+            PCMessageCharLimitLbl.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // PCBroadcastToTab
             // 
@@ -762,8 +810,8 @@
             PCBroadcastToTab.Controls.Add(BroadcastToImage);
             PCBroadcastToTab.Controls.Add(PCCountLbl);
             PCBroadcastToTab.Controls.Add(SavePCListTxtBtn);
-            PCBroadcastToTab.Controls.Add(ComputerListLoadFromFileBtn);
-            PCBroadcastToTab.Controls.Add(MessagePCList);
+            PCBroadcastToTab.Controls.Add(PCComputerListOpenBtn);
+            PCBroadcastToTab.Controls.Add(PCBroadcastToList);
             PCBroadcastToTab.Controls.Add(ActiveDirectorySelectBtn);
             PCBroadcastToTab.Controls.Add(MessagePCsLabel);
             PCBroadcastToTab.ImageIndex = 4;
@@ -790,6 +838,7 @@
             // 
             FilterPCListBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             FilterPCListBtn.BackColor = Color.FromArgb(48, 48, 48);
+            FilterPCListBtn.FlatAppearance.BorderColor = Color.Silver;
             FilterPCListBtn.FlatStyle = FlatStyle.Flat;
             FilterPCListBtn.Font = new Font("Arial", 9F);
             FilterPCListBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -828,6 +877,7 @@
             // 
             SavePCListTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SavePCListTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
+            SavePCListTxtBtn.FlatAppearance.BorderColor = Color.Silver;
             SavePCListTxtBtn.FlatStyle = FlatStyle.Flat;
             SavePCListTxtBtn.Font = new Font("Arial", 9F);
             SavePCListTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -842,118 +892,123 @@
             SavePCListTxtBtn.UseVisualStyleBackColor = false;
             SavePCListTxtBtn.Click += SaveComputerListBtn_Click;
             // 
-            // ComputerListLoadFromFileBtn
+            // PCComputerListOpenBtn
             // 
-            ComputerListLoadFromFileBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            ComputerListLoadFromFileBtn.BackColor = Color.FromArgb(48, 48, 48);
-            ComputerListLoadFromFileBtn.FlatStyle = FlatStyle.Flat;
-            ComputerListLoadFromFileBtn.Font = new Font("Arial", 9F);
-            ComputerListLoadFromFileBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            ComputerListLoadFromFileBtn.Image = Properties.Resources.icons8_external_link_24;
-            ComputerListLoadFromFileBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            ComputerListLoadFromFileBtn.Location = new Point(5, 230);
-            ComputerListLoadFromFileBtn.Margin = new Padding(3, 2, 3, 2);
-            ComputerListLoadFromFileBtn.Name = "ComputerListLoadFromFileBtn";
-            ComputerListLoadFromFileBtn.Size = new Size(183, 32);
-            ComputerListLoadFromFileBtn.TabIndex = 73;
-            ComputerListLoadFromFileBtn.Text = "Open from .txt";
-            ComputerListLoadFromFileBtn.UseVisualStyleBackColor = false;
-            ComputerListLoadFromFileBtn.Click += OpenSendComputerListToolStripMenuItem_Click;
+            PCComputerListOpenBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            PCComputerListOpenBtn.BackColor = Color.FromArgb(48, 48, 48);
+            PCComputerListOpenBtn.FlatAppearance.BorderColor = Color.Silver;
+            PCComputerListOpenBtn.FlatStyle = FlatStyle.Flat;
+            PCComputerListOpenBtn.Font = new Font("Arial", 9F);
+            PCComputerListOpenBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            PCComputerListOpenBtn.Image = Properties.Resources.icons8_external_link_24;
+            PCComputerListOpenBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            PCComputerListOpenBtn.Location = new Point(5, 230);
+            PCComputerListOpenBtn.Margin = new Padding(3, 2, 3, 2);
+            PCComputerListOpenBtn.Name = "PCComputerListOpenBtn";
+            PCComputerListOpenBtn.Size = new Size(183, 32);
+            PCComputerListOpenBtn.TabIndex = 73;
+            PCComputerListOpenBtn.Text = "Open from .txt";
+            PCComputerListOpenBtn.UseVisualStyleBackColor = false;
+            PCComputerListOpenBtn.Click += OpenSendComputerListToolStripMenuItem_Click;
             // 
-            // MessagePCList
+            // PCBroadcastToList
             // 
-            MessagePCList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            MessagePCList.BackColor = Color.FromArgb(45, 45, 45);
-            MessagePCList.BorderStyle = BorderStyle.FixedSingle;
-            MessagePCList.ContextMenuStrip = PCListcontextMenuStrip;
-            MessagePCList.Font = new Font("Segoe UI", 8F);
-            MessagePCList.ForeColor = Color.White;
-            MessagePCList.Location = new Point(5, 26);
-            MessagePCList.Margin = new Padding(3, 2, 3, 2);
-            MessagePCList.Multiline = true;
-            MessagePCList.Name = "MessagePCList";
-            MessagePCList.ScrollBars = ScrollBars.Vertical;
-            MessagePCList.Size = new Size(370, 200);
-            MessagePCList.TabIndex = 76;
-            MessagePCList.TextChanged += ComputerSelectList_TextChanged;
-            MessagePCList.KeyPress += ComputerSelectList_KeyPress;
+            PCBroadcastToList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PCBroadcastToList.BackColor = Color.FromArgb(45, 45, 45);
+            PCBroadcastToList.BorderStyle = BorderStyle.FixedSingle;
+            PCBroadcastToList.ContextMenuStrip = PCListcontextMenuStrip;
+            PCBroadcastToList.Font = new Font("Segoe UI", 8F);
+            PCBroadcastToList.ForeColor = Color.White;
+            PCBroadcastToList.Location = new Point(5, 26);
+            PCBroadcastToList.Margin = new Padding(3, 2, 3, 2);
+            PCBroadcastToList.Multiline = true;
+            PCBroadcastToList.Name = "PCBroadcastToList";
+            PCBroadcastToList.ScrollBars = ScrollBars.Vertical;
+            PCBroadcastToList.Size = new Size(370, 200);
+            PCBroadcastToList.TabIndex = 76;
+            PCBroadcastToList.TextChanged += ComputerSelectList_TextChanged;
+            PCBroadcastToList.KeyPress += ComputerSelectList_KeyPress;
             // 
             // PCListcontextMenuStrip
             // 
             PCListcontextMenuStrip.ImageScalingSize = new Size(20, 20);
             PCListcontextMenuStrip.Items.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveToolStripMenuItem, loadFromActiveDirectoryToolStripMenuItem, fitlerToolStripMenuItem, toolStripSeparator2, testBroadcastMessageToolStripMenuItem, undoToolStripMenuItem, selectAllToolStripMenuItem, toolStripSeparator1, addThisPCToTheListToolStripMenuItem, clearAllToolStripMenuItem });
             PCListcontextMenuStrip.Name = "PCListcontextMenuStrip";
-            PCListcontextMenuStrip.Size = new Size(268, 232);
+            PCListcontextMenuStrip.Size = new Size(272, 250);
             // 
             // openToolStripMenuItem
             // 
+            openToolStripMenuItem.Image = Properties.Resources.icons8_external_link_24_black;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(267, 24);
+            openToolStripMenuItem.Size = new Size(271, 26);
             openToolStripMenuItem.Text = "&Open...";
             openToolStripMenuItem.Click += OpenSendComputerListToolStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
+            saveToolStripMenuItem.Image = Properties.Resources.mspaint_501371;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(267, 24);
+            saveToolStripMenuItem.Size = new Size(271, 26);
             saveToolStripMenuItem.Text = "&Save...";
             saveToolStripMenuItem.Click += SaveComputerListBtn_Click;
             // 
             // loadFromActiveDirectoryToolStripMenuItem
             // 
             loadFromActiveDirectoryToolStripMenuItem.Name = "loadFromActiveDirectoryToolStripMenuItem";
-            loadFromActiveDirectoryToolStripMenuItem.Size = new Size(267, 24);
+            loadFromActiveDirectoryToolStripMenuItem.Size = new Size(271, 26);
             loadFromActiveDirectoryToolStripMenuItem.Text = "Load from &Active Directory...";
             loadFromActiveDirectoryToolStripMenuItem.Click += ActiveDirectorySelectBtn_Click;
             // 
             // fitlerToolStripMenuItem
             // 
             fitlerToolStripMenuItem.Name = "fitlerToolStripMenuItem";
-            fitlerToolStripMenuItem.Size = new Size(267, 24);
+            fitlerToolStripMenuItem.Size = new Size(271, 26);
             fitlerToolStripMenuItem.Text = "&Filter List...";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(264, 6);
+            toolStripSeparator2.Size = new Size(268, 6);
             // 
             // testBroadcastMessageToolStripMenuItem
             // 
+            testBroadcastMessageToolStripMenuItem.Image = Properties.Resources.icons8_chat_bubble_24_black;
             testBroadcastMessageToolStripMenuItem.Name = "testBroadcastMessageToolStripMenuItem";
-            testBroadcastMessageToolStripMenuItem.Size = new Size(267, 24);
+            testBroadcastMessageToolStripMenuItem.Size = new Size(271, 26);
             testBroadcastMessageToolStripMenuItem.Text = "Send test message to this PC";
             testBroadcastMessageToolStripMenuItem.Click += TestBroadcastMessageToolStripMenuItem_Click;
             // 
             // undoToolStripMenuItem
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.Size = new Size(267, 24);
+            undoToolStripMenuItem.Size = new Size(271, 26);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += UndoToolStripMenuItem_Click;
             // 
             // selectAllToolStripMenuItem
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            selectAllToolStripMenuItem.Size = new Size(267, 24);
+            selectAllToolStripMenuItem.Size = new Size(271, 26);
             selectAllToolStripMenuItem.Text = "Select All";
             selectAllToolStripMenuItem.Click += SelectAllToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(264, 6);
+            toolStripSeparator1.Size = new Size(268, 6);
             // 
             // addThisPCToTheListToolStripMenuItem
             // 
+            addThisPCToTheListToolStripMenuItem.Image = Properties.Resources.icons8_pc_24_black;
             addThisPCToTheListToolStripMenuItem.Name = "addThisPCToTheListToolStripMenuItem";
-            addThisPCToTheListToolStripMenuItem.Size = new Size(267, 24);
+            addThisPCToTheListToolStripMenuItem.Size = new Size(271, 26);
             addThisPCToTheListToolStripMenuItem.Text = "Add current PC to the list";
             addThisPCToTheListToolStripMenuItem.Click += AddThisPCToTheListToolStripMenuItem_Click;
             // 
             // clearAllToolStripMenuItem
             // 
             clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            clearAllToolStripMenuItem.Size = new Size(267, 24);
+            clearAllToolStripMenuItem.Size = new Size(271, 26);
             clearAllToolStripMenuItem.Text = "Clear All Text";
             clearAllToolStripMenuItem.Click += ClearAllToolStripMenuItem_Click;
             // 
@@ -962,6 +1017,7 @@
             ActiveDirectorySelectBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             ActiveDirectorySelectBtn.BackColor = Color.FromArgb(48, 48, 48);
             ActiveDirectorySelectBtn.BackgroundImageLayout = ImageLayout.None;
+            ActiveDirectorySelectBtn.FlatAppearance.BorderColor = Color.Silver;
             ActiveDirectorySelectBtn.FlatStyle = FlatStyle.Flat;
             ActiveDirectorySelectBtn.Font = new Font("Arial", 9F);
             ActiveDirectorySelectBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1012,6 +1068,7 @@
             // 
             SaveMacAddressesAsTXTBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SaveMacAddressesAsTXTBtn.BackColor = Color.FromArgb(48, 48, 48);
+            SaveMacAddressesAsTXTBtn.FlatAppearance.BorderColor = Color.Silver;
             SaveMacAddressesAsTXTBtn.FlatStyle = FlatStyle.Flat;
             SaveMacAddressesAsTXTBtn.Font = new Font("Arial", 9F);
             SaveMacAddressesAsTXTBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1030,6 +1087,7 @@
             // 
             OpenMacAddressfromTxtBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             OpenMacAddressfromTxtBtn.BackColor = Color.FromArgb(48, 48, 48);
+            OpenMacAddressfromTxtBtn.FlatAppearance.BorderColor = Color.Silver;
             OpenMacAddressfromTxtBtn.FlatStyle = FlatStyle.Flat;
             OpenMacAddressfromTxtBtn.Font = new Font("Arial", 9F);
             OpenMacAddressfromTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1081,6 +1139,7 @@
             // 
             SendWOLPacketBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             SendWOLPacketBtn.BackColor = Color.FromArgb(48, 48, 48);
+            SendWOLPacketBtn.FlatAppearance.BorderColor = Color.Silver;
             SendWOLPacketBtn.FlatStyle = FlatStyle.Flat;
             SendWOLPacketBtn.Font = new Font("Arial", 9F);
             SendWOLPacketBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1135,6 +1194,7 @@
             // RenameSelectedRMSGBtn
             // 
             RenameSelectedRMSGBtn.BackColor = Color.FromArgb(48, 48, 48);
+            RenameSelectedRMSGBtn.FlatAppearance.BorderColor = Color.Silver;
             RenameSelectedRMSGBtn.FlatStyle = FlatStyle.Flat;
             RenameSelectedRMSGBtn.Font = new Font("Arial", 9F);
             RenameSelectedRMSGBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1166,6 +1226,7 @@
             // 
             LoadSelectedRMSGBtn.BackColor = Color.FromArgb(48, 48, 48);
             LoadSelectedRMSGBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            LoadSelectedRMSGBtn.FlatAppearance.BorderColor = Color.Silver;
             LoadSelectedRMSGBtn.FlatStyle = FlatStyle.Flat;
             LoadSelectedRMSGBtn.Font = new Font("Arial", 9F);
             LoadSelectedRMSGBtn.ForeColor = Color.White;
@@ -1180,28 +1241,29 @@
             LoadSelectedRMSGBtn.UseVisualStyleBackColor = false;
             LoadSelectedRMSGBtn.Click += LoadSelectedRMSGBtn_Click;
             // 
-            // RMSGFileListBox
+            // QuickLoadListbox
             // 
-            RMSGFileListBox.BackColor = Color.FromArgb(45, 45, 45);
-            RMSGFileListBox.BorderStyle = BorderStyle.FixedSingle;
-            RMSGFileListBox.ContextMenuStrip = Rmsgcontextstrip;
-            RMSGFileListBox.ForeColor = Color.White;
-            RMSGFileListBox.FormattingEnabled = true;
-            RMSGFileListBox.IntegralHeight = false;
-            RMSGFileListBox.Location = new Point(5, 72);
-            RMSGFileListBox.Margin = new Padding(3, 2, 3, 2);
-            RMSGFileListBox.Name = "RMSGFileListBox";
-            RMSGFileListBox.Size = new Size(295, 274);
-            RMSGFileListBox.TabIndex = 78;
-            RMSGFileListBox.DoubleClick += RMSGFileListBox_DoubleClick;
+            QuickLoadListbox.BackColor = Color.FromArgb(45, 45, 45);
+            QuickLoadListbox.BorderStyle = BorderStyle.FixedSingle;
+            QuickLoadListbox.ContextMenuStrip = Rmsgcontextstrip;
+            QuickLoadListbox.ForeColor = Color.White;
+            QuickLoadListbox.FormattingEnabled = true;
+            QuickLoadListbox.IntegralHeight = false;
+            QuickLoadListbox.Location = new Point(5, 72);
+            QuickLoadListbox.Margin = new Padding(3, 2, 3, 2);
+            QuickLoadListbox.Name = "QuickLoadListbox";
+            QuickLoadListbox.Size = new Size(295, 274);
+            QuickLoadListbox.TabIndex = 78;
+            QuickLoadListbox.DoubleClick += RMSGFileListBox_DoubleClick;
             // 
             // DeleteSelectedRMSGFileBtn
             // 
             DeleteSelectedRMSGFileBtn.BackColor = Color.FromArgb(48, 48, 48);
+            DeleteSelectedRMSGFileBtn.FlatAppearance.BorderColor = Color.Silver;
             DeleteSelectedRMSGFileBtn.FlatStyle = FlatStyle.Flat;
             DeleteSelectedRMSGFileBtn.Font = new Font("Arial", 9F);
             DeleteSelectedRMSGFileBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            DeleteSelectedRMSGFileBtn.Image = Properties.Resources.icons8_delete_24;
+            DeleteSelectedRMSGFileBtn.Image = Properties.Resources.icons8_delete_24_white;
             DeleteSelectedRMSGFileBtn.ImageAlign = ContentAlignment.MiddleLeft;
             DeleteSelectedRMSGFileBtn.Location = new Point(218, 386);
             DeleteSelectedRMSGFileBtn.Margin = new Padding(3, 2, 3, 2);
@@ -1225,23 +1287,24 @@
             QuickLoadRMSGFileLabel.Text = "Quick Load:";
             QuickLoadRMSGFileLabel.TextAlign = ContentAlignment.TopRight;
             // 
-            // RefreshRMSGListBtn
+            // RefreshQuickLoadListBtn
             // 
-            RefreshRMSGListBtn.BackColor = Color.FromArgb(48, 48, 48);
-            RefreshRMSGListBtn.FlatStyle = FlatStyle.Flat;
-            RefreshRMSGListBtn.Font = new Font("Arial", 9F);
-            RefreshRMSGListBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            RefreshRMSGListBtn.Image = Properties.Resources.icons8_refresh_24;
-            RefreshRMSGListBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RefreshRMSGListBtn.Location = new Point(5, 386);
-            RefreshRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
-            RefreshRMSGListBtn.Name = "RefreshRMSGListBtn";
-            RefreshRMSGListBtn.Size = new Size(98, 32);
-            RefreshRMSGListBtn.TabIndex = 76;
-            RefreshRMSGListBtn.Text = "Refresh";
-            RefreshRMSGListBtn.TextAlign = ContentAlignment.MiddleRight;
-            RefreshRMSGListBtn.UseVisualStyleBackColor = false;
-            RefreshRMSGListBtn.Click += RefreshRMSGListBtn_Click;
+            RefreshQuickLoadListBtn.BackColor = Color.FromArgb(48, 48, 48);
+            RefreshQuickLoadListBtn.FlatAppearance.BorderColor = Color.Silver;
+            RefreshQuickLoadListBtn.FlatStyle = FlatStyle.Flat;
+            RefreshQuickLoadListBtn.Font = new Font("Arial", 9F);
+            RefreshQuickLoadListBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            RefreshQuickLoadListBtn.Image = Properties.Resources.icons8_refresh_24_white;
+            RefreshQuickLoadListBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            RefreshQuickLoadListBtn.Location = new Point(5, 386);
+            RefreshQuickLoadListBtn.Margin = new Padding(3, 2, 3, 2);
+            RefreshQuickLoadListBtn.Name = "RefreshQuickLoadListBtn";
+            RefreshQuickLoadListBtn.Size = new Size(98, 32);
+            RefreshQuickLoadListBtn.TabIndex = 76;
+            RefreshQuickLoadListBtn.Text = "Refresh";
+            RefreshQuickLoadListBtn.TextAlign = ContentAlignment.MiddleRight;
+            RefreshQuickLoadListBtn.UseVisualStyleBackColor = false;
+            RefreshQuickLoadListBtn.Click += RefreshRMSGListBtn_Click;
             // 
             // GreenButtonTimer
             // 
@@ -1319,6 +1382,7 @@
             // 
             SendTestEmailBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             SendTestEmailBtn.BackColor = Color.FromArgb(48, 48, 48);
+            SendTestEmailBtn.FlatAppearance.BorderColor = Color.Silver;
             SendTestEmailBtn.FlatStyle = FlatStyle.Flat;
             SendTestEmailBtn.Font = new Font("Arial", 9F);
             SendTestEmailBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1336,6 +1400,7 @@
             // EmailEditBtn
             // 
             EmailEditBtn.BackColor = Color.FromArgb(48, 48, 48);
+            EmailEditBtn.FlatAppearance.BorderColor = Color.Silver;
             EmailEditBtn.FlatStyle = FlatStyle.Flat;
             EmailEditBtn.Font = new Font("Arial", 9F);
             EmailEditBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1617,6 +1682,7 @@
             // 
             button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             button1.BackColor = Color.FromArgb(48, 48, 48);
+            button1.FlatAppearance.BorderColor = Color.Silver;
             button1.FlatStyle = FlatStyle.Flat;
             button1.Font = new Font("Arial", 9F);
             button1.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1654,6 +1720,7 @@
             // 
             button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             button2.BackColor = Color.FromArgb(48, 48, 48);
+            button2.FlatAppearance.BorderColor = Color.Silver;
             button2.FlatStyle = FlatStyle.Flat;
             button2.Font = new Font("Arial", 9F);
             button2.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1671,6 +1738,7 @@
             // 
             button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             button3.BackColor = Color.FromArgb(48, 48, 48);
+            button3.FlatAppearance.BorderColor = Color.Silver;
             button3.FlatStyle = FlatStyle.Flat;
             button3.Font = new Font("Arial", 9F);
             button3.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1705,6 +1773,7 @@
             button4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             button4.BackColor = Color.FromArgb(48, 48, 48);
             button4.BackgroundImageLayout = ImageLayout.None;
+            button4.FlatAppearance.BorderColor = Color.Silver;
             button4.FlatStyle = FlatStyle.Flat;
             button4.Font = new Font("Arial", 9F);
             button4.ForeColor = Color.FromArgb(224, 224, 224);
@@ -1762,7 +1831,6 @@
             // 
             // PSExecAcceptEulaCheckbox
             // 
-            PSExecAcceptEulaCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             PSExecAcceptEulaCheckbox.AutoSize = true;
             PSExecAcceptEulaCheckbox.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             PSExecAcceptEulaCheckbox.ForeColor = Color.White;
@@ -1775,6 +1843,7 @@
             // 
             // pictureBox2
             // 
+            pictureBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pictureBox2.Image = Properties.Resources.icons8_run_command_24light;
             pictureBox2.Location = new Point(351, 6);
             pictureBox2.Name = "pictureBox2";
@@ -1785,7 +1854,6 @@
             // 
             // checkBox9
             // 
-            checkBox9.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox9.AutoSize = true;
             checkBox9.ForeColor = Color.White;
             checkBox9.Location = new Point(6, 213);
@@ -1797,7 +1865,6 @@
             // 
             // checkBox7
             // 
-            checkBox7.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox7.AutoSize = true;
             checkBox7.ForeColor = Color.White;
             checkBox7.Location = new Point(6, 183);
@@ -1809,7 +1876,6 @@
             // 
             // checkBox6
             // 
-            checkBox6.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox6.AutoSize = true;
             checkBox6.ForeColor = Color.White;
             checkBox6.Location = new Point(6, 153);
@@ -1821,7 +1887,6 @@
             // 
             // checkBox5
             // 
-            checkBox5.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox5.AutoSize = true;
             checkBox5.ForeColor = Color.White;
             checkBox5.Location = new Point(6, 123);
@@ -1833,7 +1898,6 @@
             // 
             // checkBox4
             // 
-            checkBox4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox4.AutoSize = true;
             checkBox4.ForeColor = Color.White;
             checkBox4.Location = new Point(6, 93);
@@ -1845,7 +1909,6 @@
             // 
             // checkBox3
             // 
-            checkBox3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox3.AutoSize = true;
             checkBox3.ForeColor = Color.White;
             checkBox3.Location = new Point(6, 63);
@@ -1857,7 +1920,6 @@
             // 
             // checkBox17
             // 
-            checkBox17.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox17.AutoSize = true;
             checkBox17.ForeColor = Color.White;
             checkBox17.Location = new Point(146, 243);
@@ -1869,7 +1931,6 @@
             // 
             // checkBox16
             // 
-            checkBox16.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox16.AutoSize = true;
             checkBox16.ForeColor = Color.White;
             checkBox16.Location = new Point(146, 213);
@@ -1881,7 +1942,6 @@
             // 
             // checkBox15
             // 
-            checkBox15.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox15.AutoSize = true;
             checkBox15.ForeColor = Color.White;
             checkBox15.Location = new Point(146, 183);
@@ -1893,7 +1953,6 @@
             // 
             // checkBox14
             // 
-            checkBox14.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox14.AutoSize = true;
             checkBox14.ForeColor = Color.White;
             checkBox14.Location = new Point(146, 153);
@@ -1905,7 +1964,6 @@
             // 
             // checkBox13
             // 
-            checkBox13.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox13.AutoSize = true;
             checkBox13.ForeColor = Color.White;
             checkBox13.Location = new Point(146, 123);
@@ -1917,7 +1975,6 @@
             // 
             // checkBox12
             // 
-            checkBox12.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox12.AutoSize = true;
             checkBox12.ForeColor = Color.White;
             checkBox12.Location = new Point(146, 93);
@@ -1929,7 +1986,6 @@
             // 
             // checkBox11
             // 
-            checkBox11.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox11.AutoSize = true;
             checkBox11.ForeColor = Color.White;
             checkBox11.Location = new Point(146, 63);
@@ -1941,7 +1997,6 @@
             // 
             // checkBox10
             // 
-            checkBox10.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox10.AutoSize = true;
             checkBox10.ForeColor = Color.White;
             checkBox10.Location = new Point(146, 33);
@@ -1953,7 +2008,6 @@
             // 
             // checkBox8
             // 
-            checkBox8.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox8.AutoSize = true;
             checkBox8.ForeColor = Color.White;
             checkBox8.Location = new Point(146, 3);
@@ -1965,7 +2019,6 @@
             // 
             // checkBox2
             // 
-            checkBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox2.AutoSize = true;
             checkBox2.ForeColor = Color.White;
             checkBox2.Location = new Point(6, 33);
@@ -1977,7 +2030,6 @@
             // 
             // checkBox1
             // 
-            checkBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBox1.AutoSize = true;
             checkBox1.ForeColor = Color.White;
             checkBox1.Location = new Point(6, 3);
@@ -2135,6 +2187,7 @@
             RenewIPBtn.BackColor = Color.FromArgb(48, 48, 48);
             RenewIPBtn.BackgroundImageLayout = ImageLayout.Zoom;
             RenewIPBtn.Dock = DockStyle.Right;
+            RenewIPBtn.FlatAppearance.BorderColor = Color.Gray;
             RenewIPBtn.FlatStyle = FlatStyle.Flat;
             RenewIPBtn.Font = new Font("Arial", 6F);
             RenewIPBtn.ForeColor = Color.White;
@@ -2153,6 +2206,7 @@
             // 
             OpenRMCLogFolderBtn.BackColor = Color.FromArgb(48, 48, 48);
             OpenRMCLogFolderBtn.Dock = DockStyle.Right;
+            OpenRMCLogFolderBtn.FlatAppearance.BorderColor = Color.Gray;
             OpenRMCLogFolderBtn.FlatStyle = FlatStyle.Flat;
             OpenRMCLogFolderBtn.Font = new Font("Arial", 6.5F);
             OpenRMCLogFolderBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -2181,6 +2235,7 @@
             // 
             clearLogBtn.BackColor = Color.FromArgb(48, 48, 48);
             clearLogBtn.Dock = DockStyle.Right;
+            clearLogBtn.FlatAppearance.BorderColor = Color.Gray;
             clearLogBtn.FlatStyle = FlatStyle.Flat;
             clearLogBtn.Font = new Font("Arial", 6.5F);
             clearLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -2200,6 +2255,7 @@
             // 
             SaveRMCRuntimeLogBtn.BackColor = Color.FromArgb(48, 48, 48);
             SaveRMCRuntimeLogBtn.Dock = DockStyle.Right;
+            SaveRMCRuntimeLogBtn.FlatAppearance.BorderColor = Color.Gray;
             SaveRMCRuntimeLogBtn.FlatStyle = FlatStyle.Flat;
             SaveRMCRuntimeLogBtn.Font = new Font("Arial", 6.5F);
             SaveRMCRuntimeLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
@@ -2260,6 +2316,26 @@
             toolTipHelp.UseAnimation = false;
             toolTipHelp.UseFading = false;
             // 
+            // HideQuickLoadBtn
+            // 
+            HideQuickLoadBtn.BackColor = Color.FromArgb(48, 48, 48);
+            HideQuickLoadBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            HideQuickLoadBtn.FlatAppearance.BorderSize = 0;
+            HideQuickLoadBtn.FlatStyle = FlatStyle.Flat;
+            HideQuickLoadBtn.Font = new Font("Arial", 9F);
+            HideQuickLoadBtn.ForeColor = Color.White;
+            HideQuickLoadBtn.Image = Properties.Resources.icons8_hide_24;
+            HideQuickLoadBtn.ImageAlign = ContentAlignment.MiddleLeft;
+            HideQuickLoadBtn.Location = new Point(149, 44);
+            HideQuickLoadBtn.Margin = new Padding(3, 2, 3, 2);
+            HideQuickLoadBtn.Name = "HideQuickLoadBtn";
+            HideQuickLoadBtn.Size = new Size(151, 32);
+            HideQuickLoadBtn.TabIndex = 90;
+            HideQuickLoadBtn.Text = "Hide Quick Load";
+            HideQuickLoadBtn.TextAlign = ContentAlignment.MiddleRight;
+            HideQuickLoadBtn.UseVisualStyleBackColor = false;
+            HideQuickLoadBtn.Click += HideQuickLoadBtn_Click;
+            // 
             // RMCManager
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -2271,14 +2347,15 @@
             Controls.Add(RenameSelectedRMSGBtn);
             Controls.Add(RMSGHelpLink);
             Controls.Add(LoadSelectedRMSGBtn);
-            Controls.Add(RMSGFileListBox);
+            Controls.Add(QuickLoadListbox);
             Controls.Add(DeleteSelectedRMSGFileBtn);
             Controls.Add(QuickLoadRMSGFileLabel);
-            Controls.Add(RefreshRMSGListBtn);
+            Controls.Add(RefreshQuickLoadListBtn);
             Controls.Add(MainTitleBar);
             Controls.Add(ScheduleBroadcastBtn);
             Controls.Add(BroadcastHistoryBtn);
             Controls.Add(StartBroadcastBtn);
+            Controls.Add(HideQuickLoadBtn);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(3, 2, 3, 2);
@@ -2298,10 +2375,11 @@
             PCtabControl1.ResumeLayout(false);
             PCMessageTab.ResumeLayout(false);
             PCMessageTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             ((System.ComponentModel.ISupportInitialize)PCBroadcastImage).EndInit();
-            ((System.ComponentModel.ISupportInitialize)expirySecondsTime).EndInit();
-            ((System.ComponentModel.ISupportInitialize)expiryMinutesTime).EndInit();
-            ((System.ComponentModel.ISupportInitialize)expiryHourTime).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PCexpirySecondsTime).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PCexpiryMinutesTime).EndInit();
+            ((System.ComponentModel.ISupportInitialize)PCexpiryHourTime).EndInit();
             PCBroadcastToTab.ResumeLayout(false);
             PCBroadcastToTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)BroadcastToImage).EndInit();
@@ -2352,26 +2430,26 @@
         private TabPage PCMessageTab;
         private TabPage PCBroadcastToTab;
         private LinkLabel MessageDurationHelpLink;
-        private Button SaveMessageTxtBtn;
-        private Button MessageOpenTxtBtn;
-        private NumericUpDown expirySecondsTime;
-        private NumericUpDown expiryMinutesTime;
-        private NumericUpDown expiryHourTime;
+        private Button PCSaveMessageTxtBtn;
+        private Button PCMessageOpenTxtBtn;
+        private NumericUpDown PCexpirySecondsTime;
+        private NumericUpDown PCexpiryMinutesTime;
+        private NumericUpDown PCexpiryHourTime;
         private Label MessageDurationLabel;
         private TextBox PCBroadcastMessageTxt;
-        private Label MessageLimitLbl;
+        private Label PCMessageCharLimitLbl;
         private Button SavePCListTxtBtn;
-        private Button ComputerListLoadFromFileBtn;
-        private TextBox MessagePCList;
+        private Button PCComputerListOpenBtn;
+        private TextBox PCBroadcastToList;
         private Button ActiveDirectorySelectBtn;
         private Label MessagePCsLabel;
         private Button RenameSelectedRMSGBtn;
         private LinkLabel RMSGHelpLink;
         private Button LoadSelectedRMSGBtn;
-        private ListBox RMSGFileListBox;
+        private ListBox QuickLoadListbox;
         private Button DeleteSelectedRMSGFileBtn;
         private Label QuickLoadRMSGFileLabel;
-        private Button RefreshRMSGListBtn;
+        private Button RefreshQuickLoadListBtn;
         private Panel RMCLogoPanel;
         private Label RMCManagerLbl;
         private Label TypeMessageHereLabel;
@@ -2409,7 +2487,7 @@
         private Label EmailAddressOfSMTPServerLbl;
         private TextBox SenderAddressTxt;
         private ImageList IconList;
-        private Button ToggleRMSGListBtn;
+        private Button ShowRMSGListBtn;
         private TabPage PSExecTab;
         private NumericUpDown EmailPortNumber;
         private TextBox AddressOfSMTPServerTxt;
@@ -2490,5 +2568,10 @@
         private CheckBox checkBox15;
         private CheckBox checkBox14;
         private Button RenewIPBtn;
+        private Button HideQuickLoadBtn;
+        private ToolStripMenuItem openFolderLocationToolStripMenuItem;
+        private PictureBox pictureBox3;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripSeparator toolStripSeparator4;
     }
 }

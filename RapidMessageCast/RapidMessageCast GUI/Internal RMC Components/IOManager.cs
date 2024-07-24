@@ -53,10 +53,11 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // [17] = Auth Mode
             // [18] = Email Account
             // [19] = Encrypted Email Password, this will be decrypted when the email module is enabled.
+            // [20] = RMC Software Version
 
             if (string.IsNullOrEmpty(filePath))
             {
-                return ["Error: File path is null or empty"];
+                return ["Error - File path is null or empty"];
             }
 
             try
@@ -75,6 +76,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 bool IsEnabled(string tagName) => GetElementValue(tagName).Equals("Enabled", StringComparison.OrdinalIgnoreCase);
 
                 // Extract values
+                string RMCSoftwareVersion = GetElementValue("RMCSoftwareVersion");
                 string message = GetElementValue("Message");
                 string pcList = GetElementValue("PCList");
                 string WOLlist = GetElementValue("WOLList");
@@ -104,7 +106,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     catch (Exception ex)
                     {
                         EmailPassword = string.Empty;
-                        return [$"Error - EncryptionHandler: Failure in decrypting email password: {ex.Message}"];
+                        return [$"Warning - EncryptionHandler: Failure in decrypting email password: {ex.Message}"];
                     }
                 }
 
@@ -130,13 +132,14 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     EmailFromAddress,
                     AuthMode,
                     EmailAccount,
-                    EmailPassword
+                    EmailPassword,
+                    RMCSoftwareVersion
                 ];
             }
             catch (Exception ex)
             {
                 // Return an error message along with the exception
-                return [$"IO Manager Exception: {ex.Message}"];
+                return [$"Error - IO Manager Exception: {ex.Message}"];
             }
         }
 
@@ -161,6 +164,8 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             {
                 AddElement(name, value ? "Enabled" : "Disabled");
             }
+            //Add version of the software to the document, this is for future compatibility.
+            AddElement("RMCSoftwareVersion", Application.ProductVersion);
 
             // Add elements to the document
             AddElement("Message", messageContent);
@@ -182,15 +187,23 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             AddElement("AuthMode", authMode.ToString());
             AddElement("EmailAccount", EmailAccount);
 
-            // Encrypt and add the email password if email is enabled
-            if (enableEmail && !string.IsNullOrEmpty(EmailPassword))
+            try
             {
-                string encryptedPassword = EncryptionHandler.EncryptData(EmailPassword);
-                AddElement("EmailPassword", encryptedPassword);
+                // Encrypt and add the email password if email is enabled
+                if (enableEmail && !string.IsNullOrEmpty(EmailPassword))
+                {
+                    string encryptedPassword = EncryptionHandler.EncryptData(EmailPassword);
+                    AddElement("EmailPassword", encryptedPassword);
+                }
+                else
+                {
+                    AddElement("EmailPassword", "");
+                }
             }
-            else
+            catch (Exception ex)
             {
                 AddElement("EmailPassword", "");
+                MessageBox.Show($"IO Manager - Error encrypting email password: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             // Save the document to the specified file path
