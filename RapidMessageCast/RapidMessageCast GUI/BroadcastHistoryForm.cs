@@ -82,7 +82,7 @@ namespace RapidMessageCast_Manager
             //clear listbox
             HistoryListBox.Items.Clear();
             //Load the broadcast history from the application directory / broadcast history folder and add it to the HistoryListBox
-            string[] files = Directory.GetFiles(Application.StartupPath + "\\BroadcastHistory");
+            string[] files = Directory.GetFiles(Application.StartupPath + "\\Broadcast History Logs");
             foreach (string file in files)
             {
                 if (new FileInfo(file).Length == 0 || Path.GetExtension(file) != ".txt")
@@ -100,12 +100,12 @@ namespace RapidMessageCast_Manager
             {
                 string? selectedFile = HistoryListBox.SelectedItem?.ToString();
                 //check if the file exists before opening the form...
-                if (selectedFile == null || !File.Exists(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile))
+                if (selectedFile == null || !File.Exists(Application.StartupPath + "\\Broadcast History Logs\\" + selectedFile))
                 {
                     MessageBox.Show("The selected file does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                Broadcast_History_Viewer.ChildBroadcastViewer childForm = new(Application.StartupPath + "\\BroadcastHistory\\" + selectedFile)
+                Broadcast_History_Viewer.ChildBroadcastViewer childForm = new(Application.StartupPath + "\\Broadcast History Logs\\" + selectedFile)
                 {
                     MdiParent = this
                 };
@@ -126,7 +126,7 @@ namespace RapidMessageCast_Manager
         {
             ProcessStartInfo startInfo = new()
             {
-                Arguments = Application.StartupPath + "BroadcastHistory\\",
+                Arguments = Application.StartupPath + "Broadcast History Logs\\",
                 FileName = "explorer.exe"
             };
             Process.Start(startInfo);

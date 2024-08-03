@@ -1,15 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-//NOTE: This program shouldn't be used, since the GUI code is newer and saves the files differently it may cause issues with the file parsing on the CLI version.
-//This code is going to be be redone but for now, it's here for reference. The GUI version is the recommended version to use.
-//The features will be added to the GUI first and once all features are added, the CLI version will be updated to match the GUI version to ensure compatibility.
+//Important: This is going to be removed in the future.
+//NOTE: This program shouldn't be used.
 
 string versionNumb = "v0.1 indev 2024";
 Console.WriteLine("RapidMessageCast CLI Version " + versionNumb);
 Console.WriteLine("--------------------------------------------------");
 Console.ForegroundColor = ConsoleColor.Red;
-Console.WriteLine("IMPORTANT NOTICE: This CLI program might not be compatible with the GUI version at this point in time, and this program is due to be redone. Use with caution.");
+Console.WriteLine("Warning: This program is not intended for use. Please use the GUI version of RapidMessageCast Dispatcher.");
 Console.ForegroundColor = ConsoleColor.Gray;
 //Print the starting message to the console
 Console.WriteLine("Starting RapidMessageCast Dispatcher...");

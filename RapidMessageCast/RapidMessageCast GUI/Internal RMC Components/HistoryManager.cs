@@ -62,7 +62,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             }
             //Set the filename to the enum and the date and time.
             string broadcastHistoryFileName = $"{Module}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt";
-            string directoryPath = Path.Combine(Application.StartupPath, "BroadcastHistory");
+            string directoryPath = Path.Combine(Application.StartupPath, "Broadcast History Logs");
 
             if (!Directory.Exists(directoryPath))
             {

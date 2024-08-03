@@ -214,9 +214,10 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
         {
             bool directoriesCreated = false;
             string[] directories = [
-                Path.Combine(Application.StartupPath, "BroadcastHistory"),
-                Path.Combine(Application.StartupPath, "RMSGFiles"),
-                Path.Combine(Application.StartupPath, "RMC Runtime Logs")
+                Path.Combine(Application.StartupPath, "Broadcast History Logs"),
+                Path.Combine(Application.StartupPath, "RMSG Files"),
+                Path.Combine(Application.StartupPath, "RMC Runtime Logs"),
+                Path.Combine(Application.StartupPath, "Email Files")
             ];
             try
             {
@@ -238,14 +239,14 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                                     $"Please read the license agreement in the 'License' folder for more information. This messagebox will only appear once.",
                                     $"Welcome to RapidMessageCast", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    return "Info - [RMC_IO_Manager]: Required directories created. (RMSGFiles, RMC Runtime Logs, BroadcastHistory)";
+                    return "Info - [IOManager]: Required directories created. " + directories.Length + " directories created.";
                 }
                 
-                return "Info - [RMC_IO_Manager]: Loading list of RMSG files."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
+                return "Info - [IOManager]: Required directories already exist."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
             }
             catch (Exception ex)
             {
-                return $"Error - [RMC_IO_Manager]: Failure in creating required directories: {ex.Message}";
+                return $"Error - [IOManager]: Failure in creating required directories: {ex.Message}";
             }
         }
 

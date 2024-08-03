@@ -1,6 +1,7 @@
 using RapidMessageCast_Manager.Internal_RMC_Components;
 using System.Diagnostics;
 using System.DirectoryServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 //--RapidMessageCast Software--
@@ -38,8 +39,10 @@ using System.Text.RegularExpressions;
 //Test scheduled broadcasts and panic button. Make sure they work as intended.
 //Could make the CLI redundant by checking if a STARTUP.rmsg exists, if it does, load it and start the broadcast. The command line argument function is already in place, so this should be easy to implement.
 //Add PSexec saves to the IO manager.
+//Also move the WOL page to the main tab control instead of the PC tab control.
 //Fix me list:
-//(1) [FIXME] 21/07/24
+//(1) [FIXME] - 21/07/24 - Why is this function (ScheduledBroadcast) only running the PC module? It should check if the other modules are enabled and run them as well. TODO: Fix this.
+//(2) [Critical Fault] - 03/08/24 - There is a fault where if there are too many msg commands sent at once, the entire network service stack on the broadcaster machine freezes. Primary suspect is DNS Service hanging, I believe this is because the DNS Client has to parse alot of DNS hostnames quickly so it gets overwhelmed. This is a theory, but it is the most likely cause. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens.
 
 namespace RapidMessageCast_Manager
 {
@@ -73,12 +76,13 @@ namespace RapidMessageCast_Manager
                 LoadGlobalSettings();
                 CheckSystemState();
                 AddIconsToTabControls();
-                HandleDefaultRMSGFile();
+                AddTextToLogList(RMC_IO_Manager.AttemptToCreateRMCDirectories());
+                HandleAutoStartRMSGFiles();
                 UpdateUIWithVersionInformation();
                 RefreshRMSGFileList();
                 InitalizeToolTipHelp();
-                RMC_IO_Manager.AttemptToCreateRMCDirectories();
             }
+            Console.WriteLine("RapidMessageCast Manager has started.");
             AddTextToLogList("Info - [RMC Startup]: RMC GUI is now ready.");
         }
 
@@ -113,86 +117,117 @@ namespace RapidMessageCast_Manager
         private void CheckCommandLineArguments()
         {
             var args = Environment.GetCommandLineArgs();
-            if (args.Length > 1)
-            {
-                AddTextToLogList("Info - [CheckCommandLineArguments]: Startup command line arguments detected. Checking for RMSG file.");
-                AddTextToLogList($"Info - [CheckCommandLineArguments]: Command line arguments: {string.Join(" ", args)}");
+            if (args.Length <= 1) return;
 
-                if (args.Length >= 2 && args[1].Equals("panic", StringComparison.CurrentCultureIgnoreCase))
+            AddTextToLogList("Info - [CheckCommandLineArguments]: Startup command line arguments detected. Checking for RMSG file.");
+            AddTextToLogList($"Info - [CheckCommandLineArguments]: Command line arguments: {string.Join(" ", args)}");
+
+            try
+            {
+                switch (args[1].ToLower())
                 {
-                    try
-                    {
+                    case "panic":
+                        HandlePanicMode(args);
+                        break;
+                    case "schedule" when args.Length == 3:
+                        AddTextToLogList("Info - [CheckCommandLineArguments]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
                         dontPromptClosureMessage = true;
-                        //Panic button that activates broadcasting immediately with a predefined message.
-                        AddTextToLogList("Info - [CheckCommandLineArguments]: [PANIC!] Panic Startup detected. Loading RMSG file and starting emergency alert broadcast...");
-                        //Check if args 2 is vaild or even exists. If it doesn't, use the default panic message.
-                        if (args.Length > 2)
+                        RunScheduledBroastcast(args[2]);
+                        break;
+                    default:
+                        if (args.Length == 2)
                         {
-                            LoadAndParseRMSGFile(args[2]);
+                            AddTextToLogList("Info - [CheckCommandLineArguments]: Loading RMSG file from command line argument.");
+                            LoadAndParseRMSGFile(args[1]);
                         }
-                        else
-                        {
-                            AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Attempting to load PANIC.rmsg...");
-                            LoadAndParseRMSGFile($"{Application.StartupPath}\\RMSGFiles\\PANIC.rmsg");
-                        }
-                        //Check if the message loaded, if it didn't then as a failsafe, set the message to a predefined message.
-                        if (PCBroadcastMessageTxt.Text == "")
-                        {
-                            AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Using predefined message.");
-                            PCBroadcastMessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
-                        }
-                        //Check if the PC list is empty, if it is, then close the program.
-                        if (PCBroadcastToList.Text == "")
-                        {
-                            AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PC list is empty. Closing program.");
-                            MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Application.Exit();
-                        }
-                        AddTextToLogList("Info - [CheckCommandLineArguments]: PANIC broadcast - Starting broadcast.");
-                        StartBroadcastBtn_Click(this, EventArgs.Empty);
-                        CloseAfterAllModulesAreFinished();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Critical error! Panic button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        AddTextToLogList($"Critical - [CheckCommandLineArguments]: [PANIC Error!] Panic button failed to broadcast: {ex}");
-                    }
+                        break;
                 }
-                else if (args.Length == 2)
-                {
-                    AddTextToLogList("Info - [CheckCommandLineArguments]: Loading RMSG file from command line argument.");
-                    LoadAndParseRMSGFile(args[1]);
-                }
-                else if (args.Length == 3 && args[1].Equals("schedule", StringComparison.CurrentCultureIgnoreCase)) //Arugment 1 is schedule, argument 2 is the RMSG file.
-                {
-                    AddTextToLogList("Info - [CheckCommandLineArguments]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
-                    dontPromptClosureMessage = true;
-                    RunScheduledBroastcast(args[2]);
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Critical error! Panic button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                AddTextToLogList($"Critical - [CheckCommandLineArguments]: [PANIC Error!] Panic button failed to broadcast: {ex}");
             }
         }
 
+        private void HandlePanicMode(string[] args)
+        {
+            dontPromptClosureMessage = true;
+            AddTextToLogList("Info - [CheckCommandLineArguments]: [PANIC!] Panic Startup detected. Loading RMSG file and starting emergency alert broadcast...");
+
+            string rmsgFilePath = args.Length > 2 ? args[2] : $"{Application.StartupPath}\\RMSGFiles\\PANIC.rmsg";
+            LoadAndParseRMSGFile(rmsgFilePath);
+
+            if (string.IsNullOrEmpty(PCBroadcastMessageTxt.Text))
+            {
+                AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Asking if allowed to use predefined message.");
+                //Ask user if they want to use the predefined message.
+                DialogResult dialogResult = MessageBox.Show("PANIC message not loaded. Use predefined message?\n \"PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.\"", "PANIC Message", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    AddTextToLogList("Info - [CheckCommandLineArguments]: PANIC broadcast - User approved using predefined message, broadcasting predefined PANIC message.");
+                    PCBroadcastMessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
+                }
+                else
+                {
+                    AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Closing program.");
+                    MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
+                }
+            }
+
+            if (string.IsNullOrEmpty(PCBroadcastToList.Text))
+            {
+                AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PC list is empty. Closing program.");
+                MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+
+            AddTextToLogList("Info - [CheckCommandLineArguments]: PANIC broadcast - RMSG parsed, Starting broadcast...");
+            StartBroadcastBtn_Click(this, EventArgs.Empty);
+            CloseAfterAllModulesAreFinished();
+        }
+
+
         private async void CloseAfterAllModulesAreFinished()
         {
+            AddTextToLogList("Info - [CloseAfterAllModulesAreFinished]: Closing program after all modules are finished....");
             //Check if all modules are finished. If they are, close the program.
             //use the broadcastController to check if all modules are finished via the AreAnyModulesRunning void func
             //if they are not finished, then repeat this every 5 seconds until they are.
             //if they are finished, then close the program. PS. This is the simplest code in this project. :)
             while (broadcastController.AreAnyModulesRunning())
             {
+                AddTextToLogList("Info - [CloseAfterAllModulesAreFinished]: (Timer TICK) Waiting for all modules to finish...");
                 await Task.Delay(5000); //broadcastController will handle hung modules so we don't need to worry about that in this function.
             }
+            AddTextToLogList("Info - [CloseAfterAllModulesAreFinished]: All modules are finished. Closing program.");
             dontPromptClosureMessage = true; //Setting this true will prevent the program from asking the user if they want to close.
             Application.Exit();
         }
 
-        private void HandleDefaultRMSGFile()
+        private void HandleAutoStartRMSGFiles()
         {
-            var defaultRMSGPath = $"{Application.StartupPath}\\RMSGFiles\\default.rmsg";
-            if (File.Exists(defaultRMSGPath))
+            var rmsgFiles = new[]
             {
-                LoadAndParseRMSGFile(defaultRMSGPath);
-                AddTextToLogList("Info - [HandleDefaultRMSGFile]: Default.rmsg file loaded.");
+                $"{Application.StartupPath}\\RMSGFiles\\default.rmsg",
+                $"{Application.StartupPath}\\RMSGFiles\\autobroadcast.rmsg"
+            };
+
+            foreach (var filePath in rmsgFiles)
+            {
+                if (File.Exists(filePath))
+                {
+                    LoadAndParseRMSGFile(filePath);
+                    AddTextToLogList($"Info - [HandleAutoStartRMSGFiles]: {Path.GetFileName(filePath)} file loaded.");
+
+                    if (filePath.EndsWith("autobroadcast.rmsg"))
+                    {
+                        AddTextToLogList("Info - [HandleAutoStartRMSGFiles]: autobroadcast.rmsg file detected. Starting scheduled broadcast.");
+                        dontPromptClosureMessage = true;
+                        RunScheduledBroastcast(filePath);
+                    }
+                }
             }
         }
 
@@ -415,7 +450,7 @@ namespace RapidMessageCast_Manager
             try
             {
                 QuickLoadListbox.Items.Clear();
-                string[] files = Directory.GetFiles(Application.StartupPath + "\\RMSGFiles\\");
+                string[] files = Directory.GetFiles(Application.StartupPath + "\\RMSG Files\\");
                 foreach (string file in files)
                 {
                     QuickLoadListbox.Items.Add(Path.GetFileName(file));
@@ -576,7 +611,7 @@ namespace RapidMessageCast_Manager
 
         private async void StartBroadcastBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [InitBroadcast]: Broadcast button pressed. Running selected modules...");
+            AddTextToLogList("Info - [InitBroadcast]: Broadcast button pressed. Preparing to run selected modules...");
 
             bool isMessagePCChecked = MessagePCcheckBox.Checked;
             bool isMessageEmailChecked = MessageEmailcheckBox.Checked;
@@ -591,7 +626,7 @@ namespace RapidMessageCast_Manager
 
             if (isMessagePCChecked)
             {
-                AddTextToLogList("Info - [InitBroadcast]: PC message module is selected. Notifying the broadcast controller to start the PC broadcast.");
+                AddTextToLogList("Info - [InitBroadcast]: PC module is enabled. Starting PC cast.");
 
                 string messageText = PCBroadcastMessageTxt.Text;
                 string computerSelectListText = PCBroadcastToList.Text;
@@ -637,7 +672,7 @@ namespace RapidMessageCast_Manager
             string? selectedFile = QuickLoadListbox.SelectedItem?.ToString();
             if (selectedFile != null)
             {
-                LoadAndParseRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile));
+                LoadAndParseRMSGFile(Path.Combine(Application.StartupPath, "RMSG Files", selectedFile));
             }
         }
 
@@ -649,7 +684,7 @@ namespace RapidMessageCast_Manager
             AddTextToLogList($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
             Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
-            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSGFiles", quickSaveFileName), PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, PCexpiryHourTime.Value.ToString(), PCexpiryMinutesTime.Value.ToString(), PCexpirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
+            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSG Files", quickSaveFileName), PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, PCexpiryHourTime.Value.ToString(), PCexpiryMinutesTime.Value.ToString(), PCexpirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
             RefreshRMSGFileList();
         }
 
@@ -671,7 +706,7 @@ namespace RapidMessageCast_Manager
                     DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the file: {selectedFile}?", "Delete File", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.Yes)
                     {
-                        File.Delete(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile));
+                        File.Delete(Path.Combine(Application.StartupPath, "RMSG Files", selectedFile));
                         AddTextToLogList("Info - [DeleteSelectedRMSGFile]: File deleted: " + selectedFile);
                         RefreshRMSGFileList();
                     }
@@ -712,7 +747,7 @@ namespace RapidMessageCast_Manager
                 }
 
                 // Check if the file already exists and prompt for overwrite
-                string filePath = Path.Combine(Application.StartupPath, "RMSGFiles", newFileName);
+                string filePath = Path.Combine(Application.StartupPath, "RMSG Files", newFileName);
                 if (File.Exists(filePath))
                 {
                     DialogResult dialogResult = MessageBox.Show("The file already exists. Do you want to overwrite it?", "Overwrite File", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
@@ -723,7 +758,7 @@ namespace RapidMessageCast_Manager
                 try
                 {
                     // Move the file to the new location
-                    File.Move(Path.Combine(Application.StartupPath, "RMSGFiles", selectedFile), filePath, true);
+                    File.Move(Path.Combine(Application.StartupPath, "RMSG Files", selectedFile), filePath, true);
                     AddTextToLogList($"Info - [RenameSelectedRMSGBtn]: File renamed: {selectedFile} to {newFileName}");
                     RefreshRMSGFileList();
                 }
@@ -744,7 +779,7 @@ namespace RapidMessageCast_Manager
         private void RMSGHelpLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             //Open up a messagebox with Information on what the RMSG file is.
-            MessageBox.Show("The RMSG file is a file that contains the configuration of the RMC program when it was saved. It's used to quickly send messages to a list of computers without having to type it out every time. if you save a RMSG file as default.rmsg, it will load it automatically when the program starts.");
+            MessageBox.Show("The RMSG file is a file that contains the configuration of the RMC program when it was saved. It's used to quickly send messages to a list of computers without having to type it out every time.\n\nIf you save a RMSG file as default.rmsg, it will load it automatically when the program starts. And if you save a RMSG file as autobroadcast.rmsg, if a person or program opens RMC again, it will automatically broadcast all the contents of autobroadcast.rmsg.");
         }
 
         private void RMCManager_FormClosing(object sender, FormClosingEventArgs e)

@@ -594,11 +594,11 @@
             MessagePCcheckBox.Checked = true;
             MessagePCcheckBox.CheckState = CheckState.Checked;
             MessagePCcheckBox.ForeColor = Color.White;
-            MessagePCcheckBox.Location = new Point(256, 2);
+            MessagePCcheckBox.Location = new Point(264, 2);
             MessagePCcheckBox.Name = "MessagePCcheckBox";
-            MessagePCcheckBox.Size = new Size(119, 24);
+            MessagePCcheckBox.Size = new Size(111, 24);
             MessagePCcheckBox.TabIndex = 75;
-            MessagePCcheckBox.Text = "Message PC's";
+            MessagePCcheckBox.Text = "Enable MSG";
             MessagePCcheckBox.UseVisualStyleBackColor = true;
             MessagePCcheckBox.CheckedChanged += MessagePCcheckBox_CheckedChanged;
             // 
@@ -1214,7 +1214,7 @@
             // 
             RMSGHelpLink.AutoSize = true;
             RMSGHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
-            RMSGHelpLink.Location = new Point(123, 49);
+            RMSGHelpLink.Location = new Point(127, 49);
             RMSGHelpLink.Name = "RMSGHelpLink";
             RMSGHelpLink.Size = new Size(16, 20);
             RMSGHelpLink.TabIndex = 81;
@@ -1346,7 +1346,7 @@
             PCTab.Padding = new Padding(3);
             PCTab.Size = new Size(395, 341);
             PCTab.TabIndex = 0;
-            PCTab.Text = "PC's";
+            PCTab.Text = "MSG";
             // 
             // EmailTab
             // 
@@ -1418,12 +1418,12 @@
             // EmailAuthTypecomboBox
             // 
             EmailAuthTypecomboBox.FormattingEnabled = true;
-            EmailAuthTypecomboBox.Items.AddRange(new object[] { "No Authentication", "Basic Authentication", "SSL Authentication", "NTLM Authentication" });
+            EmailAuthTypecomboBox.Items.AddRange(new object[] { "Basic Authentication", "SSL Authentication" });
             EmailAuthTypecomboBox.Location = new Point(175, 135);
             EmailAuthTypecomboBox.Name = "EmailAuthTypecomboBox";
             EmailAuthTypecomboBox.Size = new Size(211, 28);
             EmailAuthTypecomboBox.TabIndex = 109;
-            EmailAuthTypecomboBox.Text = "No Authentication";
+            EmailAuthTypecomboBox.Text = "Basic Authentication";
             // 
             // EmailPortNumber
             // 
@@ -2360,7 +2360,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
-            MinimumSize = new Size(699, 476);
+            MinimumSize = new Size(726, 537);
             Name = "RMCManager";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "RapidMessageCast - vx.x.x.x";

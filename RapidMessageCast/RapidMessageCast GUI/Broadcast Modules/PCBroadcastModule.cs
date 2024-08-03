@@ -29,7 +29,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
 {
     internal class PCBroadcastModule
     {
-        //readonly List<string> broadcastHistoryBuffer = []; //Buffer for the broadcast history. This will be saved to a file after the broadcast has finished.
         private static readonly char[] PCseparatorArray = ['\n', '\r']; //Used for PCList parsing.
         readonly HistoryManager broadcastHistoryHandler = new(); //Create a new instance of the broadcastHistoryHandler class.
         public void BroadcastPCMessage(string message, string PCList, int duration, bool HasThisBeenReattempted, bool emergencyMode, bool isReattemptOnErrorChecked, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)
@@ -40,8 +39,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 return;
             }
             RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: PC Broadcast has been started. Started by: {Environment.UserName} - System Name: {Environment.MachineName}");
-            //broadcastHistoryBuffer.Clear();
-            //Broadcast message to all PCs
             //Check if msg.exe exists in the system32 folder. If not, display a message to the user.
             if (!File.Exists("C:\\Windows\\System32\\msg.exe"))
             {
@@ -49,7 +46,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 MessageBox.Show("msg.exe not found in the System32 folder. Please ensure that you have a supported operating system.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            //broadcastHistoryBuffer.Clear();
             broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"===RapidMessageCast=== - Version: {RMCManagerForm.versionNumb}");
             broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"START - Broadcast has started. Broadcast started by: {Environment.UserName} - System Name: {Environment.MachineName}");
             broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"Message - Message Content: {message}");
@@ -92,32 +88,31 @@ namespace RapidMessageCast_Manager.BroadcastModules
                             broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"Error - [PCBroadcastModule]: The process did not start correctly for PC: {pcName} [Process ID was 0]. Continuing to the next one...");
                             RMCManagerForm.AddTextToLogList($"Error - [PCBroadcastModule]: The process did not start correctly for PC: {pcName}");
                         }
-                        else
+                        else //If it does return a process, add a success message to the broadcast history.
                         {
                             RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: MSG process started for \"{pcName}\". (Process ID: {process.Id})");
-                        }
-
-                        //Check if emergency mode is enabled. if it is, do not wait for the process to exit.
-                        if (!emergencyMode)
-                        {
-                            //Check if the program exits without any errors.
-                            if (!process.WaitForExit(1500))
+                            //Check if emergency mode is enabled. if it is, do not wait for the process to exit.
+                            if (!emergencyMode)
                             {
-                                //Add the error to the broadcast history.
-                                broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"Error - [PCBroadcastModule]: The process did not exit in time for PC: {pcName}");
-                                RMCManagerForm.AddTextToLogList($"Error - [PCBroadcastModule]: The process did not exit in time for PC: {pcName}");
+                                //Check if the program exits without any errors.
+                                if (!process.WaitForExit(1500))
+                                {
+                                    //Add the error to the broadcast history.
+                                    broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"Error - [PCBroadcastModule]: The process did not exit in time for PC: {pcName}");
+                                    RMCManagerForm.AddTextToLogList($"Error - [PCBroadcastModule]: The process did not exit in time for PC: {pcName}");
+                                }
+                                else
+                                {
+                                    //Add the success to the broadcast history.
+                                    broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"Info - [PCBroadcastModule]: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
+                                    RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
+                                }
                             }
                             else
                             {
-                                //Add the success to the broadcast history.
-                                broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $"Info - [PCBroadcastModule]: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
-                                RMCManagerForm.AddTextToLogList($"Info - [PCBroadcastModule]: SUCCESS! MSG.exe process exited within allocated timelimit: {pcName}");
+                                //Add PC name to the broadcast history. But write unknown if message was sent or not.
+                                broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $" - Unknown if successful - MSG process started for \"{pcName}\" - Process ID: {process.Id}");
                             }
-                        }
-                        else
-                        {
-                            //Add PC name to the broadcast history. But write unknown if message was sent or not.
-                            broadcastHistoryHandler.AddToHistory(RMCEnums.PC, $" - Unknown if successful - MSG process started for \"{pcName}\" - Process ID: {process.Id}");
                         }
                     }
                     catch (Exception ex)
@@ -143,7 +138,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
         private void WaitForMSGTasksToFinish(RMCManager RMCManagerForm, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)
         {
             //Wait for all processes that contain msg.exe to close before saving the broadcast history.
-            //Create a var outside this loop that will be used to count the amount of msg.exe processes.
             int msgProcesses = 0;
             Task.Run(() =>
             {
