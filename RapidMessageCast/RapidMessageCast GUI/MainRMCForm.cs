@@ -1,7 +1,8 @@
 using RapidMessageCast_Manager.Internal_RMC_Components;
 using System.Diagnostics;
 using System.DirectoryServices;
-using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 //--RapidMessageCast Software--
@@ -43,6 +44,7 @@ using System.Text.RegularExpressions;
 //Fix me list:
 //(1) [FIXME] - 21/07/24 - Why is this function (ScheduledBroadcast) only running the PC module? It should check if the other modules are enabled and run them as well. TODO: Fix this.
 //(2) [Critical Fault] - 03/08/24 - There is a fault where if there are too many msg commands sent at once, the entire network service stack on the broadcaster machine freezes. Primary suspect is DNS Service hanging, I believe this is because the DNS Client has to parse alot of DNS hostnames quickly so it gets overwhelmed. This is a theory, but it is the most likely cause. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens.
+//(3) [Security] - 03/08/24 - The EmailPassword is encrypted but it is passed to the IO manager in plain text to be encrypted. This is a security risk. Encrypt the EmailPassword before passing it to the IO manager.
 
 namespace RapidMessageCast_Manager
 {
@@ -76,7 +78,7 @@ namespace RapidMessageCast_Manager
                 LoadGlobalSettings();
                 CheckSystemState();
                 AddIconsToTabControls();
-                AddTextToLogList(RMC_IO_Manager.AttemptToCreateRMCDirectories());
+                AddTextToLogList(IOManager.AttemptToCreateRMCDirectories());
                 HandleAutoStartRMSGFiles();
                 UpdateUIWithVersionInformation();
                 RefreshRMSGFileList();
@@ -112,6 +114,20 @@ namespace RapidMessageCast_Manager
             {
                 AddTextToLogList($"Error - [ToolTipHelp]: Failed to initalize the tooltip help, this is not a critical error: {ex}"); //This error isn't critical, so it can be ignored tbh.
             }
+        }
+
+        public static string EncryptData(string data)
+        {
+            byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+            byte[] protectedBytes = ProtectedData.Protect(dataBytes, null, DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(protectedBytes);
+        }
+
+        public static string DecryptData(string protectedData)
+        {
+            byte[] protectedBytes = Convert.FromBase64String(protectedData);
+            byte[] dataBytes = ProtectedData.Unprotect(protectedBytes, null, DataProtectionScope.CurrentUser);
+            return Encoding.UTF8.GetString(dataBytes);
         }
 
         private void CheckCommandLineArguments()
@@ -379,7 +395,7 @@ namespace RapidMessageCast_Manager
         private void LoadAndParseRMSGFile(string filePath)
         {
             AddTextToLogList($"Info - [LoadRMSGFileInProgram]: Loading RMSG file: {Path.GetFileName(filePath)}");
-            string[] RMSGFileValues = RMC_IO_Manager.LoadRMSGFile(filePath);
+            string[] RMSGFileValues = IOManager.LoadRMSGFile(filePath);
 
             if (!string.IsNullOrEmpty(RMSGFileValues[0]))
             {
@@ -426,7 +442,14 @@ namespace RapidMessageCast_Manager
                 SenderAddressTxt.Text = RMSGFileValues[16];
                 EmailAuthTypecomboBox.Text = RMSGFileValues[17];
                 EmailAccountTextbox.Text = RMSGFileValues[18];
-                EmailPasswordTextbox.Text = RMSGFileValues[19];
+                try
+                {
+                    EmailPasswordTextbox.Text = DecryptData(RMSGFileValues[19]);
+                }
+                catch (Exception ex)
+                {
+                    AddTextToLogList($"Error - [LoadRMSGFileInProgram]: Failed to decrypt email password: {ex}");
+                }
                 AddTextToLogList($"Info - [LoadRMSGFileInProgram]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
             catch (FormatException ex1)
@@ -552,39 +575,39 @@ namespace RapidMessageCast_Manager
                 string fileName = saveFileDialog.FileName;
                 AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
                 Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
-                RMC_IO_Manager.SaveRMSGFile(fileName, PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, PCexpiryHourTime.Value.ToString(), PCexpiryMinutesTime.Value.ToString(), PCexpirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
+                IOManager.SaveRMSGFile(fileName, PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, PCexpiryHourTime.Value.ToString(), PCexpiryMinutesTime.Value.ToString(), PCexpirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
                 RefreshRMSGFileList();
             }
         }
 
         private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", RegexFilters.FilterInvalidMessage);
+            new IOManager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", RegexFilters.FilterInvalidMessage);
         }
 
         private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastToList, "OpenPCList", "OpenPCList", RegexFilters.FilterInvalidPCNames);
+            new IOManager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastToList, "OpenPCList", "OpenPCList", RegexFilters.FilterInvalidPCNames);
         }
 
         private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", RegexFilters.FilterInvalidPCNames);
+            new IOManager(AddTextToLogList).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", RegexFilters.FilterInvalidPCNames);
         }
 
         private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
+            new IOManager(AddTextToLogList).SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
         }
 
         private void SaveComputerListBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastToList, "SavePCList", "SavePCList");
+            new IOManager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastToList, "SavePCList", "SavePCList");
         }
 
         private void SaveMessageBtn_Click(object sender, EventArgs e)
         {
-            new RMC_IO_Manager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastMessageTxt, "SaveMessageBtn", "SaveMessageBtn");
+            new IOManager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastMessageTxt, "SaveMessageBtn", "SaveMessageBtn");
         }
 
         private void ComputerSelectList_KeyPress(object sender, KeyPressEventArgs e)
@@ -684,7 +707,47 @@ namespace RapidMessageCast_Manager
             AddTextToLogList($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
             Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
-            RMC_IO_Manager.SaveRMSGFile(Path.Combine(Application.StartupPath, "RMSG Files", quickSaveFileName), PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, PCexpiryHourTime.Value.ToString(), PCexpiryMinutesTime.Value.ToString(), PCexpirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
+
+            string encryptedPassword;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(EmailPasswordTextbox.Text))
+                {
+                    encryptedPassword = string.Empty;
+                }
+                else
+                {
+                    encryptedPassword = EncryptData(EmailPasswordTextbox.Text);
+                }
+            }
+            catch (Exception ex)
+            {
+                encryptedPassword = string.Empty; //Prevent saving the password if it fails to encrypt.
+                AddTextToLogList($"Warning - [SaveQuickRMSGFile]: Failed to encrypt email password. Saving without encrypted password. Exception: {ex.Message}");
+            }
+
+            IOManager.SaveRMSGFile(
+                Path.Combine(Application.StartupPath, "RMSG Files", quickSaveFileName),
+                PCBroadcastMessageTxt.Text,
+                PCBroadcastToList.Text,
+                WOLTextbox.Text,
+                (int)WOLPortNumberBox.Value,
+                PCexpiryHourTime.Value.ToString(),
+                PCexpiryMinutesTime.Value.ToString(),
+                PCexpirySecondsTime.Value.ToString(),
+                FastBroadcastModeCheckbox.Checked,
+                MessagePCcheckBox.Checked,
+                MessageEmailcheckBox.Checked,
+                PSExecModuleEnableCheckBox.Checked,
+                ReattemptOnErrorCheckbox.Checked,
+                DontSaveBroadcastHistoryCheckbox.Checked,
+                AddressOfSMTPServerTxt.Text,
+                EmailPortNumber.Value,
+                SenderAddressTxt.Text,
+                authMode,
+                EmailAccountTextbox.Text,
+                encryptedPassword
+            ); 
             RefreshRMSGFileList();
         }
 
@@ -862,16 +925,7 @@ namespace RapidMessageCast_Manager
 
         private void IconsLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //Create a process 
-            Process process = new()
-            {
-                //Set the startInfo to the process.
-                StartInfo = new ProcessStartInfo("https://icons8.com/")
-            };
-            process.StartInfo.UseShellExecute = true;
-            //Start the process.
-            process.Start();
-
+            IOManager.OpenLinkOrFolder("https://icons8.com/");
         }
 
         private void DontSaveHistoryLinkHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1030,17 +1084,7 @@ namespace RapidMessageCast_Manager
 
         private void OpenRMCLogFolderBtn_Click(object sender, EventArgs e)
         {
-            //Create a process 
-            Process process = new()
-            {
-                //Set the startInfo to the process.
-                StartInfo = new ProcessStartInfo("RMC Runtime Logs")
-                {
-                    UseShellExecute = true
-                }
-            };
-            //Start the process.
-            process.Start();
+            IOManager.OpenLinkOrFolder("RMC Runtime Logs");
         }
         private void FilterPCListBtn_Click(object sender, EventArgs e)
         {
@@ -1080,17 +1124,7 @@ namespace RapidMessageCast_Manager
 
         private void OpenSaveLocationBtn_Click(object sender, EventArgs e)
         {
-            //Create a process 
-            Process process = new()
-            {
-                //Set the startInfo to the process.
-                StartInfo = new ProcessStartInfo("RMSGFiles")
-                {
-                    UseShellExecute = true
-                }
-            };
-            //Start the process.
-            process.Start();
+            IOManager.OpenLinkOrFolder("RMSG Files");
         }
     }
 }

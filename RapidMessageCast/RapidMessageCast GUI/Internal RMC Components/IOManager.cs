@@ -1,4 +1,7 @@
-﻿using System.Xml;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using System.Xml;
 
 //--RapidMessageCast Software--
 //IOManager.cs - RapidMessageCast Manager
@@ -26,7 +29,7 @@
 
 namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
-    internal class RMC_IO_Manager(Action<string> logAction)
+    internal class IOManager(Action<string> logAction)
     {
         private readonly Action<string> _logAction = logAction;
 
@@ -96,19 +99,6 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 string AuthMode = GetElementValue("AuthMode");
                 string EmailAccount = GetElementValue("EmailAccount");
                 string EmailPassword = GetElementValue("EmailPassword");
-
-                if(enableEmail && !string.IsNullOrEmpty(EmailPassword))
-                {
-                    try
-                    {
-                        EmailPassword = EncryptionHandler.DecryptData(EmailPassword);
-                    }
-                    catch (Exception ex)
-                    {
-                        EmailPassword = string.Empty;
-                        return [$"Warning - EncryptionHandler: Failure in decrypting email password: {ex.Message}"];
-                    }
-                }
 
                 // Return the extracted values via an array
                 return
@@ -186,25 +176,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             AddElement("EmailFromAddress", EmailFromAddress);
             AddElement("AuthMode", authMode.ToString());
             AddElement("EmailAccount", EmailAccount);
-
-            try
-            {
-                // Encrypt and add the email password if email is enabled
-                if (enableEmail && !string.IsNullOrEmpty(EmailPassword))
-                {
-                    string encryptedPassword = EncryptionHandler.EncryptData(EmailPassword);
-                    AddElement("EmailPassword", encryptedPassword);
-                }
-                else
-                {
-                    AddElement("EmailPassword", "");
-                }
-            }
-            catch (Exception ex)
-            {
-                AddElement("EmailPassword", "");
-                MessageBox.Show($"IO Manager - Error encrypting email password: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            AddElement("EmailPassword", EmailPassword); //NOTE: This is encrypted by the main form class.
 
             // Save the document to the specified file path
             doc.Save(filePath);
@@ -304,6 +276,21 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     _logAction($"Error - [{logError}]: Failure in saving {logError}: {ex}");
                 }
             }
+        }
+
+        public static void OpenLinkOrFolder(string location)
+        {
+            //Create a process 
+            Process process = new()
+            {
+                //Set the startInfo to the process.
+                StartInfo = new ProcessStartInfo(location)
+                {
+                    UseShellExecute = true
+                }
+            };
+            //Start the process.
+            process.Start();
         }
     }
 }
