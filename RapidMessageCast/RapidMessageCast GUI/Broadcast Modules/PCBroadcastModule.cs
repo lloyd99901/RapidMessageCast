@@ -130,9 +130,6 @@ namespace RapidMessageCast_Manager.BroadcastModules
                 });
             }
             WaitForMSGTasksToFinish(RMCManagerForm, isDontSaveBroadcastHistoryChecked, isScheduledBroadcast);
-            //Set the start broadcast button to green and start the timer to change it back to the original color.
-            RMCManagerForm.StartBroadcastBtn.BackColor = Color.Green;
-            RMCManagerForm.GreenButtonTimer.Start();
         }
 
         private void WaitForMSGTasksToFinish(RMCManager RMCManagerForm, bool isDontSaveBroadcastHistoryChecked, bool isScheduledBroadcast)

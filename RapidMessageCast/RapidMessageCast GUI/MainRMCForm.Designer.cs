@@ -43,10 +43,10 @@
             BroadcastHistoryBtn = new Button();
             ScheduleBroadcastBtn = new Button();
             Rmsgcontextstrip = new ContextMenuStrip(components);
-            refreshToolStripMenuItem = new ToolStripMenuItem();
+            renameSelectRMSGFileToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator4 = new ToolStripSeparator();
             openFolderLocationToolStripMenuItem = new ToolStripMenuItem();
-            renameSelectRMSGFileToolStripMenuItem = new ToolStripMenuItem();
+            refreshToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             deleteSelectedItemToolStripMenuItem = new ToolStripMenuItem();
             PCtabControl1 = new TabControl();
@@ -110,7 +110,6 @@
             DeleteSelectedRMSGFileBtn = new Button();
             QuickLoadRMSGFileLabel = new Label();
             RefreshQuickLoadListBtn = new Button();
-            GreenButtonTimer = new System.Windows.Forms.Timer(components);
             QuickLoadRMSGImage = new PictureBox();
             ModulesTabControl = new TabControl();
             PCTab = new TabPage();
@@ -437,17 +436,17 @@
             // Rmsgcontextstrip
             // 
             Rmsgcontextstrip.ImageScalingSize = new Size(20, 20);
-            Rmsgcontextstrip.Items.AddRange(new ToolStripItem[] { refreshToolStripMenuItem, toolStripSeparator4, openFolderLocationToolStripMenuItem, renameSelectRMSGFileToolStripMenuItem, toolStripSeparator3, deleteSelectedItemToolStripMenuItem });
+            Rmsgcontextstrip.Items.AddRange(new ToolStripItem[] { renameSelectRMSGFileToolStripMenuItem, toolStripSeparator4, openFolderLocationToolStripMenuItem, refreshToolStripMenuItem, toolStripSeparator3, deleteSelectedItemToolStripMenuItem });
             Rmsgcontextstrip.Name = "Rmsgcontextstrip";
             Rmsgcontextstrip.Size = new Size(232, 120);
             // 
-            // refreshToolStripMenuItem
+            // renameSelectRMSGFileToolStripMenuItem
             // 
-            refreshToolStripMenuItem.Image = Properties.Resources.icons8_refresh_24_black;
-            refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            refreshToolStripMenuItem.Size = new Size(231, 26);
-            refreshToolStripMenuItem.Text = "Refresh";
-            refreshToolStripMenuItem.Click += RefreshRMSGListBtn_Click;
+            renameSelectRMSGFileToolStripMenuItem.Image = Properties.Resources.icons8_rename_24_black;
+            renameSelectRMSGFileToolStripMenuItem.Name = "renameSelectRMSGFileToolStripMenuItem";
+            renameSelectRMSGFileToolStripMenuItem.Size = new Size(231, 26);
+            renameSelectRMSGFileToolStripMenuItem.Text = "Rename Selected Item";
+            renameSelectRMSGFileToolStripMenuItem.Click += RenameSelectedRMSGBtn_Click;
             // 
             // toolStripSeparator4
             // 
@@ -462,13 +461,13 @@
             openFolderLocationToolStripMenuItem.Text = "Open Folder Location";
             openFolderLocationToolStripMenuItem.Click += OpenSaveLocationBtn_Click;
             // 
-            // renameSelectRMSGFileToolStripMenuItem
+            // refreshToolStripMenuItem
             // 
-            renameSelectRMSGFileToolStripMenuItem.Image = Properties.Resources.icons8_rename_24_black;
-            renameSelectRMSGFileToolStripMenuItem.Name = "renameSelectRMSGFileToolStripMenuItem";
-            renameSelectRMSGFileToolStripMenuItem.Size = new Size(231, 26);
-            renameSelectRMSGFileToolStripMenuItem.Text = "Rename Selected Item";
-            renameSelectRMSGFileToolStripMenuItem.Click += RenameSelectedRMSGBtn_Click;
+            refreshToolStripMenuItem.Image = Properties.Resources.icons8_refresh_24_black;
+            refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            refreshToolStripMenuItem.Size = new Size(231, 26);
+            refreshToolStripMenuItem.Text = "Refresh";
+            refreshToolStripMenuItem.Click += RefreshRMSGListBtn_Click;
             // 
             // toolStripSeparator3
             // 
@@ -1305,11 +1304,6 @@
             RefreshQuickLoadListBtn.TextAlign = ContentAlignment.MiddleRight;
             RefreshQuickLoadListBtn.UseVisualStyleBackColor = false;
             RefreshQuickLoadListBtn.Click += RefreshRMSGListBtn_Click;
-            // 
-            // GreenButtonTimer
-            // 
-            GreenButtonTimer.Interval = 5000;
-            GreenButtonTimer.Tick += GreenButtonTimer_Tick;
             // 
             // QuickLoadRMSGImage
             // 
@@ -2519,7 +2513,6 @@
         private LinkLabel ReattemptonErrorHelpLbl;
         private Label MessageCheckboxSettingLabel;
         public Button StartBroadcastBtn;
-        public System.Windows.Forms.Timer GreenButtonTimer;
         private ToolTip toolTipHelp;
         private Label verNumbLblAboutLbl;
         private Label RMCTitleLabel;
