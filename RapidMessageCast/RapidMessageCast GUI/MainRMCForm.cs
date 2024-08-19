@@ -40,6 +40,8 @@ using System.Text.RegularExpressions;
 //Could make the CLI redundant by checking if a STARTUP.rmsg exists, if it does, load it and start the broadcast. The command line argument function is already in place, so this should be easy to implement.
 //Add PSexec saves to the IO manager.
 //Also move the WOL page to the main tab control instead of the PC tab control.
+//Add WOL to the broadcast controller: Do the WOL, add a delay, and then broadcast the MSG message, do not delay any other modules.
+//Add Run Program as a module. This will allow the user to run a program on the local machine that can do anything.
 //Fix me list:
 //(1) [FIXME] - 21/07/24 - Why is this function (ScheduledBroadcast) only running the PC module? It should check if the other modules are enabled and run them as well. TODO: Fix this.
 //(2) [Critical Fault] - 03/08/24 - There is a fault where if there are too many msg commands sent at once, the entire network service stack on the broadcaster machine freezes. Primary suspect is DNS Service hanging, I believe this is because the DNS Client has to parse alot of DNS hostnames quickly so it gets overwhelmed. This is a theory, but it is the most likely cause. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens.
@@ -68,7 +70,7 @@ namespace RapidMessageCast_Manager
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            AddTextToLogList($"Info - [RMC Startup]: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
+            TraceLog($"Info - [RMC Startup]: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
             CheckCommandLineArguments();
             //This if statement is to prevent the program from loading fully when the program is started with a command line argument (This will prevent slowdowns when doing automatic broadcasting).
             if (!dontPromptClosureMessage)
@@ -76,14 +78,14 @@ namespace RapidMessageCast_Manager
                 LoadGlobalSettings();
                 CheckSystemState();
                 AddIconsToTabControls();
-                AddTextToLogList(IOManager.AttemptToCreateRMCDirectories());
+                TraceLog(IOManager.AttemptToCreateRMCDirectories());
                 HandleAutoStartRMSGFiles();
                 UpdateUIWithVersionInformation();
                 RefreshRMSGFileList();
                 InitalizeToolTipHelp();
             }
             Console.WriteLine("RapidMessageCast Manager has started.");
-            AddTextToLogList("Info - [RMC Startup]: RMC GUI is now ready.");
+            TraceLog("Info - [RMC Startup]: RMC GUI is now ready.");
         }
 
         #region Functions
@@ -110,7 +112,7 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [ToolTipHelp]: Failed to initalize the tooltip help, this is not a critical error: {ex}"); //This error isn't critical, so it can be ignored tbh.
+                TraceLog($"Error - [ToolTipHelp]: Failed to initalize the tooltip help, this is not a critical error: {ex}"); //This error isn't critical, so it can be ignored tbh.
             }
         }
 
@@ -161,8 +163,8 @@ namespace RapidMessageCast_Manager
             var args = Environment.GetCommandLineArgs();
             if (args.Length <= 1) return;
 
-            AddTextToLogList("Info - [CheckCommandLineArguments]: Startup command line arguments detected. Checking for RMSG file.");
-            AddTextToLogList($"Info - [CheckCommandLineArguments]: Command line arguments: {string.Join(" ", args)}");
+            TraceLog("Info - [CheckCommandLineArguments]: Startup command line arguments detected. Checking for RMSG file.");
+            TraceLog($"Info - [CheckCommandLineArguments]: Command line arguments: {string.Join(" ", args)}");
 
             try
             {
@@ -172,14 +174,14 @@ namespace RapidMessageCast_Manager
                         HandlePanicMode(args);
                         break;
                     case "schedule" when args.Length == 3:
-                        AddTextToLogList("Info - [CheckCommandLineArguments]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
+                        TraceLog("Info - [CheckCommandLineArguments]: [SCHEDULE] Startup loading RMSG file from command line argument and starting scheduled broadcast.");
                         dontPromptClosureMessage = true;
                         RunScheduledBroastcast(args[2]);
                         break;
                     default:
                         if (args.Length == 2)
                         {
-                            AddTextToLogList("Info - [CheckCommandLineArguments]: Loading RMSG file from command line argument.");
+                            TraceLog("Info - [CheckCommandLineArguments]: Loading RMSG file from command line argument.");
                             LoadAndParseRMSGFile(args[1]);
                         }
                         break;
@@ -188,31 +190,31 @@ namespace RapidMessageCast_Manager
             catch (Exception ex)
             {
                 MessageBox.Show("Critical error! Panic button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddTextToLogList($"Critical - [CheckCommandLineArguments]: [PANIC Error!] Panic button failed to broadcast: {ex}");
+                TraceLog($"Critical - [CheckCommandLineArguments]: [PANIC Error!] Panic button failed to broadcast: {ex}");
             }
         }
 
         private void HandlePanicMode(string[] args)
         {
             dontPromptClosureMessage = true;
-            AddTextToLogList("Info - [CheckCommandLineArguments]: [PANIC!] Panic Startup detected. Loading RMSG file and starting emergency alert broadcast...");
+            TraceLog("Info - [CheckCommandLineArguments]: [PANIC!] Panic Startup detected. Loading RMSG file and starting emergency alert broadcast...");
 
             string rmsgFilePath = args.Length > 2 ? args[2] : $"{Application.StartupPath}\\RMSGFiles\\PANIC.rmsg";
             LoadAndParseRMSGFile(rmsgFilePath);
 
             if (string.IsNullOrEmpty(PCBroadcastMessageTxt.Text))
             {
-                AddTextToLogList("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Asking if allowed to use predefined message.");
+                TraceLog("Error - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Asking if allowed to use predefined message.");
                 //Ask user if they want to use the predefined message.
                 DialogResult dialogResult = MessageBox.Show("PANIC message not loaded. Use predefined message?\n \"PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.\"", "PANIC Message", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    AddTextToLogList("Info - [CheckCommandLineArguments]: PANIC broadcast - User approved using predefined message, broadcasting predefined PANIC message.");
+                    TraceLog("Info - [CheckCommandLineArguments]: PANIC broadcast - User approved using predefined message, broadcasting predefined PANIC message.");
                     PCBroadcastMessageTxt.Text = "PANIC BUTTON ALERT: This is a PANIC message. Please evacuate the building immediately. This is not a drill.";
                 }
                 else
                 {
-                    AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Closing program.");
+                    TraceLog("Critical - [CheckCommandLineArguments]: PANIC broadcast - PANIC message not loaded. Closing program.");
                     MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Application.Exit();
                 }
@@ -220,12 +222,12 @@ namespace RapidMessageCast_Manager
 
             if (string.IsNullOrEmpty(PCBroadcastToList.Text))
             {
-                AddTextToLogList("Critical - [CheckCommandLineArguments]: PANIC broadcast - PC list is empty. Closing program.");
+                TraceLog("Critical - [CheckCommandLineArguments]: PANIC broadcast - PC list is empty. Closing program.");
                 MessageBox.Show("Critical error! PANIC button failed to broadcast. Please check the RMC log list for more information.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
 
-            AddTextToLogList("Info - [CheckCommandLineArguments]: PANIC broadcast - RMSG parsed, Starting broadcast...");
+            TraceLog("Info - [CheckCommandLineArguments]: PANIC broadcast - RMSG parsed, Starting broadcast...");
             StartBroadcastBtn_Click(this, EventArgs.Empty);
             CloseAfterAllModulesAreFinished();
         }
@@ -233,17 +235,17 @@ namespace RapidMessageCast_Manager
 
         private async void CloseAfterAllModulesAreFinished()
         {
-            AddTextToLogList("Info - [CloseAfterAllModulesAreFinished]: Closing program after all modules are finished....");
+            TraceLog("Info - [CloseAfterAllModulesAreFinished]: Closing program after all modules are finished....");
             //Check if all modules are finished. If they are, close the program.
             //use the broadcastController to check if all modules are finished via the AreAnyModulesRunning void func
             //if they are not finished, then repeat this every 5 seconds until they are.
             //if they are finished, then close the program. PS. This is the simplest code in this project. :)
             while (broadcastController.AreAnyModulesRunning())
             {
-                AddTextToLogList("Info - [CloseAfterAllModulesAreFinished]: (Timer TICK) Waiting for all modules to finish...");
+                TraceLog("Info - [CloseAfterAllModulesAreFinished]: (Timer TICK) Waiting for all modules to finish...");
                 await Task.Delay(5000); //broadcastController will handle hung modules so we don't need to worry about that in this function.
             }
-            AddTextToLogList("Info - [CloseAfterAllModulesAreFinished]: All modules are finished. Closing program.");
+            TraceLog("Info - [CloseAfterAllModulesAreFinished]: All modules are finished. Closing program.");
             dontPromptClosureMessage = true; //Setting this true will prevent the program from asking the user if they want to close.
             Application.Exit();
         }
@@ -261,11 +263,11 @@ namespace RapidMessageCast_Manager
                 if (File.Exists(filePath))
                 {
                     LoadAndParseRMSGFile(filePath);
-                    AddTextToLogList($"Info - [HandleAutoStartRMSGFiles]: {Path.GetFileName(filePath)} file loaded.");
+                    TraceLog($"Info - [HandleAutoStartRMSGFiles]: {Path.GetFileName(filePath)} file loaded.");
 
                     if (filePath.EndsWith("autobroadcast.rmsg"))
                     {
-                        AddTextToLogList("Info - [HandleAutoStartRMSGFiles]: autobroadcast.rmsg file detected. Starting scheduled broadcast.");
+                        TraceLog("Info - [HandleAutoStartRMSGFiles]: autobroadcast.rmsg file detected. Starting scheduled broadcast.");
                         dontPromptClosureMessage = true;
                         RunScheduledBroastcast(filePath);
                     }
@@ -282,32 +284,32 @@ namespace RapidMessageCast_Manager
 
         private async void RunScheduledBroastcast(string RMSGFile)
         {
-            AddTextToLogList("Info - [ScheduledBroadcast]: Starting scheduled broadcast...");
+            TraceLog("Info - [ScheduledBroadcast]: Starting scheduled broadcast...");
             //(1) [FIXME] 21/07/24 - Why is this function only running the PC module? It should check if the other modules are enabled and run them as well. TODO: Fix this.
             LoadAndParseRMSGFile(RMSGFile); //Load the RMSG file into the program.
             //Check if modules are selected. If not, close the program.
             if (!MessagePCcheckBox.Checked && !MessageEmailcheckBox.Checked && !PSExecModuleEnableCheckBox.Checked)
             {
-                AddTextToLogList("Critical - [ScheduledBroadcast]: No modules are selected. Closing program.");
+                TraceLog("Critical - [ScheduledBroadcast]: No modules are selected. Closing program.");
                 Application.Exit();
             }
             //Check if message or pclist is empty. If it is, close the program.
             if (PCBroadcastMessageTxt.Text == "" || PCBroadcastToList.Text == "")
             {
-                AddTextToLogList("Critical - [ScheduledBroadcast]: Message or PC list is empty. Closing program.");
+                TraceLog("Critical - [ScheduledBroadcast]: Message or PC list is empty. Closing program.");
                 Application.Exit();
             }
             int totalSeconds = ((int)PCexpiryHourTime.Value * 3600) + ((int)PCexpiryMinutesTime.Value * 60) + (int)PCexpirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             await
-            broadcastController.StartBroadcastModule(RMCEnums.PC, PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
-            AddTextToLogList("Info - [ScheduledBroadcast]: Scheduled broadcast completed.");
+            broadcastController.StartPCBroadcastModule(PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
+            TraceLog("Info - [ScheduledBroadcast]: Scheduled broadcast completed.");
             CloseAfterAllModulesAreFinished();
         }
 
         private void CheckSystemState()
         {
-            var systemChecker = new SystemHealthCheck(AddTextToLogList);
-            AddTextToLogList("Info - [CheckSystemState]: Checking system state...");
+            var systemChecker = new SystemHealthCheck(TraceLog);
+            TraceLog("Info - [CheckSystemState]: Checking system state...");
             systemChecker.CheckFileExistence("C:\\Windows\\System32\\msg.exe",
                 "Critical - [CheckSystemState]: msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.",
                 "msg.exe not found in the System32 folder. Please ensure that you have a supported operating system edition.");
@@ -325,20 +327,20 @@ namespace RapidMessageCast_Manager
                 PsExecLabel.Text = "PsExec (Disabled)";
             }
             systemChecker.AreCriticalServicesRunning();
-            AddTextToLogList("Info - [CheckSystemState]: System state check completed.");
+            TraceLog("Info - [CheckSystemState]: System state check completed.");
         }
         public void CheckForUpdates()
         {
             //Check for RMC program updates
-            AddTextToLogList("Info - [RMCUpdate]: Checking for RMC program updates...");
+            TraceLog("Info - [RMCUpdate]: Checking for RMC program updates...");
             if (RMCUpdateChecker.CheckForUpdates())
             {
-                AddTextToLogList("Info - [RMCUpdate]: An update is available. Please download the latest version from the GitHub repository to ensure stability.");
+                TraceLog("Info - [RMCUpdate]: An update is available. Please download the latest version from the GitHub repository to ensure stability.");
                 MessageBox.Show("An update is available. Please download the latest version from the GitHub repository to ensure stability.", "Update Available", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                AddTextToLogList("Info - [RMCUpdate]: No RMC updates available or no connection is detected.");
+                TraceLog("Info - [RMCUpdate]: No RMC updates available or no connection is detected.");
                 MessageBox.Show("No updates available or no connection is detected.", "Update Check", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
@@ -364,11 +366,11 @@ namespace RapidMessageCast_Manager
             }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [AddIconsToTabControls]: Failed to add images to the GUI form tabcontrol: {ex}");
+                TraceLog($"Error - [AddIconsToTabControls]: Failed to add images to the GUI form tabcontrol: {ex}");
             }
         }
 
-        public void AddTextToLogList(string item)
+        public void TraceLog(string item)
         {
             //Debug States:
             //Info - Used for general information.
@@ -381,7 +383,7 @@ namespace RapidMessageCast_Manager
             {
                 if (logList.InvokeRequired)
                 {
-                    logList.Invoke(new MethodInvoker(() => AddTextToLogList(item))); //This was added to prevent crashing when there are multiple threads trying to access the listbox.
+                    logList.Invoke(new MethodInvoker(() => TraceLog(item))); //This was added to prevent crashing when there are multiple threads trying to access the listbox.
                 }
                 else
                 {
@@ -395,7 +397,7 @@ namespace RapidMessageCast_Manager
                 try
                 {
                     //This exception has to be caught, otherwise the program will crash if an error occurs in the loglist.
-                    Console.WriteLine($"Critical - [AddTextToLogList] Error! An exception occurred when adding an item to the loglist: {ex}");
+                    Console.WriteLine($"Critical - [TraceLog] Error! An exception occurred when adding an item to the loglist: {ex}");
                     //Attempt to write the exception message to a file using file.writealltext.
                     File.WriteAllText($"{Application.StartupPath}\\RMC Runtime Logs\\RMC_Critical_Exception.txt", $"Critical - [AddTextToLogList] Error! An exception occurred when adding an item to the loglist: {ex}");
                 }
@@ -418,7 +420,7 @@ namespace RapidMessageCast_Manager
             MessageEmailcheckBox.Checked = Properties.Settings.Default.MessageEmailEnabled;
             WOLPortNumberBox.Value = Properties.Settings.Default.MagicPortNumber;
             ReattemptOnErrorCheckbox.Checked = Properties.Settings.Default.ReattemptOnError;
-            AddTextToLogList($"Info - [LoadGlobalSettings]: {Properties.Settings.Default.Properties.Count} Program settings loaded.");
+            TraceLog($"Info - [LoadGlobalSettings]: {Properties.Settings.Default.Properties.Count} Program settings loaded.");
         }
         private static void SetCheckboxState(CheckBox checkBox, string value)
         {
@@ -426,7 +428,7 @@ namespace RapidMessageCast_Manager
         }
         private void LoadAndParseRMSGFile(string filePath)
         {
-            AddTextToLogList($"Info - [LoadAndParseRMSGFile]: Loading RMSG file: {Path.GetFileName(filePath)}");
+            TraceLog($"Info - [LoadAndParseRMSGFile]: Loading RMSG file: {Path.GetFileName(filePath)}");
             string[] RMSGFileValues = IOManager.LoadRMSGFile(filePath);
 
             if (!string.IsNullOrEmpty(RMSGFileValues[0]))
@@ -434,27 +436,27 @@ namespace RapidMessageCast_Manager
                 //If first word is error, addtext and return. If warning, addtext but continue.
                 if (RMSGFileValues[0].StartsWith("Warning"))
                 {
-                    AddTextToLogList($"Warning - [LoadAndParseRMSGFile]: Loading message returned a non-critical warning: {RMSGFileValues[0]} - Continuing anyway.");
+                    TraceLog($"Warning - [LoadAndParseRMSGFile]: Loading message returned a non-critical warning: {RMSGFileValues[0]} - Continuing anyway.");
                 }
                 else if (RMSGFileValues[0].StartsWith("Error"))
                 {
-                    AddTextToLogList($"Error - [LoadAndParseRMSGFile]: Loading message returned an error: {RMSGFileValues[0]} - Loading of RMSG file halted.");
+                    TraceLog($"Error - [LoadAndParseRMSGFile]: Loading message returned an error: {RMSGFileValues[0]} - Loading of RMSG file halted.");
                     return;
                 }
                 else
                 {
-                    AddTextToLogList($"Error - [LoadAndParseRMSGFile]: Loading message returned an unknown error: {RMSGFileValues[0]} - Loading of RMSG file halted.");
+                    TraceLog($"Error - [LoadAndParseRMSGFile]: Loading message returned an unknown error: {RMSGFileValues[0]} - Loading of RMSG file halted.");
                     return;
                 }
             }
-            AddTextToLogList($"Info - [LoadAndParseRMSGFile]: Parsing RMSG file: {Path.GetFileName(filePath)}");
+            TraceLog($"Info - [LoadAndParseRMSGFile]: Parsing RMSG file: {Path.GetFileName(filePath)}");
             try
             {
                 //Check RMCSoftwareVersion, if it doesn't match the current version, then show a message box.
                 if (RMSGFileValues[20] != versionNumb)
                 {
-                    MessageBox.Show("The RMSG file was created with a different version of RMC. Please save this file again to convert this save to one that is compatible with this current version of RMC.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    AddTextToLogList($"Info - [LoadAndParseRMSGFile]: RMSG file was created with a different version of RMC. RMSG resave might be required. RMC Version: {versionNumb}, RMSG Version: {RMSGFileValues[20]}");
+                    MessageBox.Show($"This RMSG file was created with a different version of RMC (Expected Version: {versionNumb}, Actual File Version: {RMSGFileValues[20]}). RMC will attempt to load this file, and once the file is loaded you can save this file again to convert this save to one that is compatible with the current version of RMC.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    TraceLog($"Info - [LoadAndParseRMSGFile]: RMSG file was created with a different version of RMC. RMSG resave might be required. RMC Version: {versionNumb}, RMSG Version: {RMSGFileValues[20]}");
                 }
                 PCBroadcastMessageTxt.Text = RMSGFileValues[1];
                 PCBroadcastToList.Text = RMSGFileValues[2];
@@ -483,20 +485,20 @@ namespace RapidMessageCast_Manager
                 }
                 catch (Exception ex)
                 {
-                    AddTextToLogList($"Warning - [LoadAndParseRMSGFile]: Failed to decrypt email password: {ex}");
+                    TraceLog($"Warning - [LoadAndParseRMSGFile]: Failed to decrypt email password: {ex}");
                 }
-                AddTextToLogList($"Info - [LoadAndParseRMSGFile]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
+                TraceLog($"Info - [LoadAndParseRMSGFile]: RMSG File loaded successfully: {Path.GetFileName(filePath)}");
             }
             catch (FormatException ex1)
             {
-                AddTextToLogList($"Error - [LoadAndParseRMSGFile]: Format Parse Failure - Format exception when loading RMSG file, RMSG file is not loading correctly! {ex1}");
+                TraceLog($"Error - [LoadAndParseRMSGFile]: Format Parse Failure - Format exception when loading RMSG file, RMSG file is not loading correctly! {ex1}");
                 MessageBox.Show("A RMSG format error has occurred. Please check the debug log for file errors.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LoadGlobalSettings(); //If the RMSG file fails to load, then load the global settings instead.
                 return;
             }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [LoadAndParseRMSGFile]: General Parse Failure: {ex} - Will now load global settings.");
+                TraceLog($"Error - [LoadAndParseRMSGFile]: General Parse Failure: {ex} - Will now load global settings.");
                 LoadGlobalSettings(); //If the RMSG file fails to load, then load the global settings instead.
                 return;
             }
@@ -514,11 +516,11 @@ namespace RapidMessageCast_Manager
                     QuickLoadListbox.Items.Add(Path.GetFileName(file));
                 }
                 //Add to loglist that the RMSG files have been loaded. with the amount of files.
-                AddTextToLogList($"Info - [RefreshRMSGFileList]: RMSG list refreshed. Amount of files on the list: {files.Length}");
+                TraceLog($"Info - [RefreshRMSGFileList]: RMSG list refreshed. Amount of files on the list: {files.Length}");
             }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [RefreshRMSGFileList]: Failure in creating QuickLoad folder(s)/Refreshing the RMSGFileList {ex}");
+                TraceLog($"Error - [RefreshRMSGFileList]: Failure in creating QuickLoad folder(s)/Refreshing the RMSGFileList {ex}");
             }
         }
 
@@ -528,7 +530,7 @@ namespace RapidMessageCast_Manager
         {
             //If possible, I will create a form to select the OU's from the Active Directory. For now, it will just add all computers from the Computers OU.
             //--Connect to the Active Directory, show a form window with all the available OU's, let the user select one or all. Then add all the computers from the OU that the user selected to the pclist.--
-            AddTextToLogList("Info - [Active Directory]: Attempting to connect to Active Directory.");
+            TraceLog("Info - [Active Directory]: Attempting to connect to Active Directory.");
             try
             {
                 DirectoryEntry entry = new("LDAP://OU=Computers,DC=example,DC=com");
@@ -542,12 +544,12 @@ namespace RapidMessageCast_Manager
                 {
                     PCBroadcastToList.Text += resEnt.GetDirectoryEntry().Name + "\r\n";
                 }
-                AddTextToLogList("Info - [Active Directory] Computers from Active Directory added to the list.");
+                TraceLog("Info - [Active Directory] Computers from Active Directory added to the list.");
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error connecting to Active Directory: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddTextToLogList($"Error - [Active Directory]: Failure in connecting to Active Directory. {ex}");
+                TraceLog($"Error - [Active Directory]: Failure in connecting to Active Directory. {ex}");
             }
         }
 
@@ -608,7 +610,7 @@ namespace RapidMessageCast_Manager
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string fileName = saveFileDialog.FileName;
-                AddTextToLogList($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
+                TraceLog($"Info - [SaveRMSGBtn]: Saving RMSG file: {fileName}");
                 Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
                 IOManager.SaveRMSGFile(fileName, PCBroadcastMessageTxt.Text, PCBroadcastToList.Text, WOLTextbox.Text, (int)WOLPortNumberBox.Value, PCexpiryHourTime.Value.ToString(), PCexpiryMinutesTime.Value.ToString(), PCexpirySecondsTime.Value.ToString(), FastBroadcastModeCheckbox.Checked, MessagePCcheckBox.Checked, MessageEmailcheckBox.Checked, PSExecModuleEnableCheckBox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, AddressOfSMTPServerTxt.Text, EmailPortNumber.Value, SenderAddressTxt.Text, authMode, EmailAccountTextbox.Text, EmailPasswordTextbox.Text);
                 RefreshRMSGFileList();
@@ -617,32 +619,32 @@ namespace RapidMessageCast_Manager
 
         private void OpenMessageTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new IOManager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", RegexFilters.FilterInvalidMessage);
+            new IOManager(TraceLog).OpenFileAndProcessContents(PCBroadcastMessageTxt, "OpenMessageAsTxt", "OpenMessageAsTxt", RegexFilters.FilterInvalidMessage);
         }
 
         private void OpenSendComputerListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new IOManager(AddTextToLogList).OpenFileAndProcessContents(PCBroadcastToList, "OpenPCList", "OpenPCList", RegexFilters.FilterInvalidPCNames);
+            new IOManager(TraceLog).OpenFileAndProcessContents(PCBroadcastToList, "OpenPCList", "OpenPCList", RegexFilters.FilterInvalidPCNames);
         }
 
         private void OpenMacAddressfromTxtBtn_Click(object sender, EventArgs e)
         {
-            new IOManager(AddTextToLogList).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", RegexFilters.FilterInvalidPCNames);
+            new IOManager(TraceLog).OpenFileAndProcessContents(WOLTextbox, "MacAddressfromTxt", "OpenMacAddressfromTxt", RegexFilters.FilterInvalidPCNames);
         }
 
         private void SaveMacAddressesAsTXTBtn_Click(object sender, EventArgs e)
         {
-            new IOManager(AddTextToLogList).SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
+            new IOManager(TraceLog).SaveFileFromTextBox(WOLTextbox, "SaveMacAddressesAsTXTBtn", "SaveMacAddressesAsTXTBtn");
         }
 
         private void SaveComputerListBtn_Click(object sender, EventArgs e)
         {
-            new IOManager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastToList, "SavePCList", "SavePCList");
+            new IOManager(TraceLog).SaveFileFromTextBox(PCBroadcastToList, "SavePCList", "SavePCList");
         }
 
         private void SaveMessageBtn_Click(object sender, EventArgs e)
         {
-            new IOManager(AddTextToLogList).SaveFileFromTextBox(PCBroadcastMessageTxt, "SaveMessageBtn", "SaveMessageBtn");
+            new IOManager(TraceLog).SaveFileFromTextBox(PCBroadcastMessageTxt, "SaveMessageBtn", "SaveMessageBtn");
         }
 
         private void ComputerSelectList_KeyPress(object sender, KeyPressEventArgs e)
@@ -669,7 +671,7 @@ namespace RapidMessageCast_Manager
 
         private void StartBroadcastBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [InitBroadcast]: Broadcast button pressed. Preparing to run selected modules...");
+            TraceLog("Info - [InitBroadcast]: Broadcast button pressed. Preparing to run selected modules...");
 
             bool isMessagePCChecked = MessagePCcheckBox.Checked;
             bool isMessageEmailChecked = MessageEmailcheckBox.Checked;
@@ -677,38 +679,44 @@ namespace RapidMessageCast_Manager
 
             if (!isMessagePCChecked && !isMessageEmailChecked && !isMessagePSExecChecked)
             {
-                AddTextToLogList("Error - [InitBroadcast]: No modules are enabled. Unable to broadcast.");
+                TraceLog("Error - [InitBroadcast]: No modules are enabled. Unable to broadcast.");
                 MessageBox.Show("No modules are enabled. Please enable at least one module before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (isMessagePCChecked)
             {
-                AddTextToLogList("Info - [InitBroadcast]: PC module is enabled. Starting PC cast.");
-                Task PCCall;
+                TraceLog("Info - [InitBroadcast]: PC module is enabled. Starting PC cast.");
                 string messageText = PCBroadcastMessageTxt.Text;
                 string computerSelectListText = PCBroadcastToList.Text;
 
                 if (string.IsNullOrWhiteSpace(messageText) || string.IsNullOrWhiteSpace(computerSelectListText))
                 {
                     MessageBox.Show("Message or PC list is empty. Please fill in the message and PC list before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList("Error - [InitBroadcast]: PC Broadcast - Message textbox or PC list are empty. Broadcast halted.");
+                    TraceLog("Error - [InitBroadcast]: PC Broadcast - Message textbox or PC list are empty. Broadcast halted.");
                     return;
                 }
 
                 int totalSeconds = ((int)PCexpiryHourTime.Value * 3600) + ((int)PCexpiryMinutesTime.Value * 60) + (int)PCexpirySecondsTime.Value;
-                PCCall = broadcastController.StartBroadcastModule(RMCEnums.PC, messageText, computerSelectListText, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
+                _ = broadcastController.StartPCBroadcastModule(messageText, computerSelectListText, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
             }
 
             if (isMessageEmailChecked)
             {
-                AddTextToLogList("Info - [InitBroadcast]: Email module is enabled. Starting email cast.");
+                TraceLog("Info - [InitBroadcast]: Email module is enabled. Starting email cast.");
                 //MessageBox.Show("Email module is not implemented yet. This is a placeholder message.", "Email Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             if (isMessagePSExecChecked)
             {
-                AddTextToLogList("Info - [InitBroadcast]: PSExec module is enabled. Starting PSExec cast.");
+                //Check if PSexec label contains (Disabled), if it does, then show a message box and return.
+                if (PsExecLabel.Text.Contains("(Disabled)"))
+                {
+                    TraceLog("Error - [InitBroadcast]: PSExec module is disabled due to startup PsExec check failure. Unable to start PSExec cast.");
+                    MessageBox.Show("PSExec module is disabled since it either doesn't exist or is not available to use. Please check if PSExec is present in the RMC root folder before starting a broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                TraceLog("Info - [InitBroadcast]: PSExec module is enabled and passed check. Starting PSExec cast.");
                 //MessageBox.Show("PSExec module is not implemented yet. This is a placeholder message.", "PSExec Module", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             NotifyBroadcastStatus();
@@ -721,7 +729,7 @@ namespace RapidMessageCast_Manager
             if (dialogResult == DialogResult.Yes)
             {
                 logList.Items.Clear();
-                AddTextToLogList("Info - [RMC Manager]: Loglist cleared.");
+                TraceLog("Info - [RMC Manager]: Loglist cleared.");
             }
         }
 
@@ -740,7 +748,7 @@ namespace RapidMessageCast_Manager
             //Save a quick save file name based on the current date and time.
             string quickSaveFileName = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".rmsg";
 
-            AddTextToLogList($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
+            TraceLog($"Info - [QuickSaveBtn]: Quick saving RMSG file: {quickSaveFileName}");
             //Use the SaveRMSGFile in the RMC_IO_Manager to save the file.
             Enum.TryParse(EmailAuthTypecomboBox.Text, out AuthMode authMode);
 
@@ -759,7 +767,7 @@ namespace RapidMessageCast_Manager
             catch (Exception ex)
             {
                 encryptedPassword = string.Empty; //Prevent saving the password if it fails to encrypt.
-                AddTextToLogList($"Warning - [SaveQuickRMSGFile]: Failed to encrypt email password. Saving without encrypted password. Exception: {ex.Message}");
+                TraceLog($"Warning - [SaveQuickRMSGFile]: Failed to encrypt email password. Saving without encrypted password. Exception: {ex.Message}");
             }
 
             IOManager.SaveRMSGFile(
@@ -783,13 +791,13 @@ namespace RapidMessageCast_Manager
                 authMode,
                 EmailAccountTextbox.Text,
                 encryptedPassword
-            ); 
+            );
             RefreshRMSGFileList();
         }
 
         private void RefreshRMSGListBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [RefreshRMSGBtn]: Refreshing RMSG file list.");
+            TraceLog("Info - [RefreshRMSGBtn]: Refreshing RMSG file list.");
             RefreshRMSGFileList();
         }
 
@@ -806,13 +814,13 @@ namespace RapidMessageCast_Manager
                     if (dialogResult == DialogResult.Yes)
                     {
                         File.Delete(Path.Combine(Application.StartupPath, "RMSG Files", selectedFile));
-                        AddTextToLogList("Info - [DeleteSelectedRMSGFile]: File deleted: " + selectedFile);
+                        TraceLog("Info - [DeleteSelectedRMSGFile]: File deleted: " + selectedFile);
                         RefreshRMSGFileList();
                     }
                 }
                 catch (Exception ex)
                 {
-                    AddTextToLogList($"Error - [DeleteSelectedRMSGFile]: Failure in deleting file: {ex}");
+                    TraceLog($"Error - [DeleteSelectedRMSGFile]: Failure in deleting file: {ex}");
                 }
             }
         }
@@ -841,7 +849,7 @@ namespace RapidMessageCast_Manager
                 // Check for invalid characters in the file name
                 if (newFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                 {
-                    AddTextToLogList("Error - [RenameSelectedRMSGBtn]: Error renaming file, invalid characters in the filename.");
+                    TraceLog("Error - [RenameSelectedRMSGBtn]: Error renaming file, invalid characters in the filename.");
                     return;
                 }
 
@@ -858,13 +866,13 @@ namespace RapidMessageCast_Manager
                 {
                     // Move the file to the new location
                     File.Move(Path.Combine(Application.StartupPath, "RMSG Files", selectedFile), filePath, true);
-                    AddTextToLogList($"Info - [RenameSelectedRMSGBtn]: File renamed: {selectedFile} to {newFileName}");
+                    TraceLog($"Info - [RenameSelectedRMSGBtn]: File renamed: {selectedFile} to {newFileName}");
                     RefreshRMSGFileList();
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Error renaming file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [RenameSelectedRMSGBtn]: Failure in renaming file: {ex.Message}");
+                    TraceLog($"Error - [RenameSelectedRMSGBtn]: Failure in renaming file: {ex.Message}");
                 }
             }
         }
@@ -885,18 +893,18 @@ namespace RapidMessageCast_Manager
         {
             try
             {
-                AddTextToLogList($"Info - [RMC Manager]: Program closure has been triggered. (Closure Type: {dontPromptClosureMessage}).");
+                TraceLog($"Info - [RMC Manager]: Program closure has been triggered. (Closure Type: {dontPromptClosureMessage}).");
                 // If isScheduledBroadcast is true, close the program without asking.
                 if (dontPromptClosureMessage)
                 {
                     if (!broadcastController.AreAnyModulesRunning())
                     {
-                        AddTextToLogList("Info - [RMC Manager]: Scheduled programming has completed. closing...");
+                        TraceLog("Info - [RMC Manager]: Scheduled programming has completed. closing...");
                         return;
                     }
                     else
                     {
-                        AddTextToLogList("Warning - [RMC Manager]: Scheduled programming is still running. Closing the program will stop the broadcast. Rejecting close request and checking again in 10 seconds...");
+                        TraceLog("Warning - [RMC Manager]: Scheduled programming is still running. Closing the program will stop the broadcast. Rejecting close request and checking again in 10 seconds...");
                         e.Cancel = true;
                         //retry the close after 10 seconds.
                         Task.Delay(10000).ContinueWith(_ => CloseAfterAllModulesAreFinished());
@@ -905,7 +913,7 @@ namespace RapidMessageCast_Manager
                 }
                 if (broadcastController.AreAnyModulesRunning()) // User might have clicked close on accident since there is a broadcast in progress. Confirm here.
                 {
-                    AddTextToLogList("Warning - [RMC Manager]: Broadcast is still running. Closing the program will stop the broadcast. Confirming close request.");
+                    TraceLog("Warning - [RMC Manager]: Broadcast is still running. Closing the program will stop the broadcast. Confirming close request.");
                     DialogResult dialogResult = MessageBox.Show("Are you sure you want to close the program? The broadcast is still running. Closing the program will stop the broadcast.", "Close Program - RapidMessageCast Manager", MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.No)
                     {
@@ -927,7 +935,7 @@ namespace RapidMessageCast_Manager
             finally
             {
                 // Attempt Save the rmc runtime logfile by clicking the save log button.
-                AddTextToLogList("Info - [RMC Manager]: Saving log file and closing... [END OF LOG]");
+                TraceLog("Info - [RMC Manager]: Saving log file and closing... [END OF LOG]");
                 SaveRMCRuntimeLogBtn_Click(sender, e);
             }
         }
@@ -996,14 +1004,14 @@ namespace RapidMessageCast_Manager
 
         private void ScheduleBroadcastBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [ScheduleBroadcast]: Opening the schedule broadcast form.");
+            TraceLog("Info - [ScheduleBroadcast]: Opening the schedule broadcast form.");
             ScheduleBroadcastForm scheduleBroadcastForm = new();
             scheduleBroadcastForm.ShowDialog();
         }
 
         private void BroadcastHistoryBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [BroadcastHistory]: Opening the broadcast history form.");
+            TraceLog("Info - [BroadcastHistory]: Opening the broadcast history form.");
             BroadcastHistoryForm broadcastHistoryForm = new();
             broadcastHistoryForm.Show();
         }
@@ -1015,11 +1023,11 @@ namespace RapidMessageCast_Manager
             try
             {
                 File.WriteAllLines(Application.StartupPath + "\\RMC Runtime Logs\\" + logFileName, logList.Items.Cast<string>().ToArray());
-                AddTextToLogList($"Info - [RuntimeSaveLog]: Runtime log saved to file: {logFileName}");
+                TraceLog($"Info - [RuntimeSaveLog]: Runtime log saved to file: {logFileName}");
             }
             catch (Exception ex)
             {
-                AddTextToLogList($"Error - [RuntimeSaveLog]: Failure in saving runtime log. {ex}");
+                TraceLog($"Error - [RuntimeSaveLog]: Failure in saving runtime log. {ex}");
                 MessageBox.Show($"Error saving runtime log: {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -1058,27 +1066,28 @@ namespace RapidMessageCast_Manager
         private async void TestBroadcastMessageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Broadcast the message to just the computer that the program is running on.
-            if (PCBroadcastMessageTxt.Text == "" || PCBroadcastToList.Text == "")
+            TraceLog("Info - [TestBroadcastMessage]: Testing the broadcast message to the local computer.");
+            if (PCBroadcastMessageTxt.Text == "")
             {
-                MessageBox.Show("Message or PC list is empty. Please fill in the message and PC list before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddTextToLogList("Error - [InitBroadcast]: Message or PC list is empty. Broadcast halted.");
+                MessageBox.Show("Message is empty. Please fill in the message before starting the broadcast.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                TraceLog("Error - [TestBroadcastMessage]: Message is empty. Broadcast halted.");
                 return;
             }
             int totalSeconds = ((int)PCexpiryHourTime.Value * 3600) + ((int)PCexpiryMinutesTime.Value * 60) + (int)PCexpirySecondsTime.Value; //Calculate the total seconds from the hours, minutes and seconds for the message duration.
             //pcBroadcastModule.BroadcastPCMessage(MessageTxt.Text, Environment.MachineName, totalSeconds, false, EmergencyModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, isScheduledBroadcast);
             await
-            broadcastController.StartBroadcastModule(RMCEnums.PC, PCBroadcastMessageTxt.Text, Environment.MachineName, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
+            broadcastController.StartPCBroadcastModule(PCBroadcastMessageTxt.Text, Environment.MachineName, totalSeconds, FastBroadcastModeCheckbox.Checked, ReattemptOnErrorCheckbox.Checked, DontSaveBroadcastHistoryCheckbox.Checked, dontPromptClosureMessage);
         }
 
         private async void SendWOLPacketBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [SendWOLPacket]: Sending WOL packet to the PC's in the list.");
+            TraceLog("Info - [SendWOLPacket]: Sending WOL packet to the PC's in the list.");
             //Send a WOL packet to all mac addresses in the WOLTextbox. But first check if the textbox is empty or contains invalid mac addresses.
             string[] macAddresses = WOLTextbox.Text.Split(PCseparatorArray, StringSplitOptions.RemoveEmptyEntries);
             if (macAddresses.Length == 0)
             {
                 MessageBox.Show("No MAC addresses in the textbox. Please add MAC addresses before sending a WOL packet.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                AddTextToLogList("Error - [SendWOLPacket]: No MAC addresses in the textbox. Please add MAC addresses before sending a WOL packet.");
+                TraceLog("Error - [SendWOLPacket]: No MAC addresses in the textbox. Please add MAC addresses before sending a WOL packet.");
                 return;
             }
             foreach (string macAddress in macAddresses)
@@ -1086,10 +1095,10 @@ namespace RapidMessageCast_Manager
                 if (!WakeOnLANManager.IsValidMacAddress(macAddress))
                 {
                     //MessageBox.Show("Invalid MAC address: " + macAddress, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    AddTextToLogList($"Error - [SendWOLPacket]: Invalid MAC address: {macAddress}");
+                    TraceLog($"Error - [SendWOLPacket]: Invalid MAC address: {macAddress}");
                     return;
                 }
-                AddTextToLogList($"Info - [SendWOLPacket]: Sending WOL packet to MAC address: {macAddress}");
+                TraceLog($"Info - [SendWOLPacket]: Sending WOL packet to MAC address: {macAddress}");
                 await
                 WakeOnLANManager.WakeOnLan(macAddress, (int)WOLPortNumberBox.Value);
             }
@@ -1133,21 +1142,25 @@ namespace RapidMessageCast_Manager
 
         private void RenewIPBtn_Click(object sender, EventArgs e)
         {
-            AddTextToLogList("Info - [RenewIPBtn]: Renewing the IP address of the computer.");
+            //Ask before renewing the IP address of the computer.
+            DialogResult dialogResult = MessageBox.Show("Are you sure you want to renew the IP address of the computer?", "Renew IP Address", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.No)
+            {
+                return;
+            }
+            TraceLog("Info - [RenewIPBtn]: Renewing the IP address of the computer.");
             SystemServiceManager.ReleaseAndRenewIP();
         }
 
         private void ShowRMSGListBtn_Click(object sender, EventArgs e)
         {
-            //Set the ModulesTabControl dock style to right. 
-            ModulesTabControl.Dock = DockStyle.Right;
+            MainSplitContainer.Panel1Collapsed = false;
             ShowRMSGListBtn.Visible = false;
         }
 
         private void HideQuickLoadBtn_Click(object sender, EventArgs e)
         {
-            //Set the ModulesTabControl dock style to fill.
-            ModulesTabControl.Dock = DockStyle.Fill;
+            MainSplitContainer.Panel1Collapsed = true;
             ShowRMSGListBtn.Visible = true;
         }
 

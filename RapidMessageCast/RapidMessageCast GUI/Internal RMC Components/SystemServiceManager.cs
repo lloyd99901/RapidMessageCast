@@ -61,10 +61,10 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
         {
             try
             {
-                string[] commands = new[] { "/release", "/renew"};
+                string[] commands = ["/release", "/renew"];
                 foreach (var command in commands)
                 {
-                    ProcessStartInfo psi = new ProcessStartInfo("ipconfig", command)
+                    ProcessStartInfo psi = new("ipconfig", command)
                     {
                         WindowStyle = ProcessWindowStyle.Hidden
                     };
@@ -98,12 +98,10 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             {
                 try
                 {
-                    using (ServiceController service = new ServiceController(serviceName))
+                    using ServiceController service = new(serviceName);
+                    if (service.Status != ServiceControllerStatus.Running)
                     {
-                        if (service.Status != ServiceControllerStatus.Running)
-                        {
-                            return false; // If any service is not running, return false
-                        }
+                        return false; // If any service is not running, return false
                     }
                 }
                 catch (InvalidOperationException ex)

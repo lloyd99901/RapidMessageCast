@@ -57,7 +57,7 @@
             panel1.Location = new Point(0, 0);
             panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(847, 48);
+            panel1.Size = new Size(1022, 48);
             panel1.TabIndex = 43;
             // 
             // SaveRMCFileBTN
@@ -70,7 +70,7 @@
             SaveRMCFileBTN.ForeColor = Color.White;
             SaveRMCFileBTN.Image = Properties.Resources.icons8_save_24;
             SaveRMCFileBTN.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveRMCFileBTN.Location = new Point(701, 0);
+            SaveRMCFileBTN.Location = new Point(876, 0);
             SaveRMCFileBTN.Margin = new Padding(3, 2, 3, 2);
             SaveRMCFileBTN.Name = "SaveRMCFileBTN";
             SaveRMCFileBTN.Size = new Size(144, 46);
@@ -228,7 +228,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 30);
-            ClientSize = new Size(847, 430);
+            ClientSize = new Size(1022, 479);
             Controls.Add(comboBox1);
             Controls.Add(LoadSelectedRMSGBtn);
             Controls.Add(RMSGFileListBox);
