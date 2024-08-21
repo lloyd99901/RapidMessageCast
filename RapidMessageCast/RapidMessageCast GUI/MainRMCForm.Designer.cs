@@ -30,7 +30,6 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RMCManager));
-            StartBroadcastBtn = new Button();
             MainTitleBar = new Panel();
             ShowRMSGListBtn = new Button();
             RMCLogoPanel = new Panel();
@@ -40,8 +39,6 @@
             OpenRMCFileBtn = new Button();
             SaveRMCFileBTN = new Button();
             QuickSaveRMSGBtn = new Button();
-            BroadcastHistoryBtn = new Button();
-            ScheduleBroadcastBtn = new Button();
             Rmsgcontextstrip = new ContextMenuStrip(components);
             renameSelectRMSGFileToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator4 = new ToolStripSeparator();
@@ -51,7 +48,6 @@
             deleteSelectedItemToolStripMenuItem = new ToolStripMenuItem();
             PCtabControl1 = new TabControl();
             PCMessageTab = new TabPage();
-            pictureBox3 = new PictureBox();
             MessageCheckboxSettingLabel = new Label();
             PCBroadcastImage = new PictureBox();
             ReattemptOnErrorCheckbox = new CheckBox();
@@ -70,6 +66,7 @@
             PCBroadcastMessageTxt = new TextBox();
             TypeMessageHereLabel = new Label();
             PCMessageCharLimitLbl = new Label();
+            pictureBox3 = new PictureBox();
             PCBroadcastToTab = new TabPage();
             MessagePCHelpLabel = new LinkLabel();
             FilterPCListBtn = new Button();
@@ -177,30 +174,35 @@
             AboutText = new TextBox();
             verNumbLblAboutLbl = new Label();
             LogTab = new TabPage();
+            logList = new ListBox();
+            panel3 = new Panel();
             RenewIPBtn = new Button();
             OpenRMCLogFolderBtn = new Button();
-            RMCLogsImage = new PictureBox();
             clearLogBtn = new Button();
-            SaveRMCRuntimeLogBtn = new Button();
             RMCLogLabel = new Label();
-            logList = new ListBox();
+            SaveRMCRuntimeLogBtn = new Button();
+            RMCLogsImage = new PictureBox();
             IconList = new ImageList(components);
             toolTipHelp = new ToolTip(components);
             HideQuickLoadBtn = new Button();
             MainSplitContainer = new SplitContainer();
             panel1 = new Panel();
             DeleteSelectedRMSGFileBtn = new Button();
+            panel2 = new Panel();
+            StartBroadcastBtn = new Button();
+            ScheduleBroadcastBtn = new Button();
+            BroadcastHistoryBtn = new Button();
             MainTitleBar.SuspendLayout();
             RMCLogoPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage).BeginInit();
             Rmsgcontextstrip.SuspendLayout();
             PCtabControl1.SuspendLayout();
             PCMessageTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PCBroadcastImage).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PCexpirySecondsTime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PCexpiryMinutesTime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PCexpiryHourTime).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             PCBroadcastToTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)BroadcastToImage).BeginInit();
             PCListcontextMenuStrip.SuspendLayout();
@@ -223,33 +225,15 @@
             AboutTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage2).BeginInit();
             LogTab.SuspendLayout();
+            panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogsImage).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MainSplitContainer).BeginInit();
             MainSplitContainer.Panel1.SuspendLayout();
             MainSplitContainer.Panel2.SuspendLayout();
             MainSplitContainer.SuspendLayout();
             panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
-            // 
-            // StartBroadcastBtn
-            // 
-            StartBroadcastBtn.BackColor = Color.FromArgb(53, 48, 70);
-            StartBroadcastBtn.BackgroundImageLayout = ImageLayout.Center;
-            StartBroadcastBtn.Dock = DockStyle.Bottom;
-            StartBroadcastBtn.FlatStyle = FlatStyle.Flat;
-            StartBroadcastBtn.Font = new Font("Arial", 9F, FontStyle.Bold);
-            StartBroadcastBtn.ForeColor = Color.PaleGreen;
-            StartBroadcastBtn.Image = Properties.Resources.Send4;
-            StartBroadcastBtn.ImageAlign = ContentAlignment.TopCenter;
-            StartBroadcastBtn.Location = new Point(0, 422);
-            StartBroadcastBtn.Margin = new Padding(3, 2, 3, 2);
-            StartBroadcastBtn.Name = "StartBroadcastBtn";
-            StartBroadcastBtn.Size = new Size(724, 68);
-            StartBroadcastBtn.TabIndex = 9;
-            StartBroadcastBtn.Text = "Start Message Broadcast";
-            StartBroadcastBtn.TextAlign = ContentAlignment.BottomCenter;
-            StartBroadcastBtn.UseVisualStyleBackColor = false;
-            StartBroadcastBtn.Click += StartBroadcastBtn_Click;
             // 
             // MainTitleBar
             // 
@@ -264,7 +248,7 @@
             MainTitleBar.Location = new Point(0, 0);
             MainTitleBar.Margin = new Padding(3, 2, 3, 2);
             MainTitleBar.Name = "MainTitleBar";
-            MainTitleBar.Size = new Size(724, 48);
+            MainTitleBar.Size = new Size(645, 36);
             MainTitleBar.TabIndex = 42;
             // 
             // ShowRMSGListBtn
@@ -274,14 +258,14 @@
             ShowRMSGListBtn.Dock = DockStyle.Right;
             ShowRMSGListBtn.FlatAppearance.BorderColor = Color.Gray;
             ShowRMSGListBtn.FlatStyle = FlatStyle.Flat;
-            ShowRMSGListBtn.Font = new Font("Arial", 6F);
+            ShowRMSGListBtn.Font = new Font("Arial", 6.5F);
             ShowRMSGListBtn.ForeColor = Color.White;
             ShowRMSGListBtn.Image = Properties.Resources.icons8_expand_24;
             ShowRMSGListBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            ShowRMSGListBtn.Location = new Point(296, 0);
+            ShowRMSGListBtn.Location = new Point(266, 0);
             ShowRMSGListBtn.Margin = new Padding(3, 2, 3, 2);
             ShowRMSGListBtn.Name = "ShowRMSGListBtn";
-            ShowRMSGListBtn.Size = new Size(125, 46);
+            ShowRMSGListBtn.Size = new Size(114, 34);
             ShowRMSGListBtn.TabIndex = 79;
             ShowRMSGListBtn.Text = "Show Quick Load";
             ShowRMSGListBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -300,7 +284,7 @@
             RMCLogoPanel.Location = new Point(0, 0);
             RMCLogoPanel.Margin = new Padding(3, 2, 3, 2);
             RMCLogoPanel.Name = "RMCLogoPanel";
-            RMCLogoPanel.Size = new Size(186, 46);
+            RMCLogoPanel.Size = new Size(163, 34);
             RMCLogoPanel.TabIndex = 0;
             // 
             // RMCLogoImage
@@ -308,8 +292,9 @@
             RMCLogoImage.Dock = DockStyle.Left;
             RMCLogoImage.Image = Properties.Resources.RMC_GUI_Icon;
             RMCLogoImage.Location = new Point(0, 0);
+            RMCLogoImage.Margin = new Padding(3, 2, 3, 2);
             RMCLogoImage.Name = "RMCLogoImage";
-            RMCLogoImage.Size = new Size(46, 44);
+            RMCLogoImage.Size = new Size(40, 32);
             RMCLogoImage.SizeMode = PictureBoxSizeMode.Zoom;
             RMCLogoImage.TabIndex = 2;
             RMCLogoImage.TabStop = false;
@@ -320,9 +305,9 @@
             RMCManagerLbl.AutoSize = true;
             RMCManagerLbl.Font = new Font("Arial", 9F);
             RMCManagerLbl.ForeColor = Color.FromArgb(224, 224, 224);
-            RMCManagerLbl.Location = new Point(46, 4);
+            RMCManagerLbl.Location = new Point(40, 3);
             RMCManagerLbl.Name = "RMCManagerLbl";
-            RMCManagerLbl.Size = new Size(136, 17);
+            RMCManagerLbl.Size = new Size(117, 15);
             RMCManagerLbl.TabIndex = 1;
             RMCManagerLbl.Text = "RapidMessageCast\r\n";
             RMCManagerLbl.TextAlign = ContentAlignment.TopRight;
@@ -332,9 +317,9 @@
             versionLbl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             versionLbl.Font = new Font("Arial", 9F);
             versionLbl.ForeColor = Color.Silver;
-            versionLbl.Location = new Point(45, 21);
+            versionLbl.Location = new Point(39, 16);
             versionLbl.Name = "versionLbl";
-            versionLbl.Size = new Size(133, 23);
+            versionLbl.Size = new Size(116, 16);
             versionLbl.TabIndex = 1;
             versionLbl.Text = "verNumb";
             versionLbl.TextAlign = ContentAlignment.TopRight;
@@ -350,10 +335,10 @@
             OpenRMCFileBtn.ForeColor = Color.White;
             OpenRMCFileBtn.Image = Properties.Resources.icons8_external_link_24;
             OpenRMCFileBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            OpenRMCFileBtn.Location = new Point(421, 0);
+            OpenRMCFileBtn.Location = new Point(380, 0);
             OpenRMCFileBtn.Margin = new Padding(3, 2, 3, 2);
             OpenRMCFileBtn.Name = "OpenRMCFileBtn";
-            OpenRMCFileBtn.Size = new Size(79, 46);
+            OpenRMCFileBtn.Size = new Size(69, 34);
             OpenRMCFileBtn.TabIndex = 27;
             OpenRMCFileBtn.Text = "Open";
             OpenRMCFileBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -371,10 +356,10 @@
             SaveRMCFileBTN.ForeColor = Color.White;
             SaveRMCFileBTN.Image = Properties.Resources.icons8_save_24;
             SaveRMCFileBTN.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveRMCFileBTN.Location = new Point(500, 0);
+            SaveRMCFileBTN.Location = new Point(449, 0);
             SaveRMCFileBTN.Margin = new Padding(3, 2, 3, 2);
             SaveRMCFileBTN.Name = "SaveRMCFileBTN";
-            SaveRMCFileBTN.Size = new Size(105, 46);
+            SaveRMCFileBTN.Size = new Size(92, 34);
             SaveRMCFileBTN.TabIndex = 27;
             SaveRMCFileBTN.Text = "Save as...";
             SaveRMCFileBTN.TextAlign = ContentAlignment.MiddleRight;
@@ -392,81 +377,41 @@
             QuickSaveRMSGBtn.ForeColor = Color.White;
             QuickSaveRMSGBtn.Image = Properties.Resources.icons8_save_24;
             QuickSaveRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            QuickSaveRMSGBtn.Location = new Point(605, 0);
+            QuickSaveRMSGBtn.Location = new Point(541, 0);
             QuickSaveRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             QuickSaveRMSGBtn.Name = "QuickSaveRMSGBtn";
-            QuickSaveRMSGBtn.Size = new Size(117, 46);
+            QuickSaveRMSGBtn.Size = new Size(102, 34);
             QuickSaveRMSGBtn.TabIndex = 27;
             QuickSaveRMSGBtn.Text = "Quick Save";
             QuickSaveRMSGBtn.TextAlign = ContentAlignment.MiddleRight;
             QuickSaveRMSGBtn.UseVisualStyleBackColor = false;
             QuickSaveRMSGBtn.Click += QuickSaveRMSGBtn_Clicked;
             // 
-            // BroadcastHistoryBtn
-            // 
-            BroadcastHistoryBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            BroadcastHistoryBtn.BackColor = Color.FromArgb(48, 48, 48);
-            BroadcastHistoryBtn.FlatAppearance.BorderColor = Color.Gray;
-            BroadcastHistoryBtn.FlatStyle = FlatStyle.Flat;
-            BroadcastHistoryBtn.Font = new Font("Arial", 9F);
-            BroadcastHistoryBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            BroadcastHistoryBtn.Image = Properties.Resources.icons8_broadcast_24;
-            BroadcastHistoryBtn.ImageAlign = ContentAlignment.TopCenter;
-            BroadcastHistoryBtn.Location = new Point(0, 423);
-            BroadcastHistoryBtn.Margin = new Padding(3, 2, 3, 2);
-            BroadcastHistoryBtn.Name = "BroadcastHistoryBtn";
-            BroadcastHistoryBtn.Size = new Size(105, 66);
-            BroadcastHistoryBtn.TabIndex = 26;
-            BroadcastHistoryBtn.Text = "Broadcast History";
-            BroadcastHistoryBtn.TextAlign = ContentAlignment.BottomCenter;
-            BroadcastHistoryBtn.UseVisualStyleBackColor = false;
-            BroadcastHistoryBtn.Click += BroadcastHistoryBtn_Click;
-            // 
-            // ScheduleBroadcastBtn
-            // 
-            ScheduleBroadcastBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            ScheduleBroadcastBtn.BackColor = Color.FromArgb(48, 48, 48);
-            ScheduleBroadcastBtn.FlatAppearance.BorderColor = Color.Gray;
-            ScheduleBroadcastBtn.FlatStyle = FlatStyle.Flat;
-            ScheduleBroadcastBtn.Font = new Font("Arial", 9F);
-            ScheduleBroadcastBtn.ForeColor = Color.FromArgb(224, 224, 224);
-            ScheduleBroadcastBtn.Image = Properties.Resources.icons8_schedule_24;
-            ScheduleBroadcastBtn.ImageAlign = ContentAlignment.TopCenter;
-            ScheduleBroadcastBtn.Location = new Point(620, 423);
-            ScheduleBroadcastBtn.Margin = new Padding(3, 2, 3, 2);
-            ScheduleBroadcastBtn.Name = "ScheduleBroadcastBtn";
-            ScheduleBroadcastBtn.Size = new Size(104, 66);
-            ScheduleBroadcastBtn.TabIndex = 26;
-            ScheduleBroadcastBtn.Text = "Schedule Message";
-            ScheduleBroadcastBtn.TextAlign = ContentAlignment.BottomCenter;
-            ScheduleBroadcastBtn.UseVisualStyleBackColor = false;
-            ScheduleBroadcastBtn.Click += ScheduleBroadcastBtn_Click;
-            // 
             // Rmsgcontextstrip
             // 
             Rmsgcontextstrip.ImageScalingSize = new Size(20, 20);
             Rmsgcontextstrip.Items.AddRange(new ToolStripItem[] { renameSelectRMSGFileToolStripMenuItem, toolStripSeparator4, openFolderLocationToolStripMenuItem, refreshToolStripMenuItem, toolStripSeparator3, deleteSelectedItemToolStripMenuItem });
             Rmsgcontextstrip.Name = "Rmsgcontextstrip";
-            Rmsgcontextstrip.Size = new Size(232, 120);
+            Rmsgcontextstrip.Size = new Size(196, 120);
             // 
             // renameSelectRMSGFileToolStripMenuItem
             // 
             renameSelectRMSGFileToolStripMenuItem.Image = Properties.Resources.icons8_rename_24_black;
             renameSelectRMSGFileToolStripMenuItem.Name = "renameSelectRMSGFileToolStripMenuItem";
-            renameSelectRMSGFileToolStripMenuItem.Size = new Size(231, 26);
+            renameSelectRMSGFileToolStripMenuItem.Size = new Size(195, 26);
             renameSelectRMSGFileToolStripMenuItem.Text = "Rename Selected Item";
             renameSelectRMSGFileToolStripMenuItem.Click += RenameSelectedRMSGBtn_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(228, 6);
+            toolStripSeparator4.Size = new Size(192, 6);
             // 
             // openFolderLocationToolStripMenuItem
             // 
             openFolderLocationToolStripMenuItem.Image = Properties.Resources.icons8_external_link_24_black;
             openFolderLocationToolStripMenuItem.Name = "openFolderLocationToolStripMenuItem";
-            openFolderLocationToolStripMenuItem.Size = new Size(231, 26);
+            openFolderLocationToolStripMenuItem.Size = new Size(195, 26);
             openFolderLocationToolStripMenuItem.Text = "Open Folder Location";
             openFolderLocationToolStripMenuItem.Click += OpenSaveLocationBtn_Click;
             // 
@@ -474,20 +419,20 @@
             // 
             refreshToolStripMenuItem.Image = Properties.Resources.icons8_refresh_24_black;
             refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            refreshToolStripMenuItem.Size = new Size(231, 26);
+            refreshToolStripMenuItem.Size = new Size(195, 26);
             refreshToolStripMenuItem.Text = "Refresh";
             refreshToolStripMenuItem.Click += RefreshRMSGListBtn_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(228, 6);
+            toolStripSeparator3.Size = new Size(192, 6);
             // 
             // deleteSelectedItemToolStripMenuItem
             // 
             deleteSelectedItemToolStripMenuItem.Image = Properties.Resources.icons8_delete_24_black;
             deleteSelectedItemToolStripMenuItem.Name = "deleteSelectedItemToolStripMenuItem";
-            deleteSelectedItemToolStripMenuItem.Size = new Size(231, 26);
+            deleteSelectedItemToolStripMenuItem.Size = new Size(195, 26);
             deleteSelectedItemToolStripMenuItem.Text = "Delete Selected Item";
             deleteSelectedItemToolStripMenuItem.Click += DeleteSelectedRMSGFileBtn_Click;
             // 
@@ -497,17 +442,17 @@
             PCtabControl1.Controls.Add(PCBroadcastToTab);
             PCtabControl1.Controls.Add(PCWOLTab);
             PCtabControl1.Dock = DockStyle.Fill;
-            PCtabControl1.Location = new Point(3, 3);
+            PCtabControl1.Location = new Point(3, 2);
+            PCtabControl1.Margin = new Padding(3, 2, 3, 2);
             PCtabControl1.Multiline = true;
             PCtabControl1.Name = "PCtabControl1";
             PCtabControl1.SelectedIndex = 0;
-            PCtabControl1.Size = new Size(389, 335);
+            PCtabControl1.Size = new Size(352, 288);
             PCtabControl1.TabIndex = 73;
             // 
             // PCMessageTab
             // 
             PCMessageTab.BackColor = Color.FromArgb(30, 30, 30);
-            PCMessageTab.Controls.Add(pictureBox3);
             PCMessageTab.Controls.Add(MessageCheckboxSettingLabel);
             PCMessageTab.Controls.Add(PCBroadcastImage);
             PCMessageTab.Controls.Add(ReattemptOnErrorCheckbox);
@@ -526,24 +471,15 @@
             PCMessageTab.Controls.Add(PCBroadcastMessageTxt);
             PCMessageTab.Controls.Add(TypeMessageHereLabel);
             PCMessageTab.Controls.Add(PCMessageCharLimitLbl);
+            PCMessageTab.Controls.Add(pictureBox3);
             PCMessageTab.ImageIndex = 2;
-            PCMessageTab.Location = new Point(4, 29);
+            PCMessageTab.Location = new Point(4, 24);
+            PCMessageTab.Margin = new Padding(3, 2, 3, 2);
             PCMessageTab.Name = "PCMessageTab";
-            PCMessageTab.Padding = new Padding(3);
-            PCMessageTab.Size = new Size(381, 302);
+            PCMessageTab.Padding = new Padding(3, 2, 3, 2);
+            PCMessageTab.Size = new Size(344, 260);
             PCMessageTab.TabIndex = 0;
             PCMessageTab.Text = "Message";
-            // 
-            // pictureBox3
-            // 
-            pictureBox3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            pictureBox3.Image = Properties.Resources.icons8_message_24;
-            pictureBox3.Location = new Point(189, 175);
-            pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(24, 24);
-            pictureBox3.SizeMode = PictureBoxSizeMode.AutoSize;
-            pictureBox3.TabIndex = 89;
-            pictureBox3.TabStop = false;
             // 
             // MessageCheckboxSettingLabel
             // 
@@ -551,9 +487,9 @@
             MessageCheckboxSettingLabel.AutoSize = true;
             MessageCheckboxSettingLabel.Font = new Font("Arial", 9F, FontStyle.Underline);
             MessageCheckboxSettingLabel.ForeColor = Color.FromArgb(224, 224, 224);
-            MessageCheckboxSettingLabel.Location = new Point(213, 180);
+            MessageCheckboxSettingLabel.Location = new Point(191, 162);
             MessageCheckboxSettingLabel.Name = "MessageCheckboxSettingLabel";
-            MessageCheckboxSettingLabel.Size = new Size(128, 17);
+            MessageCheckboxSettingLabel.Size = new Size(109, 15);
             MessageCheckboxSettingLabel.TabIndex = 88;
             MessageCheckboxSettingLabel.Text = "Message Settings:";
             MessageCheckboxSettingLabel.TextAlign = ContentAlignment.TopRight;
@@ -561,7 +497,8 @@
             // PCBroadcastImage
             // 
             PCBroadcastImage.Image = Properties.Resources.icons8_message_24;
-            PCBroadcastImage.Location = new Point(6, 0);
+            PCBroadcastImage.Location = new Point(5, 0);
+            PCBroadcastImage.Margin = new Padding(3, 2, 3, 2);
             PCBroadcastImage.Name = "PCBroadcastImage";
             PCBroadcastImage.Size = new Size(24, 24);
             PCBroadcastImage.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -573,9 +510,10 @@
             ReattemptOnErrorCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             ReattemptOnErrorCheckbox.AutoSize = true;
             ReattemptOnErrorCheckbox.ForeColor = Color.White;
-            ReattemptOnErrorCheckbox.Location = new Point(193, 225);
+            ReattemptOnErrorCheckbox.Location = new Point(176, 200);
+            ReattemptOnErrorCheckbox.Margin = new Padding(3, 2, 3, 2);
             ReattemptOnErrorCheckbox.Name = "ReattemptOnErrorCheckbox";
-            ReattemptOnErrorCheckbox.Size = new Size(158, 24);
+            ReattemptOnErrorCheckbox.Size = new Size(126, 19);
             ReattemptOnErrorCheckbox.TabIndex = 85;
             ReattemptOnErrorCheckbox.Text = "Reattempt on error";
             ReattemptOnErrorCheckbox.UseVisualStyleBackColor = true;
@@ -588,9 +526,10 @@
             MessagePCcheckBox.Checked = true;
             MessagePCcheckBox.CheckState = CheckState.Checked;
             MessagePCcheckBox.ForeColor = Color.White;
-            MessagePCcheckBox.Location = new Point(264, 2);
+            MessagePCcheckBox.Location = new Point(251, 4);
+            MessagePCcheckBox.Margin = new Padding(3, 2, 3, 2);
             MessagePCcheckBox.Name = "MessagePCcheckBox";
-            MessagePCcheckBox.Size = new Size(111, 24);
+            MessagePCcheckBox.Size = new Size(89, 19);
             MessagePCcheckBox.TabIndex = 75;
             MessagePCcheckBox.Text = "Enable MSG";
             MessagePCcheckBox.UseVisualStyleBackColor = true;
@@ -601,9 +540,10 @@
             FastBroadcastModeCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             FastBroadcastModeCheckbox.AutoSize = true;
             FastBroadcastModeCheckbox.ForeColor = Color.White;
-            FastBroadcastModeCheckbox.Location = new Point(193, 201);
+            FastBroadcastModeCheckbox.Location = new Point(176, 181);
+            FastBroadcastModeCheckbox.Margin = new Padding(3, 2, 3, 2);
             FastBroadcastModeCheckbox.Name = "FastBroadcastModeCheckbox";
-            FastBroadcastModeCheckbox.Size = new Size(126, 24);
+            FastBroadcastModeCheckbox.Size = new Size(102, 19);
             FastBroadcastModeCheckbox.TabIndex = 85;
             FastBroadcastModeCheckbox.Text = "Fast Broadcast";
             FastBroadcastModeCheckbox.UseVisualStyleBackColor = true;
@@ -614,9 +554,9 @@
             ReattemptonErrorHelpLbl.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             ReattemptonErrorHelpLbl.AutoSize = true;
             ReattemptonErrorHelpLbl.LinkColor = Color.FromArgb(0, 192, 0);
-            ReattemptonErrorHelpLbl.Location = new Point(354, 226);
+            ReattemptonErrorHelpLbl.Location = new Point(305, 202);
             ReattemptonErrorHelpLbl.Name = "ReattemptonErrorHelpLbl";
-            ReattemptonErrorHelpLbl.Size = new Size(16, 20);
+            ReattemptonErrorHelpLbl.Size = new Size(12, 15);
             ReattemptonErrorHelpLbl.TabIndex = 86;
             ReattemptonErrorHelpLbl.TabStop = true;
             ReattemptonErrorHelpLbl.Text = "?";
@@ -627,9 +567,9 @@
             FastBroadcastHelpLink.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             FastBroadcastHelpLink.AutoSize = true;
             FastBroadcastHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
-            FastBroadcastHelpLink.Location = new Point(319, 202);
+            FastBroadcastHelpLink.Location = new Point(278, 183);
             FastBroadcastHelpLink.Name = "FastBroadcastHelpLink";
-            FastBroadcastHelpLink.Size = new Size(16, 20);
+            FastBroadcastHelpLink.Size = new Size(12, 15);
             FastBroadcastHelpLink.TabIndex = 86;
             FastBroadcastHelpLink.TabStop = true;
             FastBroadcastHelpLink.Text = "?";
@@ -640,9 +580,9 @@
             MessageDurationHelpLink.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             MessageDurationHelpLink.AutoSize = true;
             MessageDurationHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
-            MessageDurationHelpLink.Location = new Point(358, 272);
+            MessageDurationHelpLink.Location = new Point(315, 236);
             MessageDurationHelpLink.Name = "MessageDurationHelpLink";
-            MessageDurationHelpLink.Size = new Size(16, 20);
+            MessageDurationHelpLink.Size = new Size(12, 15);
             MessageDurationHelpLink.TabIndex = 83;
             MessageDurationHelpLink.TabStop = true;
             MessageDurationHelpLink.Text = "?";
@@ -658,10 +598,10 @@
             PCSaveMessageTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
             PCSaveMessageTxtBtn.Image = Properties.Resources.icons8_save_24;
             PCSaveMessageTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            PCSaveMessageTxtBtn.Location = new Point(6, 230);
+            PCSaveMessageTxtBtn.Location = new Point(6, 203);
             PCSaveMessageTxtBtn.Margin = new Padding(3, 2, 3, 2);
             PCSaveMessageTxtBtn.Name = "PCSaveMessageTxtBtn";
-            PCSaveMessageTxtBtn.Size = new Size(181, 32);
+            PCSaveMessageTxtBtn.Size = new Size(158, 26);
             PCSaveMessageTxtBtn.TabIndex = 75;
             PCSaveMessageTxtBtn.Text = "Save as .txt";
             PCSaveMessageTxtBtn.UseVisualStyleBackColor = false;
@@ -677,10 +617,10 @@
             SendTestMSGBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SendTestMSGBtn.Image = Properties.Resources.icons8_broadcast_24;
             SendTestMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SendTestMSGBtn.Location = new Point(6, 266);
+            SendTestMSGBtn.Location = new Point(6, 232);
             SendTestMSGBtn.Margin = new Padding(3, 2, 3, 2);
             SendTestMSGBtn.Name = "SendTestMSGBtn";
-            SendTestMSGBtn.Size = new Size(181, 32);
+            SendTestMSGBtn.Size = new Size(158, 26);
             SendTestMSGBtn.TabIndex = 76;
             SendTestMSGBtn.Text = "Send Test Message...";
             SendTestMSGBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -697,10 +637,10 @@
             PCMessageOpenTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
             PCMessageOpenTxtBtn.Image = Properties.Resources.icons8_external_link_24;
             PCMessageOpenTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            PCMessageOpenTxtBtn.Location = new Point(6, 195);
+            PCMessageOpenTxtBtn.Location = new Point(6, 175);
             PCMessageOpenTxtBtn.Margin = new Padding(3, 2, 3, 2);
             PCMessageOpenTxtBtn.Name = "PCMessageOpenTxtBtn";
-            PCMessageOpenTxtBtn.Size = new Size(181, 32);
+            PCMessageOpenTxtBtn.Size = new Size(158, 26);
             PCMessageOpenTxtBtn.TabIndex = 76;
             PCMessageOpenTxtBtn.Text = "Open from .txt";
             PCMessageOpenTxtBtn.UseVisualStyleBackColor = false;
@@ -713,11 +653,11 @@
             PCexpirySecondsTime.BorderStyle = BorderStyle.FixedSingle;
             PCexpirySecondsTime.Font = new Font("Arial", 9F);
             PCexpirySecondsTime.ForeColor = Color.White;
-            PCexpirySecondsTime.Location = new Point(305, 270);
+            PCexpirySecondsTime.Location = new Point(269, 234);
             PCexpirySecondsTime.Margin = new Padding(3, 2, 3, 2);
             PCexpirySecondsTime.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
             PCexpirySecondsTime.Name = "PCexpirySecondsTime";
-            PCexpirySecondsTime.Size = new Size(47, 25);
+            PCexpirySecondsTime.Size = new Size(41, 21);
             PCexpirySecondsTime.TabIndex = 79;
             // 
             // PCexpiryMinutesTime
@@ -727,11 +667,11 @@
             PCexpiryMinutesTime.BorderStyle = BorderStyle.FixedSingle;
             PCexpiryMinutesTime.Font = new Font("Arial", 9F);
             PCexpiryMinutesTime.ForeColor = Color.White;
-            PCexpiryMinutesTime.Location = new Point(252, 270);
+            PCexpiryMinutesTime.Location = new Point(222, 234);
             PCexpiryMinutesTime.Margin = new Padding(3, 2, 3, 2);
             PCexpiryMinutesTime.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
             PCexpiryMinutesTime.Name = "PCexpiryMinutesTime";
-            PCexpiryMinutesTime.Size = new Size(47, 25);
+            PCexpiryMinutesTime.Size = new Size(41, 21);
             PCexpiryMinutesTime.TabIndex = 80;
             // 
             // PCexpiryHourTime
@@ -741,10 +681,10 @@
             PCexpiryHourTime.BorderStyle = BorderStyle.FixedSingle;
             PCexpiryHourTime.Font = new Font("Arial", 9F);
             PCexpiryHourTime.ForeColor = Color.White;
-            PCexpiryHourTime.Location = new Point(199, 270);
+            PCexpiryHourTime.Location = new Point(176, 234);
             PCexpiryHourTime.Margin = new Padding(3, 2, 3, 2);
             PCexpiryHourTime.Name = "PCexpiryHourTime";
-            PCexpiryHourTime.Size = new Size(47, 25);
+            PCexpiryHourTime.Size = new Size(41, 21);
             PCexpiryHourTime.TabIndex = 81;
             PCexpiryHourTime.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -754,9 +694,9 @@
             MessageDurationLabel.AutoSize = true;
             MessageDurationLabel.Font = new Font("Arial", 8F);
             MessageDurationLabel.ForeColor = Color.White;
-            MessageDurationLabel.Location = new Point(187, 250);
+            MessageDurationLabel.Location = new Point(173, 219);
             MessageDurationLabel.Name = "MessageDurationLabel";
-            MessageDurationLabel.Size = new Size(190, 16);
+            MessageDurationLabel.Size = new Size(146, 14);
             MessageDurationLabel.TabIndex = 78;
             MessageDurationLabel.Text = "Message duration HH:MM:SS";
             MessageDurationLabel.TextAlign = ContentAlignment.MiddleCenter;
@@ -766,14 +706,15 @@
             PCBroadcastMessageTxt.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             PCBroadcastMessageTxt.BackColor = Color.FromArgb(45, 45, 45);
             PCBroadcastMessageTxt.BorderStyle = BorderStyle.FixedSingle;
+            PCBroadcastMessageTxt.Font = new Font("Segoe UI", 10F);
             PCBroadcastMessageTxt.ForeColor = Color.White;
-            PCBroadcastMessageTxt.Location = new Point(5, 26);
+            PCBroadcastMessageTxt.Location = new Point(4, 25);
             PCBroadcastMessageTxt.Margin = new Padding(3, 2, 3, 2);
             PCBroadcastMessageTxt.MaxLength = 255;
             PCBroadcastMessageTxt.Multiline = true;
             PCBroadcastMessageTxt.Name = "PCBroadcastMessageTxt";
             PCBroadcastMessageTxt.ScrollBars = ScrollBars.Vertical;
-            PCBroadcastMessageTxt.Size = new Size(370, 146);
+            PCBroadcastMessageTxt.Size = new Size(336, 131);
             PCBroadcastMessageTxt.TabIndex = 77;
             PCBroadcastMessageTxt.TextChanged += MessageTxt_TextChanged;
             PCBroadcastMessageTxt.KeyPress += MessageTxt_KeyPress;
@@ -783,9 +724,9 @@
             TypeMessageHereLabel.AutoSize = true;
             TypeMessageHereLabel.Font = new Font("Arial", 9F);
             TypeMessageHereLabel.ForeColor = Color.White;
-            TypeMessageHereLabel.Location = new Point(36, 4);
+            TypeMessageHereLabel.Location = new Point(32, 5);
             TypeMessageHereLabel.Name = "TypeMessageHereLabel";
-            TypeMessageHereLabel.Size = new Size(165, 17);
+            TypeMessageHereLabel.Size = new Size(139, 15);
             TypeMessageHereLabel.TabIndex = 73;
             TypeMessageHereLabel.Text = "Type the message here:";
             TypeMessageHereLabel.TextAlign = ContentAlignment.TopRight;
@@ -796,12 +737,24 @@
             PCMessageCharLimitLbl.BackColor = Color.FromArgb(30, 30, 30);
             PCMessageCharLimitLbl.Font = new Font("Arial", 9F, FontStyle.Bold | FontStyle.Italic);
             PCMessageCharLimitLbl.ForeColor = Color.White;
-            PCMessageCharLimitLbl.Location = new Point(6, 174);
+            PCMessageCharLimitLbl.Location = new Point(6, 158);
             PCMessageCharLimitLbl.Name = "PCMessageCharLimitLbl";
-            PCMessageCharLimitLbl.Size = new Size(181, 20);
+            PCMessageCharLimitLbl.Size = new Size(158, 15);
             PCMessageCharLimitLbl.TabIndex = 74;
             PCMessageCharLimitLbl.Text = "Length Remaining: 255";
             PCMessageCharLimitLbl.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pictureBox3
+            // 
+            pictureBox3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            pictureBox3.Image = Properties.Resources.icons8_message_24;
+            pictureBox3.Location = new Point(169, 158);
+            pictureBox3.Margin = new Padding(3, 2, 3, 2);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new Size(24, 24);
+            pictureBox3.SizeMode = PictureBoxSizeMode.AutoSize;
+            pictureBox3.TabIndex = 89;
+            pictureBox3.TabStop = false;
             // 
             // PCBroadcastToTab
             // 
@@ -816,10 +769,11 @@
             PCBroadcastToTab.Controls.Add(ActiveDirectorySelectBtn);
             PCBroadcastToTab.Controls.Add(MessagePCsLabel);
             PCBroadcastToTab.ImageIndex = 4;
-            PCBroadcastToTab.Location = new Point(4, 29);
+            PCBroadcastToTab.Location = new Point(4, 24);
+            PCBroadcastToTab.Margin = new Padding(3, 2, 3, 2);
             PCBroadcastToTab.Name = "PCBroadcastToTab";
-            PCBroadcastToTab.Padding = new Padding(3);
-            PCBroadcastToTab.Size = new Size(380, 302);
+            PCBroadcastToTab.Padding = new Padding(3, 2, 3, 2);
+            PCBroadcastToTab.Size = new Size(344, 260);
             PCBroadcastToTab.TabIndex = 1;
             PCBroadcastToTab.Text = "Broadcast to...";
             // 
@@ -827,9 +781,9 @@
             // 
             MessagePCHelpLabel.AutoSize = true;
             MessagePCHelpLabel.LinkColor = Color.FromArgb(0, 192, 0);
-            MessagePCHelpLabel.Location = new Point(195, 3);
+            MessagePCHelpLabel.Location = new Point(171, 6);
             MessagePCHelpLabel.Name = "MessagePCHelpLabel";
-            MessagePCHelpLabel.Size = new Size(16, 20);
+            MessagePCHelpLabel.Size = new Size(12, 15);
             MessagePCHelpLabel.TabIndex = 87;
             MessagePCHelpLabel.TabStop = true;
             MessagePCHelpLabel.Text = "?";
@@ -844,10 +798,10 @@
             FilterPCListBtn.Font = new Font("Arial", 9F);
             FilterPCListBtn.ForeColor = Color.FromArgb(224, 224, 224);
             FilterPCListBtn.Image = Properties.Resources.icons8_filter_24;
-            FilterPCListBtn.Location = new Point(314, 265);
+            FilterPCListBtn.Location = new Point(285, 230);
             FilterPCListBtn.Margin = new Padding(3, 2, 3, 2);
             FilterPCListBtn.Name = "FilterPCListBtn";
-            FilterPCListBtn.Size = new Size(61, 32);
+            FilterPCListBtn.Size = new Size(53, 26);
             FilterPCListBtn.TabIndex = 79;
             FilterPCListBtn.UseVisualStyleBackColor = false;
             FilterPCListBtn.Click += FilterPCListBtn_Click;
@@ -855,7 +809,8 @@
             // BroadcastToImage
             // 
             BroadcastToImage.Image = Properties.Resources.icons8_pc_24;
-            BroadcastToImage.Location = new Point(6, 0);
+            BroadcastToImage.Location = new Point(5, 0);
+            BroadcastToImage.Margin = new Padding(3, 2, 3, 2);
             BroadcastToImage.Name = "BroadcastToImage";
             BroadcastToImage.Size = new Size(24, 24);
             BroadcastToImage.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -867,9 +822,9 @@
             PCCountLbl.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PCCountLbl.Font = new Font("Arial", 9F, FontStyle.Italic);
             PCCountLbl.ForeColor = Color.White;
-            PCCountLbl.Location = new Point(216, 6);
+            PCCountLbl.Location = new Point(202, 7);
             PCCountLbl.Name = "PCCountLbl";
-            PCCountLbl.Size = new Size(158, 18);
+            PCCountLbl.Size = new Size(138, 14);
             PCCountLbl.TabIndex = 77;
             PCCountLbl.Text = "PC Count: 0";
             PCCountLbl.TextAlign = ContentAlignment.MiddleRight;
@@ -884,10 +839,10 @@
             SavePCListTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SavePCListTxtBtn.Image = Properties.Resources.icons8_save_24;
             SavePCListTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SavePCListTxtBtn.Location = new Point(194, 230);
+            SavePCListTxtBtn.Location = new Point(175, 200);
             SavePCListTxtBtn.Margin = new Padding(3, 2, 3, 2);
             SavePCListTxtBtn.Name = "SavePCListTxtBtn";
-            SavePCListTxtBtn.Size = new Size(181, 32);
+            SavePCListTxtBtn.Size = new Size(163, 26);
             SavePCListTxtBtn.TabIndex = 75;
             SavePCListTxtBtn.Text = "Save list as txt";
             SavePCListTxtBtn.UseVisualStyleBackColor = false;
@@ -903,10 +858,10 @@
             PCComputerListOpenBtn.ForeColor = Color.FromArgb(224, 224, 224);
             PCComputerListOpenBtn.Image = Properties.Resources.icons8_external_link_24;
             PCComputerListOpenBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            PCComputerListOpenBtn.Location = new Point(5, 230);
+            PCComputerListOpenBtn.Location = new Point(6, 200);
             PCComputerListOpenBtn.Margin = new Padding(3, 2, 3, 2);
             PCComputerListOpenBtn.Name = "PCComputerListOpenBtn";
-            PCComputerListOpenBtn.Size = new Size(183, 32);
+            PCComputerListOpenBtn.Size = new Size(163, 26);
             PCComputerListOpenBtn.TabIndex = 73;
             PCComputerListOpenBtn.Text = "Open from .txt";
             PCComputerListOpenBtn.UseVisualStyleBackColor = false;
@@ -920,12 +875,12 @@
             PCBroadcastToList.ContextMenuStrip = PCListcontextMenuStrip;
             PCBroadcastToList.Font = new Font("Segoe UI", 8F);
             PCBroadcastToList.ForeColor = Color.White;
-            PCBroadcastToList.Location = new Point(5, 26);
+            PCBroadcastToList.Location = new Point(6, 26);
             PCBroadcastToList.Margin = new Padding(3, 2, 3, 2);
             PCBroadcastToList.Multiline = true;
             PCBroadcastToList.Name = "PCBroadcastToList";
             PCBroadcastToList.ScrollBars = ScrollBars.Vertical;
-            PCBroadcastToList.Size = new Size(369, 200);
+            PCBroadcastToList.Size = new Size(331, 170);
             PCBroadcastToList.TabIndex = 76;
             PCBroadcastToList.TextChanged += ComputerSelectList_TextChanged;
             PCBroadcastToList.KeyPress += ComputerSelectList_KeyPress;
@@ -935,13 +890,13 @@
             PCListcontextMenuStrip.ImageScalingSize = new Size(20, 20);
             PCListcontextMenuStrip.Items.AddRange(new ToolStripItem[] { openToolStripMenuItem, saveToolStripMenuItem, loadFromActiveDirectoryToolStripMenuItem, fitlerToolStripMenuItem, toolStripSeparator2, testBroadcastMessageToolStripMenuItem, undoToolStripMenuItem, selectAllToolStripMenuItem, toolStripSeparator1, addThisPCToTheListToolStripMenuItem, clearAllToolStripMenuItem });
             PCListcontextMenuStrip.Name = "PCListcontextMenuStrip";
-            PCListcontextMenuStrip.Size = new Size(272, 250);
+            PCListcontextMenuStrip.Size = new Size(230, 250);
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Image = Properties.Resources.icons8_external_link_24_black;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(271, 26);
+            openToolStripMenuItem.Size = new Size(229, 26);
             openToolStripMenuItem.Text = "&Open...";
             openToolStripMenuItem.Click += OpenSendComputerListToolStripMenuItem_Click;
             // 
@@ -949,67 +904,67 @@
             // 
             saveToolStripMenuItem.Image = Properties.Resources.mspaint_501371;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(271, 26);
+            saveToolStripMenuItem.Size = new Size(229, 26);
             saveToolStripMenuItem.Text = "&Save...";
             saveToolStripMenuItem.Click += SaveComputerListBtn_Click;
             // 
             // loadFromActiveDirectoryToolStripMenuItem
             // 
             loadFromActiveDirectoryToolStripMenuItem.Name = "loadFromActiveDirectoryToolStripMenuItem";
-            loadFromActiveDirectoryToolStripMenuItem.Size = new Size(271, 26);
+            loadFromActiveDirectoryToolStripMenuItem.Size = new Size(229, 26);
             loadFromActiveDirectoryToolStripMenuItem.Text = "Load from &Active Directory...";
             loadFromActiveDirectoryToolStripMenuItem.Click += ActiveDirectorySelectBtn_Click;
             // 
             // fitlerToolStripMenuItem
             // 
             fitlerToolStripMenuItem.Name = "fitlerToolStripMenuItem";
-            fitlerToolStripMenuItem.Size = new Size(271, 26);
+            fitlerToolStripMenuItem.Size = new Size(229, 26);
             fitlerToolStripMenuItem.Text = "&Filter List...";
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(268, 6);
+            toolStripSeparator2.Size = new Size(226, 6);
             // 
             // testBroadcastMessageToolStripMenuItem
             // 
             testBroadcastMessageToolStripMenuItem.Image = Properties.Resources.icons8_chat_bubble_24_black;
             testBroadcastMessageToolStripMenuItem.Name = "testBroadcastMessageToolStripMenuItem";
-            testBroadcastMessageToolStripMenuItem.Size = new Size(271, 26);
+            testBroadcastMessageToolStripMenuItem.Size = new Size(229, 26);
             testBroadcastMessageToolStripMenuItem.Text = "Send test message to this PC";
             testBroadcastMessageToolStripMenuItem.Click += TestBroadcastMessageToolStripMenuItem_Click;
             // 
             // undoToolStripMenuItem
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.Size = new Size(271, 26);
+            undoToolStripMenuItem.Size = new Size(229, 26);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += UndoToolStripMenuItem_Click;
             // 
             // selectAllToolStripMenuItem
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            selectAllToolStripMenuItem.Size = new Size(271, 26);
+            selectAllToolStripMenuItem.Size = new Size(229, 26);
             selectAllToolStripMenuItem.Text = "Select All";
             selectAllToolStripMenuItem.Click += SelectAllToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(268, 6);
+            toolStripSeparator1.Size = new Size(226, 6);
             // 
             // addThisPCToTheListToolStripMenuItem
             // 
             addThisPCToTheListToolStripMenuItem.Image = Properties.Resources.icons8_pc_24_black;
             addThisPCToTheListToolStripMenuItem.Name = "addThisPCToTheListToolStripMenuItem";
-            addThisPCToTheListToolStripMenuItem.Size = new Size(271, 26);
+            addThisPCToTheListToolStripMenuItem.Size = new Size(229, 26);
             addThisPCToTheListToolStripMenuItem.Text = "Add current PC to the list";
             addThisPCToTheListToolStripMenuItem.Click += AddThisPCToTheListToolStripMenuItem_Click;
             // 
             // clearAllToolStripMenuItem
             // 
             clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            clearAllToolStripMenuItem.Size = new Size(271, 26);
+            clearAllToolStripMenuItem.Size = new Size(229, 26);
             clearAllToolStripMenuItem.Text = "Clear All Text";
             clearAllToolStripMenuItem.Click += ClearAllToolStripMenuItem_Click;
             // 
@@ -1024,10 +979,10 @@
             ActiveDirectorySelectBtn.ForeColor = Color.FromArgb(224, 224, 224);
             ActiveDirectorySelectBtn.Image = Properties.Resources.icons8_directory_24;
             ActiveDirectorySelectBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            ActiveDirectorySelectBtn.Location = new Point(5, 265);
+            ActiveDirectorySelectBtn.Location = new Point(6, 230);
             ActiveDirectorySelectBtn.Margin = new Padding(3, 2, 3, 2);
             ActiveDirectorySelectBtn.Name = "ActiveDirectorySelectBtn";
-            ActiveDirectorySelectBtn.Size = new Size(303, 32);
+            ActiveDirectorySelectBtn.Size = new Size(273, 26);
             ActiveDirectorySelectBtn.TabIndex = 74;
             ActiveDirectorySelectBtn.Text = "Load PC names from Active Directory";
             ActiveDirectorySelectBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -1039,9 +994,9 @@
             MessagePCsLabel.AutoSize = true;
             MessagePCsLabel.Font = new Font("Arial", 10F);
             MessagePCsLabel.ForeColor = Color.White;
-            MessagePCsLabel.Location = new Point(36, 4);
+            MessagePCsLabel.Location = new Point(32, 5);
             MessagePCsLabel.Name = "MessagePCsLabel";
-            MessagePCsLabel.Size = new Size(162, 19);
+            MessagePCsLabel.Size = new Size(140, 16);
             MessagePCsLabel.TabIndex = 72;
             MessagePCsLabel.Text = "Message these PC's:";
             MessagePCsLabel.TextAlign = ContentAlignment.TopRight;
@@ -1059,9 +1014,10 @@
             PCWOLTab.Controls.Add(WOLImage);
             PCWOLTab.Controls.Add(WakeOnLANModuleLabel);
             PCWOLTab.ImageIndex = 1;
-            PCWOLTab.Location = new Point(4, 29);
+            PCWOLTab.Location = new Point(4, 24);
+            PCWOLTab.Margin = new Padding(3, 2, 3, 2);
             PCWOLTab.Name = "PCWOLTab";
-            PCWOLTab.Size = new Size(380, 302);
+            PCWOLTab.Size = new Size(344, 260);
             PCWOLTab.TabIndex = 4;
             PCWOLTab.Text = "WOL";
             // 
@@ -1075,10 +1031,10 @@
             SaveMacAddressesAsTXTBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SaveMacAddressesAsTXTBtn.Image = Properties.Resources.icons8_save_24;
             SaveMacAddressesAsTXTBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveMacAddressesAsTXTBtn.Location = new Point(194, 265);
+            SaveMacAddressesAsTXTBtn.Location = new Point(177, 230);
             SaveMacAddressesAsTXTBtn.Margin = new Padding(3, 2, 3, 2);
             SaveMacAddressesAsTXTBtn.Name = "SaveMacAddressesAsTXTBtn";
-            SaveMacAddressesAsTXTBtn.Size = new Size(181, 32);
+            SaveMacAddressesAsTXTBtn.Size = new Size(163, 26);
             SaveMacAddressesAsTXTBtn.TabIndex = 111;
             SaveMacAddressesAsTXTBtn.Text = "Save list as txt";
             SaveMacAddressesAsTXTBtn.UseVisualStyleBackColor = false;
@@ -1094,10 +1050,10 @@
             OpenMacAddressfromTxtBtn.ForeColor = Color.FromArgb(224, 224, 224);
             OpenMacAddressfromTxtBtn.Image = Properties.Resources.icons8_external_link_24;
             OpenMacAddressfromTxtBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            OpenMacAddressfromTxtBtn.Location = new Point(5, 265);
+            OpenMacAddressfromTxtBtn.Location = new Point(5, 230);
             OpenMacAddressfromTxtBtn.Margin = new Padding(3, 2, 3, 2);
             OpenMacAddressfromTxtBtn.Name = "OpenMacAddressfromTxtBtn";
-            OpenMacAddressfromTxtBtn.Size = new Size(183, 32);
+            OpenMacAddressfromTxtBtn.Size = new Size(166, 26);
             OpenMacAddressfromTxtBtn.TabIndex = 110;
             OpenMacAddressfromTxtBtn.Text = "Open from .txt";
             OpenMacAddressfromTxtBtn.UseVisualStyleBackColor = false;
@@ -1106,9 +1062,10 @@
             // WOLPortNumberBox
             // 
             WOLPortNumberBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            WOLPortNumberBox.Location = new Point(311, 7);
+            WOLPortNumberBox.Location = new Point(285, 3);
+            WOLPortNumberBox.Margin = new Padding(3, 2, 3, 2);
             WOLPortNumberBox.Name = "WOLPortNumberBox";
-            WOLPortNumberBox.Size = new Size(63, 27);
+            WOLPortNumberBox.Size = new Size(55, 23);
             WOLPortNumberBox.TabIndex = 109;
             WOLPortNumberBox.Value = new decimal(new int[] { 9, 0, 0, 0 });
             WOLPortNumberBox.ValueChanged += MagicPortNumberBox_ValueChanged;
@@ -1118,9 +1075,9 @@
             WOLPortLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             WOLPortLabel.Font = new Font("Arial", 9F);
             WOLPortLabel.ForeColor = Color.Silver;
-            WOLPortLabel.Location = new Point(268, 8);
+            WOLPortLabel.Location = new Point(247, 4);
             WOLPortLabel.Name = "WOLPortLabel";
-            WOLPortLabel.Size = new Size(43, 26);
+            WOLPortLabel.Size = new Size(38, 20);
             WOLPortLabel.TabIndex = 92;
             WOLPortLabel.Text = "Port:";
             WOLPortLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -1129,9 +1086,9 @@
             // 
             TypeMACAddressHereLabel.Font = new Font("Arial", 9F);
             TypeMACAddressHereLabel.ForeColor = Color.Silver;
-            TypeMACAddressHereLabel.Location = new Point(6, 24);
+            TypeMACAddressHereLabel.Location = new Point(35, 15);
             TypeMACAddressHereLabel.Name = "TypeMACAddressHereLabel";
-            TypeMACAddressHereLabel.Size = new Size(222, 21);
+            TypeMACAddressHereLabel.Size = new Size(194, 16);
             TypeMACAddressHereLabel.TabIndex = 92;
             TypeMACAddressHereLabel.Text = "Type the MAC addresses here:";
             TypeMACAddressHereLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -1146,10 +1103,10 @@
             SendWOLPacketBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SendWOLPacketBtn.Image = Properties.Resources.icons8_turn_on_24;
             SendWOLPacketBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SendWOLPacketBtn.Location = new Point(5, 230);
+            SendWOLPacketBtn.Location = new Point(5, 200);
             SendWOLPacketBtn.Margin = new Padding(3, 2, 3, 2);
             SendWOLPacketBtn.Name = "SendWOLPacketBtn";
-            SendWOLPacketBtn.Size = new Size(370, 32);
+            SendWOLPacketBtn.Size = new Size(335, 26);
             SendWOLPacketBtn.TabIndex = 90;
             SendWOLPacketBtn.Text = "Send Wake-On-LAN packet";
             SendWOLPacketBtn.UseVisualStyleBackColor = false;
@@ -1162,18 +1119,19 @@
             WOLTextbox.BorderStyle = BorderStyle.FixedSingle;
             WOLTextbox.Font = new Font("Segoe UI", 8F);
             WOLTextbox.ForeColor = Color.White;
-            WOLTextbox.Location = new Point(5, 47);
+            WOLTextbox.Location = new Point(5, 33);
             WOLTextbox.Margin = new Padding(3, 2, 3, 2);
             WOLTextbox.Multiline = true;
             WOLTextbox.Name = "WOLTextbox";
             WOLTextbox.ScrollBars = ScrollBars.Vertical;
-            WOLTextbox.Size = new Size(369, 179);
+            WOLTextbox.Size = new Size(335, 163);
             WOLTextbox.TabIndex = 91;
             // 
             // WOLImage
             // 
             WOLImage.Image = Properties.Resources.icons8_turn_on_24;
-            WOLImage.Location = new Point(6, 0);
+            WOLImage.Location = new Point(5, 3);
+            WOLImage.Margin = new Padding(3, 2, 3, 2);
             WOLImage.Name = "WOLImage";
             WOLImage.Size = new Size(24, 24);
             WOLImage.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -1185,9 +1143,9 @@
             WakeOnLANModuleLabel.AutoSize = true;
             WakeOnLANModuleLabel.Font = new Font("Arial", 10F);
             WakeOnLANModuleLabel.ForeColor = Color.White;
-            WakeOnLANModuleLabel.Location = new Point(36, 4);
+            WakeOnLANModuleLabel.Location = new Point(31, 1);
             WakeOnLANModuleLabel.Name = "WakeOnLANModuleLabel";
-            WakeOnLANModuleLabel.Size = new Size(112, 19);
+            WakeOnLANModuleLabel.Size = new Size(94, 16);
             WakeOnLANModuleLabel.TabIndex = 88;
             WakeOnLANModuleLabel.Text = "Wake-on-LAN";
             WakeOnLANModuleLabel.TextAlign = ContentAlignment.TopRight;
@@ -1202,12 +1160,12 @@
             RenameSelectedRMSGBtn.ForeColor = Color.FromArgb(224, 224, 224);
             RenameSelectedRMSGBtn.Image = Properties.Resources.icons8_rename_24;
             RenameSelectedRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RenameSelectedRMSGBtn.Location = new Point(105, 0);
+            RenameSelectedRMSGBtn.Location = new Point(92, 0);
             RenameSelectedRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             RenameSelectedRMSGBtn.Name = "RenameSelectedRMSGBtn";
-            RenameSelectedRMSGBtn.Size = new Size(120, 41);
+            RenameSelectedRMSGBtn.Size = new Size(103, 31);
             RenameSelectedRMSGBtn.TabIndex = 77;
-            RenameSelectedRMSGBtn.Text = "   Rename";
+            RenameSelectedRMSGBtn.Text = "      Rename";
             RenameSelectedRMSGBtn.UseVisualStyleBackColor = false;
             RenameSelectedRMSGBtn.Click += RenameSelectedRMSGBtn_Click;
             // 
@@ -1215,9 +1173,9 @@
             // 
             RMSGHelpLink.AutoSize = true;
             RMSGHelpLink.LinkColor = Color.FromArgb(0, 192, 0);
-            RMSGHelpLink.Location = new Point(126, 4);
+            RMSGHelpLink.Location = new Point(114, 5);
             RMSGHelpLink.Name = "RMSGHelpLink";
-            RMSGHelpLink.Size = new Size(16, 20);
+            RMSGHelpLink.Size = new Size(12, 15);
             RMSGHelpLink.TabIndex = 81;
             RMSGHelpLink.TabStop = true;
             RMSGHelpLink.Text = "?";
@@ -1234,10 +1192,10 @@
             LoadSelectedRMSGBtn.ForeColor = Color.White;
             LoadSelectedRMSGBtn.Image = Properties.Resources.icons8_send_letter_24;
             LoadSelectedRMSGBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            LoadSelectedRMSGBtn.Location = new Point(0, 301);
+            LoadSelectedRMSGBtn.Location = new Point(0, 258);
             LoadSelectedRMSGBtn.Margin = new Padding(3, 2, 3, 2);
             LoadSelectedRMSGBtn.Name = "LoadSelectedRMSGBtn";
-            LoadSelectedRMSGBtn.Size = new Size(317, 32);
+            LoadSelectedRMSGBtn.Size = new Size(275, 31);
             LoadSelectedRMSGBtn.TabIndex = 79;
             LoadSelectedRMSGBtn.Text = "Load Selected .RMSG file";
             LoadSelectedRMSGBtn.UseVisualStyleBackColor = false;
@@ -1245,17 +1203,18 @@
             // 
             // QuickLoadListbox
             // 
-            QuickLoadListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            QuickLoadListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             QuickLoadListbox.BackColor = Color.FromArgb(45, 45, 45);
             QuickLoadListbox.BorderStyle = BorderStyle.FixedSingle;
             QuickLoadListbox.ContextMenuStrip = Rmsgcontextstrip;
             QuickLoadListbox.ForeColor = Color.White;
             QuickLoadListbox.FormattingEnabled = true;
             QuickLoadListbox.IntegralHeight = false;
-            QuickLoadListbox.Location = new Point(4, 29);
+            QuickLoadListbox.ItemHeight = 15;
+            QuickLoadListbox.Location = new Point(4, 26);
             QuickLoadListbox.Margin = new Padding(3, 2, 3, 2);
             QuickLoadListbox.Name = "QuickLoadListbox";
-            QuickLoadListbox.Size = new Size(311, 268);
+            QuickLoadListbox.Size = new Size(268, 228);
             QuickLoadListbox.TabIndex = 78;
             QuickLoadListbox.DoubleClick += RMSGFileListBox_DoubleClick;
             // 
@@ -1264,9 +1223,9 @@
             QuickLoadRMSGFileLabel.AutoSize = true;
             QuickLoadRMSGFileLabel.Font = new Font("Arial", 10F);
             QuickLoadRMSGFileLabel.ForeColor = Color.White;
-            QuickLoadRMSGFileLabel.Location = new Point(30, 6);
+            QuickLoadRMSGFileLabel.Location = new Point(30, 5);
             QuickLoadRMSGFileLabel.Name = "QuickLoadRMSGFileLabel";
-            QuickLoadRMSGFileLabel.Size = new Size(97, 19);
+            QuickLoadRMSGFileLabel.Size = new Size(83, 16);
             QuickLoadRMSGFileLabel.TabIndex = 74;
             QuickLoadRMSGFileLabel.Text = "Quick Load:";
             QuickLoadRMSGFileLabel.TextAlign = ContentAlignment.TopRight;
@@ -1284,7 +1243,7 @@
             RefreshQuickLoadListBtn.Location = new Point(0, 0);
             RefreshQuickLoadListBtn.Margin = new Padding(3, 2, 3, 2);
             RefreshQuickLoadListBtn.Name = "RefreshQuickLoadListBtn";
-            RefreshQuickLoadListBtn.Size = new Size(105, 41);
+            RefreshQuickLoadListBtn.Size = new Size(92, 31);
             RefreshQuickLoadListBtn.TabIndex = 76;
             RefreshQuickLoadListBtn.Text = "Refresh";
             RefreshQuickLoadListBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -1294,7 +1253,8 @@
             // QuickLoadRMSGImage
             // 
             QuickLoadRMSGImage.Image = Properties.Resources.icons8_save_24;
-            QuickLoadRMSGImage.Location = new Point(5, 3);
+            QuickLoadRMSGImage.Location = new Point(4, 0);
+            QuickLoadRMSGImage.Margin = new Padding(3, 2, 3, 2);
             QuickLoadRMSGImage.Name = "QuickLoadRMSGImage";
             QuickLoadRMSGImage.Size = new Size(24, 24);
             QuickLoadRMSGImage.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -1310,10 +1270,11 @@
             ModulesTabControl.Controls.Add(LogTab);
             ModulesTabControl.Dock = DockStyle.Fill;
             ModulesTabControl.Location = new Point(0, 0);
+            ModulesTabControl.Margin = new Padding(3, 2, 3, 2);
             ModulesTabControl.Multiline = true;
             ModulesTabControl.Name = "ModulesTabControl";
             ModulesTabControl.SelectedIndex = 0;
-            ModulesTabControl.Size = new Size(403, 374);
+            ModulesTabControl.Size = new Size(366, 320);
             ModulesTabControl.TabIndex = 89;
             // 
             // PCTab
@@ -1321,10 +1282,11 @@
             PCTab.BackColor = Color.FromArgb(30, 30, 30);
             PCTab.Controls.Add(PCtabControl1);
             PCTab.ImageIndex = 3;
-            PCTab.Location = new Point(4, 29);
+            PCTab.Location = new Point(4, 24);
+            PCTab.Margin = new Padding(3, 2, 3, 2);
             PCTab.Name = "PCTab";
-            PCTab.Padding = new Padding(3);
-            PCTab.Size = new Size(395, 341);
+            PCTab.Padding = new Padding(3, 2, 3, 2);
+            PCTab.Size = new Size(358, 292);
             PCTab.TabIndex = 0;
             PCTab.Text = "MSG";
             // 
@@ -1352,10 +1314,11 @@
             EmailTab.Controls.Add(EmailImage);
             EmailTab.Controls.Add(EmailModuleLabel);
             EmailTab.ImageIndex = 0;
-            EmailTab.Location = new Point(4, 29);
+            EmailTab.Location = new Point(4, 24);
+            EmailTab.Margin = new Padding(3, 2, 3, 2);
             EmailTab.Name = "EmailTab";
-            EmailTab.Padding = new Padding(3);
-            EmailTab.Size = new Size(394, 341);
+            EmailTab.Padding = new Padding(3, 2, 3, 2);
+            EmailTab.Size = new Size(358, 292);
             EmailTab.TabIndex = 1;
             EmailTab.Text = "Email";
             // 
@@ -1365,9 +1328,9 @@
             EmailPortLbl.AutoSize = true;
             EmailPortLbl.Font = new Font("Arial", 10F);
             EmailPortLbl.ForeColor = Color.White;
-            EmailPortLbl.Location = new Point(289, 30);
+            EmailPortLbl.Location = new Point(256, 29);
             EmailPortLbl.Name = "EmailPortLbl";
-            EmailPortLbl.Size = new Size(44, 19);
+            EmailPortLbl.Size = new Size(37, 16);
             EmailPortLbl.TabIndex = 112;
             EmailPortLbl.Text = "Port:";
             EmailPortLbl.TextAlign = ContentAlignment.TopRight;
@@ -1382,10 +1345,10 @@
             SendTestEmailBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SendTestEmailBtn.Image = Properties.Resources.icons8_broadcast_24;
             SendTestEmailBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SendTestEmailBtn.Location = new Point(305, 246);
+            SendTestEmailBtn.Location = new Point(280, 207);
             SendTestEmailBtn.Margin = new Padding(3, 2, 3, 2);
             SendTestEmailBtn.Name = "SendTestEmailBtn";
-            SendTestEmailBtn.Size = new Size(80, 28);
+            SendTestEmailBtn.Size = new Size(72, 23);
             SendTestEmailBtn.TabIndex = 111;
             SendTestEmailBtn.Text = "Send";
             SendTestEmailBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -1400,10 +1363,10 @@
             EmailEditBtn.ForeColor = Color.FromArgb(224, 224, 224);
             EmailEditBtn.Image = Properties.Resources.icons8_email_24;
             EmailEditBtn.ImageAlign = ContentAlignment.TopCenter;
-            EmailEditBtn.Location = new Point(7, 277);
+            EmailEditBtn.Location = new Point(5, 234);
             EmailEditBtn.Margin = new Padding(3, 2, 3, 2);
             EmailEditBtn.Name = "EmailEditBtn";
-            EmailEditBtn.Size = new Size(101, 54);
+            EmailEditBtn.Size = new Size(88, 46);
             EmailEditBtn.TabIndex = 110;
             EmailEditBtn.Text = "Email Editor";
             EmailEditBtn.TextAlign = ContentAlignment.BottomCenter;
@@ -1413,18 +1376,20 @@
             // 
             EmailAuthTypecomboBox.FormattingEnabled = true;
             EmailAuthTypecomboBox.Items.AddRange(new object[] { "None", "Basic", "SSL", "NTLM" });
-            EmailAuthTypecomboBox.Location = new Point(175, 135);
+            EmailAuthTypecomboBox.Location = new Point(154, 113);
+            EmailAuthTypecomboBox.Margin = new Padding(3, 2, 3, 2);
             EmailAuthTypecomboBox.Name = "EmailAuthTypecomboBox";
-            EmailAuthTypecomboBox.Size = new Size(211, 28);
+            EmailAuthTypecomboBox.Size = new Size(185, 23);
             EmailAuthTypecomboBox.TabIndex = 109;
             EmailAuthTypecomboBox.Text = "Basic";
             // 
             // EmailPortNumber
             // 
             EmailPortNumber.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            EmailPortNumber.Location = new Point(293, 50);
+            EmailPortNumber.Location = new Point(259, 45);
+            EmailPortNumber.Margin = new Padding(3, 2, 3, 2);
             EmailPortNumber.Name = "EmailPortNumber";
-            EmailPortNumber.Size = new Size(92, 27);
+            EmailPortNumber.Size = new Size(80, 23);
             EmailPortNumber.TabIndex = 108;
             EmailPortNumber.Value = new decimal(new int[] { 25, 0, 0, 0 });
             // 
@@ -1434,12 +1399,12 @@
             AddressOfSMTPServerTxt.BackColor = Color.FromArgb(45, 45, 45);
             AddressOfSMTPServerTxt.BorderStyle = BorderStyle.FixedSingle;
             AddressOfSMTPServerTxt.ForeColor = Color.White;
-            AddressOfSMTPServerTxt.Location = new Point(6, 50);
+            AddressOfSMTPServerTxt.Location = new Point(8, 45);
             AddressOfSMTPServerTxt.Margin = new Padding(3, 2, 3, 2);
             AddressOfSMTPServerTxt.MaxLength = 255;
             AddressOfSMTPServerTxt.Name = "AddressOfSMTPServerTxt";
             AddressOfSMTPServerTxt.ScrollBars = ScrollBars.Vertical;
-            AddressOfSMTPServerTxt.Size = new Size(281, 27);
+            AddressOfSMTPServerTxt.Size = new Size(246, 23);
             AddressOfSMTPServerTxt.TabIndex = 107;
             // 
             // label4
@@ -1447,9 +1412,9 @@
             label4.AutoSize = true;
             label4.Font = new Font("Arial", 7F);
             label4.ForeColor = Color.White;
-            label4.Location = new Point(7, 229);
+            label4.Location = new Point(6, 192);
             label4.Name = "label4";
-            label4.Size = new Size(362, 15);
+            label4.Size = new Size(313, 13);
             label4.TabIndex = 106;
             label4.Text = "Send a test email by entering your email address and click 'Send'";
             label4.TextAlign = ContentAlignment.TopRight;
@@ -1459,9 +1424,9 @@
             label1.AutoSize = true;
             label1.Font = new Font("Arial", 10F);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(7, 139);
+            label1.Location = new Point(7, 116);
             label1.Name = "label1";
-            label1.Size = new Size(162, 19);
+            label1.Size = new Size(140, 16);
             label1.TabIndex = 106;
             label1.Text = "Authentication Mode:";
             label1.TextAlign = ContentAlignment.TopRight;
@@ -1471,9 +1436,9 @@
             label5.AutoSize = true;
             label5.Font = new Font("Arial", 10F);
             label5.ForeColor = Color.White;
-            label5.Location = new Point(114, 280);
+            label5.Location = new Point(98, 234);
             label5.Name = "label5";
-            label5.Size = new Size(153, 19);
+            label5.Size = new Size(131, 16);
             label5.TabIndex = 106;
             label5.Text = "Selected Email File:";
             label5.TextAlign = ContentAlignment.TopRight;
@@ -1483,9 +1448,9 @@
             label3.AutoSize = true;
             label3.Font = new Font("Arial", 10F);
             label3.ForeColor = Color.White;
-            label3.Location = new Point(7, 203);
+            label3.Location = new Point(21, 169);
             label3.Name = "label3";
-            label3.Size = new Size(85, 19);
+            label3.Size = new Size(72, 16);
             label3.TabIndex = 106;
             label3.Text = "Password:";
             label3.TextAlign = ContentAlignment.TopRight;
@@ -1495,9 +1460,9 @@
             label2.AutoSize = true;
             label2.Font = new Font("Arial", 10F);
             label2.ForeColor = Color.White;
-            label2.Location = new Point(17, 171);
+            label2.Location = new Point(30, 142);
             label2.Name = "label2";
-            label2.Size = new Size(74, 19);
+            label2.Size = new Size(62, 16);
             label2.TabIndex = 106;
             label2.Text = "Account:";
             label2.TextAlign = ContentAlignment.TopRight;
@@ -1507,9 +1472,9 @@
             SenderAddressEmailLabel.AutoSize = true;
             SenderAddressEmailLabel.Font = new Font("Arial", 10F);
             SenderAddressEmailLabel.ForeColor = Color.White;
-            SenderAddressEmailLabel.Location = new Point(6, 80);
+            SenderAddressEmailLabel.Location = new Point(7, 70);
             SenderAddressEmailLabel.Name = "SenderAddressEmailLabel";
-            SenderAddressEmailLabel.Size = new Size(116, 19);
+            SenderAddressEmailLabel.Size = new Size(99, 16);
             SenderAddressEmailLabel.TabIndex = 106;
             SenderAddressEmailLabel.Text = "From Address:";
             SenderAddressEmailLabel.TextAlign = ContentAlignment.TopRight;
@@ -1519,9 +1484,10 @@
             MessageEmailcheckBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             MessageEmailcheckBox.AutoSize = true;
             MessageEmailcheckBox.ForeColor = Color.White;
-            MessageEmailcheckBox.Location = new Point(188, 3);
+            MessageEmailcheckBox.Location = new Point(193, 5);
+            MessageEmailcheckBox.Margin = new Padding(3, 2, 3, 2);
             MessageEmailcheckBox.Name = "MessageEmailcheckBox";
-            MessageEmailcheckBox.Size = new Size(200, 24);
+            MessageEmailcheckBox.Size = new Size(159, 19);
             MessageEmailcheckBox.TabIndex = 75;
             MessageEmailcheckBox.Text = "Enable Email Notification";
             MessageEmailcheckBox.UseVisualStyleBackColor = true;
@@ -1532,9 +1498,9 @@
             EmailAddressOfSMTPServerLbl.AutoSize = true;
             EmailAddressOfSMTPServerLbl.Font = new Font("Arial", 10F);
             EmailAddressOfSMTPServerLbl.ForeColor = Color.White;
-            EmailAddressOfSMTPServerLbl.Location = new Point(6, 30);
+            EmailAddressOfSMTPServerLbl.Location = new Point(8, 29);
             EmailAddressOfSMTPServerLbl.Name = "EmailAddressOfSMTPServerLbl";
-            EmailAddressOfSMTPServerLbl.Size = new Size(282, 19);
+            EmailAddressOfSMTPServerLbl.Size = new Size(240, 16);
             EmailAddressOfSMTPServerLbl.TabIndex = 105;
             EmailAddressOfSMTPServerLbl.Text = "FQDN or IP Address of SMTP server:";
             EmailAddressOfSMTPServerLbl.TextAlign = ContentAlignment.TopRight;
@@ -1545,12 +1511,12 @@
             TestEmailAddressTextbox.BackColor = Color.FromArgb(45, 45, 45);
             TestEmailAddressTextbox.BorderStyle = BorderStyle.FixedSingle;
             TestEmailAddressTextbox.ForeColor = Color.White;
-            TestEmailAddressTextbox.Location = new Point(7, 246);
+            TestEmailAddressTextbox.Location = new Point(6, 207);
             TestEmailAddressTextbox.Margin = new Padding(3, 2, 3, 2);
             TestEmailAddressTextbox.MaxLength = 255;
             TestEmailAddressTextbox.Name = "TestEmailAddressTextbox";
             TestEmailAddressTextbox.ScrollBars = ScrollBars.Vertical;
-            TestEmailAddressTextbox.Size = new Size(292, 27);
+            TestEmailAddressTextbox.Size = new Size(268, 23);
             TestEmailAddressTextbox.TabIndex = 104;
             // 
             // EmailPasswordTextbox
@@ -1559,12 +1525,12 @@
             EmailPasswordTextbox.BackColor = Color.FromArgb(45, 45, 45);
             EmailPasswordTextbox.BorderStyle = BorderStyle.FixedSingle;
             EmailPasswordTextbox.ForeColor = Color.White;
-            EmailPasswordTextbox.Location = new Point(97, 200);
+            EmailPasswordTextbox.Location = new Point(100, 167);
             EmailPasswordTextbox.Margin = new Padding(3, 2, 3, 2);
             EmailPasswordTextbox.MaxLength = 255;
             EmailPasswordTextbox.Name = "EmailPasswordTextbox";
             EmailPasswordTextbox.ScrollBars = ScrollBars.Vertical;
-            EmailPasswordTextbox.Size = new Size(288, 27);
+            EmailPasswordTextbox.Size = new Size(252, 23);
             EmailPasswordTextbox.TabIndex = 104;
             // 
             // EmailAccountTextbox
@@ -1573,12 +1539,12 @@
             EmailAccountTextbox.BackColor = Color.FromArgb(45, 45, 45);
             EmailAccountTextbox.BorderStyle = BorderStyle.FixedSingle;
             EmailAccountTextbox.ForeColor = Color.White;
-            EmailAccountTextbox.Location = new Point(97, 168);
+            EmailAccountTextbox.Location = new Point(100, 140);
             EmailAccountTextbox.Margin = new Padding(3, 2, 3, 2);
             EmailAccountTextbox.MaxLength = 255;
             EmailAccountTextbox.Name = "EmailAccountTextbox";
             EmailAccountTextbox.ScrollBars = ScrollBars.Vertical;
-            EmailAccountTextbox.Size = new Size(288, 27);
+            EmailAccountTextbox.Size = new Size(252, 23);
             EmailAccountTextbox.TabIndex = 104;
             // 
             // SenderAddressTxt
@@ -1587,18 +1553,19 @@
             SenderAddressTxt.BackColor = Color.FromArgb(45, 45, 45);
             SenderAddressTxt.BorderStyle = BorderStyle.FixedSingle;
             SenderAddressTxt.ForeColor = Color.White;
-            SenderAddressTxt.Location = new Point(7, 101);
+            SenderAddressTxt.Location = new Point(8, 86);
             SenderAddressTxt.Margin = new Padding(3, 2, 3, 2);
             SenderAddressTxt.MaxLength = 255;
             SenderAddressTxt.Name = "SenderAddressTxt";
             SenderAddressTxt.ScrollBars = ScrollBars.Vertical;
-            SenderAddressTxt.Size = new Size(378, 27);
+            SenderAddressTxt.Size = new Size(331, 23);
             SenderAddressTxt.TabIndex = 104;
             // 
             // EmailImage
             // 
             EmailImage.Image = Properties.Resources.icons8_email_24;
-            EmailImage.Location = new Point(6, 3);
+            EmailImage.Location = new Point(5, 2);
+            EmailImage.Margin = new Padding(3, 2, 3, 2);
             EmailImage.Name = "EmailImage";
             EmailImage.Size = new Size(24, 24);
             EmailImage.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -1610,9 +1577,9 @@
             EmailModuleLabel.AutoSize = true;
             EmailModuleLabel.Font = new Font("Arial", 10F);
             EmailModuleLabel.ForeColor = Color.White;
-            EmailModuleLabel.Location = new Point(36, 7);
+            EmailModuleLabel.Location = new Point(32, 5);
             EmailModuleLabel.Name = "EmailModuleLabel";
-            EmailModuleLabel.Size = new Size(49, 19);
+            EmailModuleLabel.Size = new Size(41, 16);
             EmailModuleLabel.TabIndex = 88;
             EmailModuleLabel.Text = "Email";
             EmailModuleLabel.TextAlign = ContentAlignment.TopRight;
@@ -1624,10 +1591,11 @@
             PSExecTab.Controls.Add(PSEXECImage);
             PSExecTab.Controls.Add(PsExecLabel);
             PSExecTab.Controls.Add(PSExecModuleEnableCheckBox);
-            PSExecTab.Location = new Point(4, 29);
+            PSExecTab.Location = new Point(4, 24);
+            PSExecTab.Margin = new Padding(3, 2, 3, 2);
             PSExecTab.Name = "PSExecTab";
-            PSExecTab.Padding = new Padding(3);
-            PSExecTab.Size = new Size(394, 341);
+            PSExecTab.Padding = new Padding(3, 2, 3, 2);
+            PSExecTab.Size = new Size(358, 292);
             PSExecTab.TabIndex = 6;
             PSExecTab.Text = "PsExec";
             // 
@@ -1636,10 +1604,11 @@
             PSExecTabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             PSExecTabControl.Controls.Add(tabPage1);
             PSExecTabControl.Controls.Add(tabPage2);
-            PSExecTabControl.Location = new Point(3, 29);
+            PSExecTabControl.Location = new Point(3, 26);
+            PSExecTabControl.Margin = new Padding(3, 2, 3, 2);
             PSExecTabControl.Name = "PSExecTabControl";
             PSExecTabControl.SelectedIndex = 0;
-            PSExecTabControl.Size = new Size(388, 309);
+            PSExecTabControl.Size = new Size(353, 264);
             PSExecTabControl.TabIndex = 105;
             // 
             // tabPage1
@@ -1654,10 +1623,11 @@
             tabPage1.Controls.Add(textBox1);
             tabPage1.Controls.Add(button4);
             tabPage1.Controls.Add(label7);
-            tabPage1.Location = new Point(4, 29);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Margin = new Padding(3, 2, 3, 2);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(380, 276);
+            tabPage1.Padding = new Padding(3, 2, 3, 2);
+            tabPage1.Size = new Size(345, 236);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Remote Target(s)";
             // 
@@ -1665,9 +1635,9 @@
             // 
             linkLabel1.AutoSize = true;
             linkLabel1.LinkColor = Color.FromArgb(0, 192, 0);
-            linkLabel1.Location = new Point(161, 6);
+            linkLabel1.Location = new Point(139, 4);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(16, 20);
+            linkLabel1.Size = new Size(12, 15);
             linkLabel1.TabIndex = 96;
             linkLabel1.TabStop = true;
             linkLabel1.Text = "?";
@@ -1681,17 +1651,21 @@
             button1.Font = new Font("Arial", 9F);
             button1.ForeColor = Color.FromArgb(224, 224, 224);
             button1.Image = Properties.Resources.icons8_filter_24;
-            button1.Location = new Point(314, 239);
+            button1.ImageAlign = ContentAlignment.MiddleLeft;
+            button1.Location = new Point(267, 206);
             button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(61, 32);
+            button1.Size = new Size(72, 26);
             button1.TabIndex = 95;
+            button1.Text = "Filter";
+            button1.TextAlign = ContentAlignment.MiddleRight;
             button1.UseVisualStyleBackColor = false;
             // 
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.icons8_pc_24;
-            pictureBox1.Location = new Point(6, 3);
+            pictureBox1.Location = new Point(5, -2);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(24, 24);
             pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -1703,9 +1677,9 @@
             label6.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label6.Font = new Font("Arial", 9F, FontStyle.Italic);
             label6.ForeColor = Color.White;
-            label6.Location = new Point(216, 9);
+            label6.Location = new Point(201, 4);
             label6.Name = "label6";
-            label6.Size = new Size(158, 18);
+            label6.Size = new Size(138, 14);
             label6.TabIndex = 93;
             label6.Text = "PC Count: 0";
             label6.TextAlign = ContentAlignment.MiddleRight;
@@ -1720,10 +1694,10 @@
             button2.ForeColor = Color.FromArgb(224, 224, 224);
             button2.Image = Properties.Resources.icons8_save_24;
             button2.ImageAlign = ContentAlignment.MiddleLeft;
-            button2.Location = new Point(194, 203);
+            button2.Location = new Point(174, 176);
             button2.Margin = new Padding(3, 2, 3, 2);
             button2.Name = "button2";
-            button2.Size = new Size(181, 32);
+            button2.Size = new Size(165, 26);
             button2.TabIndex = 91;
             button2.Text = "Save list as txt";
             button2.UseVisualStyleBackColor = false;
@@ -1738,10 +1712,10 @@
             button3.ForeColor = Color.FromArgb(224, 224, 224);
             button3.Image = Properties.Resources.icons8_external_link_24;
             button3.ImageAlign = ContentAlignment.MiddleLeft;
-            button3.Location = new Point(5, 203);
+            button3.Location = new Point(6, 176);
             button3.Margin = new Padding(3, 2, 3, 2);
             button3.Name = "button3";
-            button3.Size = new Size(183, 32);
+            button3.Size = new Size(162, 26);
             button3.TabIndex = 89;
             button3.Text = "Open from .txt";
             button3.UseVisualStyleBackColor = false;
@@ -1754,12 +1728,12 @@
             textBox1.ContextMenuStrip = PCListcontextMenuStrip;
             textBox1.Font = new Font("Segoe UI", 8F);
             textBox1.ForeColor = Color.White;
-            textBox1.Location = new Point(5, 29);
+            textBox1.Location = new Point(6, 23);
             textBox1.Margin = new Padding(3, 2, 3, 2);
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
             textBox1.ScrollBars = ScrollBars.Vertical;
-            textBox1.Size = new Size(369, 170);
+            textBox1.Size = new Size(333, 149);
             textBox1.TabIndex = 92;
             // 
             // button4
@@ -1773,10 +1747,10 @@
             button4.ForeColor = Color.FromArgb(224, 224, 224);
             button4.Image = Properties.Resources.icons8_directory_24;
             button4.ImageAlign = ContentAlignment.MiddleLeft;
-            button4.Location = new Point(5, 239);
+            button4.Location = new Point(6, 206);
             button4.Margin = new Padding(3, 2, 3, 2);
             button4.Name = "button4";
-            button4.Size = new Size(303, 32);
+            button4.Size = new Size(255, 26);
             button4.TabIndex = 90;
             button4.Text = "Load PC names from Active Directory";
             button4.TextAlign = ContentAlignment.MiddleRight;
@@ -1787,9 +1761,9 @@
             label7.AutoSize = true;
             label7.Font = new Font("Arial", 10F);
             label7.ForeColor = Color.White;
-            label7.Location = new Point(36, 7);
+            label7.Location = new Point(30, 5);
             label7.Name = "label7";
-            label7.Size = new Size(126, 19);
+            label7.Size = new Size(111, 16);
             label7.TabIndex = 88;
             label7.Text = "Remote Targets:";
             label7.TextAlign = ContentAlignment.TopRight;
@@ -1816,10 +1790,11 @@
             tabPage2.Controls.Add(checkBox8);
             tabPage2.Controls.Add(checkBox2);
             tabPage2.Controls.Add(checkBox1);
-            tabPage2.Location = new Point(4, 29);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Margin = new Padding(3, 2, 3, 2);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(380, 276);
+            tabPage2.Padding = new Padding(3, 2, 3, 2);
+            tabPage2.Size = new Size(345, 236);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Parameters";
             // 
@@ -1828,9 +1803,10 @@
             PSExecAcceptEulaCheckbox.AutoSize = true;
             PSExecAcceptEulaCheckbox.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             PSExecAcceptEulaCheckbox.ForeColor = Color.White;
-            PSExecAcceptEulaCheckbox.Location = new Point(6, 243);
+            PSExecAcceptEulaCheckbox.Location = new Point(6, 184);
+            PSExecAcceptEulaCheckbox.Margin = new Padding(3, 2, 3, 2);
             PSExecAcceptEulaCheckbox.Name = "PSExecAcceptEulaCheckbox";
-            PSExecAcceptEulaCheckbox.Size = new Size(121, 24);
+            PSExecAcceptEulaCheckbox.Size = new Size(97, 19);
             PSExecAcceptEulaCheckbox.TabIndex = 86;
             PSExecAcceptEulaCheckbox.Text = "Accept EULA";
             PSExecAcceptEulaCheckbox.UseVisualStyleBackColor = true;
@@ -1839,7 +1815,8 @@
             // 
             pictureBox2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pictureBox2.Image = Properties.Resources.icons8_run_command_24light;
-            pictureBox2.Location = new Point(350, 6);
+            pictureBox2.Location = new Point(315, 4);
+            pictureBox2.Margin = new Padding(3, 2, 3, 2);
             pictureBox2.Name = "pictureBox2";
             pictureBox2.Size = new Size(24, 24);
             pictureBox2.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -1850,9 +1827,10 @@
             // 
             checkBox9.AutoSize = true;
             checkBox9.ForeColor = Color.White;
-            checkBox9.Location = new Point(6, 213);
+            checkBox9.Location = new Point(6, 162);
+            checkBox9.Margin = new Padding(3, 2, 3, 2);
             checkBox9.Name = "checkBox9";
-            checkBox9.Size = new Size(101, 24);
+            checkBox9.Size = new Size(82, 19);
             checkBox9.TabIndex = 86;
             checkBox9.Text = "No Banner";
             checkBox9.UseVisualStyleBackColor = true;
@@ -1861,9 +1839,10 @@
             // 
             checkBox7.AutoSize = true;
             checkBox7.ForeColor = Color.White;
-            checkBox7.Location = new Point(6, 183);
+            checkBox7.Location = new Point(6, 139);
+            checkBox7.Margin = new Padding(3, 2, 3, 2);
             checkBox7.Name = "checkBox7";
-            checkBox7.Size = new Size(114, 24);
+            checkBox7.Size = new Size(92, 19);
             checkBox7.TabIndex = 86;
             checkBox7.Text = "Limited User";
             checkBox7.UseVisualStyleBackColor = true;
@@ -1872,9 +1851,10 @@
             // 
             checkBox6.AutoSize = true;
             checkBox6.ForeColor = Color.White;
-            checkBox6.Location = new Point(6, 153);
+            checkBox6.Location = new Point(6, 117);
+            checkBox6.Margin = new Padding(3, 2, 3, 2);
             checkBox6.Name = "checkBox6";
-            checkBox6.Size = new Size(131, 24);
+            checkBox6.Size = new Size(104, 19);
             checkBox6.TabIndex = 86;
             checkBox6.Text = "Elevated Token";
             checkBox6.UseVisualStyleBackColor = true;
@@ -1883,9 +1863,10 @@
             // 
             checkBox5.AutoSize = true;
             checkBox5.ForeColor = Color.White;
-            checkBox5.Location = new Point(6, 123);
+            checkBox5.Location = new Point(6, 94);
+            checkBox5.Margin = new Padding(3, 2, 3, 2);
             checkBox5.Name = "checkBox5";
-            checkBox5.Size = new Size(105, 24);
+            checkBox5.Size = new Size(86, 19);
             checkBox5.TabIndex = 86;
             checkBox5.Text = "Force Copy";
             checkBox5.UseVisualStyleBackColor = true;
@@ -1894,9 +1875,10 @@
             // 
             checkBox4.AutoSize = true;
             checkBox4.ForeColor = Color.White;
-            checkBox4.Location = new Point(6, 93);
+            checkBox4.Location = new Point(6, 72);
+            checkBox4.Margin = new Padding(3, 2, 3, 2);
             checkBox4.Name = "checkBox4";
-            checkBox4.Size = new Size(101, 24);
+            checkBox4.Size = new Size(82, 19);
             checkBox4.TabIndex = 86;
             checkBox4.Text = "Don't Wait";
             checkBox4.UseVisualStyleBackColor = true;
@@ -1905,9 +1887,10 @@
             // 
             checkBox3.AutoSize = true;
             checkBox3.ForeColor = Color.White;
-            checkBox3.Location = new Point(6, 63);
+            checkBox3.Location = new Point(6, 49);
+            checkBox3.Margin = new Padding(3, 2, 3, 2);
             checkBox3.Name = "checkBox3";
-            checkBox3.Size = new Size(141, 24);
+            checkBox3.Size = new Size(114, 19);
             checkBox3.TabIndex = 86;
             checkBox3.Text = "Copy Executable";
             checkBox3.UseVisualStyleBackColor = true;
@@ -1916,9 +1899,10 @@
             // 
             checkBox17.AutoSize = true;
             checkBox17.ForeColor = Color.White;
-            checkBox17.Location = new Point(146, 243);
+            checkBox17.Location = new Point(129, 184);
+            checkBox17.Margin = new Padding(3, 2, 3, 2);
             checkBox17.Name = "checkBox17";
-            checkBox17.Size = new Size(78, 24);
+            checkBox17.Size = new Size(64, 19);
             checkBox17.TabIndex = 86;
             checkBox17.Text = "Priority";
             checkBox17.UseVisualStyleBackColor = true;
@@ -1927,9 +1911,10 @@
             // 
             checkBox16.AutoSize = true;
             checkBox16.ForeColor = Color.White;
-            checkBox16.Location = new Point(146, 213);
+            checkBox16.Location = new Point(129, 162);
+            checkBox16.Margin = new Padding(3, 2, 3, 2);
             checkBox16.Name = "checkBox16";
-            checkBox16.Size = new Size(151, 24);
+            checkBox16.Size = new Size(122, 19);
             checkBox16.TabIndex = 86;
             checkBox16.Text = "Working Directory";
             checkBox16.UseVisualStyleBackColor = true;
@@ -1938,9 +1923,10 @@
             // 
             checkBox15.AutoSize = true;
             checkBox15.ForeColor = Color.White;
-            checkBox15.Location = new Point(146, 183);
+            checkBox15.Location = new Point(129, 139);
+            checkBox15.Margin = new Padding(3, 2, 3, 2);
             checkBox15.Name = "checkBox15";
-            checkBox15.Size = new Size(100, 24);
+            checkBox15.Size = new Size(81, 19);
             checkBox15.TabIndex = 86;
             checkBox15.Text = "UserName";
             checkBox15.UseVisualStyleBackColor = true;
@@ -1949,9 +1935,10 @@
             // 
             checkBox14.AutoSize = true;
             checkBox14.ForeColor = Color.White;
-            checkBox14.Location = new Point(146, 153);
+            checkBox14.Location = new Point(129, 117);
+            checkBox14.Margin = new Padding(3, 2, 3, 2);
             checkBox14.Name = "checkBox14";
-            checkBox14.Size = new Size(134, 24);
+            checkBox14.Size = new Size(107, 19);
             checkBox14.TabIndex = 86;
             checkBox14.Text = "Remote Service";
             checkBox14.UseVisualStyleBackColor = true;
@@ -1960,9 +1947,10 @@
             // 
             checkBox13.AutoSize = true;
             checkBox13.ForeColor = Color.White;
-            checkBox13.Location = new Point(146, 123);
+            checkBox13.Location = new Point(129, 94);
+            checkBox13.Margin = new Padding(3, 2, 3, 2);
             checkBox13.Name = "checkBox13";
-            checkBox13.Size = new Size(92, 24);
+            checkBox13.Size = new Size(76, 19);
             checkBox13.TabIndex = 86;
             checkBox13.Text = "Password";
             checkBox13.UseVisualStyleBackColor = true;
@@ -1971,9 +1959,10 @@
             // 
             checkBox12.AutoSize = true;
             checkBox12.ForeColor = Color.White;
-            checkBox12.Location = new Point(146, 93);
+            checkBox12.Location = new Point(129, 72);
+            checkBox12.Margin = new Padding(3, 2, 3, 2);
             checkBox12.Name = "checkBox12";
-            checkBox12.Size = new Size(86, 24);
+            checkBox12.Size = new Size(70, 19);
             checkBox12.TabIndex = 86;
             checkBox12.Text = "Timeout";
             checkBox12.UseVisualStyleBackColor = true;
@@ -1982,9 +1971,10 @@
             // 
             checkBox11.AutoSize = true;
             checkBox11.ForeColor = Color.White;
-            checkBox11.Location = new Point(146, 63);
+            checkBox11.Location = new Point(129, 49);
+            checkBox11.Margin = new Padding(3, 2, 3, 2);
             checkBox11.Name = "checkBox11";
-            checkBox11.Size = new Size(134, 24);
+            checkBox11.Size = new Size(107, 19);
             checkBox11.TabIndex = 86;
             checkBox11.Text = "Secure Desktop";
             checkBox11.UseVisualStyleBackColor = true;
@@ -1993,9 +1983,10 @@
             // 
             checkBox10.AutoSize = true;
             checkBox10.ForeColor = Color.White;
-            checkBox10.Location = new Point(146, 33);
+            checkBox10.Location = new Point(129, 27);
+            checkBox10.Margin = new Padding(3, 2, 3, 2);
             checkBox10.Name = "checkBox10";
-            checkBox10.Size = new Size(117, 24);
+            checkBox10.Size = new Size(95, 19);
             checkBox10.TabIndex = 86;
             checkBox10.Text = "Version Copy";
             checkBox10.UseVisualStyleBackColor = true;
@@ -2004,9 +1995,10 @@
             // 
             checkBox8.AutoSize = true;
             checkBox8.ForeColor = Color.White;
-            checkBox8.Location = new Point(146, 3);
+            checkBox8.Location = new Point(129, 4);
+            checkBox8.Margin = new Padding(3, 2, 3, 2);
             checkBox8.Name = "checkBox8";
-            checkBox8.Size = new Size(136, 24);
+            checkBox8.Size = new Size(112, 19);
             checkBox8.TabIndex = 86;
             checkBox8.Text = "System Account";
             checkBox8.UseVisualStyleBackColor = true;
@@ -2015,9 +2007,10 @@
             // 
             checkBox2.AutoSize = true;
             checkBox2.ForeColor = Color.White;
-            checkBox2.Location = new Point(6, 33);
+            checkBox2.Location = new Point(6, 27);
+            checkBox2.Margin = new Padding(3, 2, 3, 2);
             checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(100, 24);
+            checkBox2.Size = new Size(81, 19);
             checkBox2.TabIndex = 86;
             checkBox2.Text = "Interactive";
             checkBox2.UseVisualStyleBackColor = true;
@@ -2026,9 +2019,10 @@
             // 
             checkBox1.AutoSize = true;
             checkBox1.ForeColor = Color.White;
-            checkBox1.Location = new Point(6, 3);
+            checkBox1.Location = new Point(6, 4);
+            checkBox1.Margin = new Padding(3, 2, 3, 2);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(134, 24);
+            checkBox1.Size = new Size(109, 19);
             checkBox1.TabIndex = 86;
             checkBox1.Text = "Non-Interactive";
             checkBox1.UseVisualStyleBackColor = true;
@@ -2036,7 +2030,8 @@
             // PSEXECImage
             // 
             PSEXECImage.Image = Properties.Resources.icons8_run_command_24light;
-            PSEXECImage.Location = new Point(6, 3);
+            PSEXECImage.Location = new Point(5, 2);
+            PSEXECImage.Margin = new Padding(3, 2, 3, 2);
             PSEXECImage.Name = "PSEXECImage";
             PSEXECImage.Size = new Size(24, 24);
             PSEXECImage.SizeMode = PictureBoxSizeMode.AutoSize;
@@ -2048,9 +2043,9 @@
             PsExecLabel.AutoSize = true;
             PsExecLabel.Font = new Font("Arial", 10F);
             PsExecLabel.ForeColor = Color.White;
-            PsExecLabel.Location = new Point(36, 7);
+            PsExecLabel.Location = new Point(32, 5);
             PsExecLabel.Name = "PsExecLabel";
-            PsExecLabel.Size = new Size(64, 19);
+            PsExecLabel.Size = new Size(53, 16);
             PsExecLabel.TabIndex = 103;
             PsExecLabel.Text = "PsExec";
             PsExecLabel.TextAlign = ContentAlignment.TopRight;
@@ -2060,9 +2055,10 @@
             PSExecModuleEnableCheckBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PSExecModuleEnableCheckBox.AutoSize = true;
             PSExecModuleEnableCheckBox.ForeColor = Color.White;
-            PSExecModuleEnableCheckBox.Location = new Point(260, 6);
+            PSExecModuleEnableCheckBox.Location = new Point(251, 4);
+            PSExecModuleEnableCheckBox.Margin = new Padding(3, 2, 3, 2);
             PSExecModuleEnableCheckBox.Name = "PSExecModuleEnableCheckBox";
-            PSExecModuleEnableCheckBox.Size = new Size(126, 24);
+            PSExecModuleEnableCheckBox.Size = new Size(101, 19);
             PSExecModuleEnableCheckBox.TabIndex = 75;
             PSExecModuleEnableCheckBox.Text = "Enable PSExec";
             PSExecModuleEnableCheckBox.UseVisualStyleBackColor = true;
@@ -2079,9 +2075,10 @@
             AboutTab.Controls.Add(RMCLogoImage2);
             AboutTab.Controls.Add(AboutText);
             AboutTab.Controls.Add(verNumbLblAboutLbl);
-            AboutTab.Location = new Point(4, 29);
+            AboutTab.Location = new Point(4, 24);
+            AboutTab.Margin = new Padding(3, 2, 3, 2);
             AboutTab.Name = "AboutTab";
-            AboutTab.Size = new Size(394, 341);
+            AboutTab.Size = new Size(358, 292);
             AboutTab.TabIndex = 3;
             AboutTab.Text = "About";
             // 
@@ -2089,9 +2086,10 @@
             // 
             DontSaveBroadcastHistoryCheckbox.AutoSize = true;
             DontSaveBroadcastHistoryCheckbox.ForeColor = Color.White;
-            DontSaveBroadcastHistoryCheckbox.Location = new Point(8, 59);
+            DontSaveBroadcastHistoryCheckbox.Location = new Point(7, 45);
+            DontSaveBroadcastHistoryCheckbox.Margin = new Padding(3, 2, 3, 2);
             DontSaveBroadcastHistoryCheckbox.Name = "DontSaveBroadcastHistoryCheckbox";
-            DontSaveBroadcastHistoryCheckbox.Size = new Size(218, 24);
+            DontSaveBroadcastHistoryCheckbox.Size = new Size(175, 19);
             DontSaveBroadcastHistoryCheckbox.TabIndex = 87;
             DontSaveBroadcastHistoryCheckbox.Text = "Don't save broadcast history";
             DontSaveBroadcastHistoryCheckbox.UseVisualStyleBackColor = true;
@@ -2101,9 +2099,9 @@
             // 
             DontSaveHistoryLinkHelp.AutoSize = true;
             DontSaveHistoryLinkHelp.LinkColor = Color.FromArgb(0, 192, 0);
-            DontSaveHistoryLinkHelp.Location = new Point(222, 60);
+            DontSaveHistoryLinkHelp.Location = new Point(183, 48);
             DontSaveHistoryLinkHelp.Name = "DontSaveHistoryLinkHelp";
-            DontSaveHistoryLinkHelp.Size = new Size(16, 20);
+            DontSaveHistoryLinkHelp.Size = new Size(12, 15);
             DontSaveHistoryLinkHelp.TabIndex = 88;
             DontSaveHistoryLinkHelp.TabStop = true;
             DontSaveHistoryLinkHelp.Text = "?";
@@ -2114,9 +2112,9 @@
             CheckforUpdatesLinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             CheckforUpdatesLinkLabel.AutoSize = true;
             CheckforUpdatesLinkLabel.LinkColor = Color.FromArgb(0, 192, 192);
-            CheckforUpdatesLinkLabel.Location = new Point(256, 7);
+            CheckforUpdatesLinkLabel.Location = new Point(246, 5);
             CheckforUpdatesLinkLabel.Name = "CheckforUpdatesLinkLabel";
-            CheckforUpdatesLinkLabel.Size = new Size(130, 20);
+            CheckforUpdatesLinkLabel.Size = new Size(104, 15);
             CheckforUpdatesLinkLabel.TabIndex = 82;
             CheckforUpdatesLinkLabel.TabStop = true;
             CheckforUpdatesLinkLabel.Text = "Check for Updates";
@@ -2127,9 +2125,9 @@
             Icons8LinkLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             Icons8LinkLabel.AutoSize = true;
             Icons8LinkLabel.LinkColor = Color.FromArgb(224, 224, 224);
-            Icons8LinkLabel.Location = new Point(277, 59);
+            Icons8LinkLabel.Location = new Point(262, 44);
             Icons8LinkLabel.Name = "Icons8LinkLabel";
-            Icons8LinkLabel.Size = new Size(109, 20);
+            Icons8LinkLabel.Size = new Size(88, 15);
             Icons8LinkLabel.TabIndex = 82;
             Icons8LinkLabel.TabStop = true;
             Icons8LinkLabel.Text = "Icons by Icons8";
@@ -2140,9 +2138,9 @@
             RMCTitleLabel.AutoSize = true;
             RMCTitleLabel.Font = new Font("Arial", 11F);
             RMCTitleLabel.ForeColor = Color.FromArgb(224, 224, 224);
-            RMCTitleLabel.Location = new Point(68, 9);
+            RMCTitleLabel.Location = new Point(60, 7);
             RMCTitleLabel.Name = "RMCTitleLabel";
-            RMCTitleLabel.Size = new Size(177, 22);
+            RMCTitleLabel.Size = new Size(136, 17);
             RMCTitleLabel.TabIndex = 1;
             RMCTitleLabel.Text = "RapidMessageCast\r\n";
             RMCTitleLabel.TextAlign = ContentAlignment.TopRight;
@@ -2151,8 +2149,9 @@
             // 
             RMCLogoImage2.Image = Properties.Resources.RMC_GUI_Icon;
             RMCLogoImage2.Location = new Point(0, 0);
+            RMCLogoImage2.Margin = new Padding(3, 2, 3, 2);
             RMCLogoImage2.Name = "RMCLogoImage2";
-            RMCLogoImage2.Size = new Size(63, 56);
+            RMCLogoImage2.Size = new Size(55, 42);
             RMCLogoImage2.SizeMode = PictureBoxSizeMode.Zoom;
             RMCLogoImage2.TabIndex = 81;
             RMCLogoImage2.TabStop = false;
@@ -2164,24 +2163,23 @@
             AboutText.BorderStyle = BorderStyle.FixedSingle;
             AboutText.Font = new Font("Segoe UI Variable Text", 8F);
             AboutText.ForeColor = Color.White;
-            AboutText.Location = new Point(0, 88);
+            AboutText.Location = new Point(0, 66);
             AboutText.Margin = new Padding(3, 2, 3, 2);
             AboutText.MaxLength = 255;
             AboutText.Multiline = true;
             AboutText.Name = "AboutText";
             AboutText.ScrollBars = ScrollBars.Both;
-            AboutText.Size = new Size(394, 253);
+            AboutText.Size = new Size(358, 227);
             AboutText.TabIndex = 83;
             AboutText.Text = resources.GetString("AboutText.Text");
-            AboutText.WordWrap = false;
             // 
             // verNumbLblAboutLbl
             // 
             verNumbLblAboutLbl.Font = new Font("Arial", 8F);
             verNumbLblAboutLbl.ForeColor = Color.Silver;
-            verNumbLblAboutLbl.Location = new Point(71, 24);
+            verNumbLblAboutLbl.Location = new Point(61, 20);
             verNumbLblAboutLbl.Name = "verNumbLblAboutLbl";
-            verNumbLblAboutLbl.Size = new Size(309, 32);
+            verNumbLblAboutLbl.Size = new Size(270, 24);
             verNumbLblAboutLbl.TabIndex = 80;
             verNumbLblAboutLbl.Text = "by lloyd99901";
             verNumbLblAboutLbl.TextAlign = ContentAlignment.MiddleLeft;
@@ -2189,34 +2187,61 @@
             // LogTab
             // 
             LogTab.BackColor = Color.FromArgb(30, 30, 30);
-            LogTab.Controls.Add(RenewIPBtn);
-            LogTab.Controls.Add(OpenRMCLogFolderBtn);
-            LogTab.Controls.Add(RMCLogsImage);
-            LogTab.Controls.Add(clearLogBtn);
-            LogTab.Controls.Add(SaveRMCRuntimeLogBtn);
-            LogTab.Controls.Add(RMCLogLabel);
             LogTab.Controls.Add(logList);
-            LogTab.Location = new Point(4, 29);
+            LogTab.Controls.Add(panel3);
+            LogTab.Location = new Point(4, 24);
+            LogTab.Margin = new Padding(3, 2, 3, 2);
             LogTab.Name = "LogTab";
-            LogTab.Size = new Size(394, 341);
+            LogTab.Size = new Size(358, 292);
             LogTab.TabIndex = 4;
             LogTab.Text = "Logs";
             // 
+            // logList
+            // 
+            logList.BackColor = Color.FromArgb(45, 45, 45);
+            logList.BorderStyle = BorderStyle.FixedSingle;
+            logList.Dock = DockStyle.Fill;
+            logList.Font = new Font("Segoe UI", 7F);
+            logList.ForeColor = Color.White;
+            logList.FormattingEnabled = true;
+            logList.HorizontalScrollbar = true;
+            logList.IntegralHeight = false;
+            logList.ItemHeight = 12;
+            logList.Location = new Point(0, 29);
+            logList.Margin = new Padding(3, 2, 3, 2);
+            logList.Name = "logList";
+            logList.Size = new Size(358, 263);
+            logList.TabIndex = 54;
+            // 
+            // panel3
+            // 
+            panel3.Controls.Add(RenewIPBtn);
+            panel3.Controls.Add(OpenRMCLogFolderBtn);
+            panel3.Controls.Add(clearLogBtn);
+            panel3.Controls.Add(RMCLogLabel);
+            panel3.Controls.Add(SaveRMCRuntimeLogBtn);
+            panel3.Controls.Add(RMCLogsImage);
+            panel3.Dock = DockStyle.Top;
+            panel3.Location = new Point(0, 0);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(358, 29);
+            panel3.TabIndex = 108;
+            // 
             // RenewIPBtn
             // 
-            RenewIPBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             RenewIPBtn.BackColor = Color.FromArgb(48, 48, 48);
             RenewIPBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            RenewIPBtn.Dock = DockStyle.Right;
             RenewIPBtn.FlatAppearance.BorderColor = Color.Gray;
             RenewIPBtn.FlatStyle = FlatStyle.Flat;
             RenewIPBtn.Font = new Font("Arial", 6F);
             RenewIPBtn.ForeColor = Color.White;
             RenewIPBtn.Image = Properties.Resources.icons8_ip_24;
             RenewIPBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            RenewIPBtn.Location = new Point(129, 0);
+            RenewIPBtn.Location = new Point(112, 0);
             RenewIPBtn.Margin = new Padding(3, 2, 3, 2);
             RenewIPBtn.Name = "RenewIPBtn";
-            RenewIPBtn.Size = new Size(83, 32);
+            RenewIPBtn.Size = new Size(73, 29);
             RenewIPBtn.TabIndex = 107;
             RenewIPBtn.Text = "Renew IP";
             RenewIPBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -2225,101 +2250,85 @@
             // 
             // OpenRMCLogFolderBtn
             // 
-            OpenRMCLogFolderBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             OpenRMCLogFolderBtn.BackColor = Color.FromArgb(48, 48, 48);
+            OpenRMCLogFolderBtn.Dock = DockStyle.Right;
             OpenRMCLogFolderBtn.FlatAppearance.BorderColor = Color.Gray;
             OpenRMCLogFolderBtn.FlatStyle = FlatStyle.Flat;
             OpenRMCLogFolderBtn.Font = new Font("Arial", 6.5F);
             OpenRMCLogFolderBtn.ForeColor = Color.FromArgb(224, 224, 224);
             OpenRMCLogFolderBtn.Image = Properties.Resources.icons8_external_link_24;
             OpenRMCLogFolderBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            OpenRMCLogFolderBtn.Location = new Point(212, 0);
+            OpenRMCLogFolderBtn.Location = new Point(185, 0);
             OpenRMCLogFolderBtn.Margin = new Padding(3, 2, 3, 2);
             OpenRMCLogFolderBtn.Name = "OpenRMCLogFolderBtn";
-            OpenRMCLogFolderBtn.Size = new Size(38, 32);
+            OpenRMCLogFolderBtn.Size = new Size(33, 29);
             OpenRMCLogFolderBtn.TabIndex = 106;
             OpenRMCLogFolderBtn.TextAlign = ContentAlignment.MiddleRight;
             OpenRMCLogFolderBtn.UseVisualStyleBackColor = false;
             OpenRMCLogFolderBtn.Click += OpenRMCLogFolderBtn_Click;
             // 
-            // RMCLogsImage
-            // 
-            RMCLogsImage.Image = Properties.Resources.icons8_pc_24;
-            RMCLogsImage.Location = new Point(6, 3);
-            RMCLogsImage.Name = "RMCLogsImage";
-            RMCLogsImage.Size = new Size(24, 24);
-            RMCLogsImage.SizeMode = PictureBoxSizeMode.AutoSize;
-            RMCLogsImage.TabIndex = 105;
-            RMCLogsImage.TabStop = false;
-            // 
             // clearLogBtn
             // 
-            clearLogBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             clearLogBtn.BackColor = Color.FromArgb(48, 48, 48);
+            clearLogBtn.Dock = DockStyle.Right;
             clearLogBtn.FlatAppearance.BorderColor = Color.Gray;
             clearLogBtn.FlatStyle = FlatStyle.Flat;
             clearLogBtn.Font = new Font("Arial", 6.5F);
             clearLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
             clearLogBtn.Image = Properties.Resources.icons8_delete_24;
             clearLogBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            clearLogBtn.Location = new Point(250, 0);
+            clearLogBtn.Location = new Point(218, 0);
             clearLogBtn.Margin = new Padding(3, 2, 3, 2);
             clearLogBtn.Name = "clearLogBtn";
-            clearLogBtn.Size = new Size(63, 32);
+            clearLogBtn.Size = new Size(62, 29);
             clearLogBtn.TabIndex = 58;
             clearLogBtn.Text = "Clear";
             clearLogBtn.TextAlign = ContentAlignment.MiddleRight;
             clearLogBtn.UseVisualStyleBackColor = false;
             clearLogBtn.Click += ClearLogBtn_Click;
             // 
+            // RMCLogLabel
+            // 
+            RMCLogLabel.AutoSize = true;
+            RMCLogLabel.Font = new Font("Arial", 10F);
+            RMCLogLabel.ForeColor = Color.White;
+            RMCLogLabel.Location = new Point(27, 6);
+            RMCLogLabel.Name = "RMCLogLabel";
+            RMCLogLabel.Size = new Size(81, 16);
+            RMCLogLabel.TabIndex = 55;
+            RMCLogLabel.Text = "Debug Log:";
+            RMCLogLabel.TextAlign = ContentAlignment.TopRight;
+            // 
             // SaveRMCRuntimeLogBtn
             // 
-            SaveRMCRuntimeLogBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             SaveRMCRuntimeLogBtn.BackColor = Color.FromArgb(48, 48, 48);
+            SaveRMCRuntimeLogBtn.Dock = DockStyle.Right;
             SaveRMCRuntimeLogBtn.FlatAppearance.BorderColor = Color.Gray;
             SaveRMCRuntimeLogBtn.FlatStyle = FlatStyle.Flat;
             SaveRMCRuntimeLogBtn.Font = new Font("Arial", 6.5F);
             SaveRMCRuntimeLogBtn.ForeColor = Color.FromArgb(224, 224, 224);
             SaveRMCRuntimeLogBtn.Image = Properties.Resources.icons8_save_24;
             SaveRMCRuntimeLogBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            SaveRMCRuntimeLogBtn.Location = new Point(313, 0);
+            SaveRMCRuntimeLogBtn.Location = new Point(280, 0);
             SaveRMCRuntimeLogBtn.Margin = new Padding(3, 2, 3, 2);
             SaveRMCRuntimeLogBtn.Name = "SaveRMCRuntimeLogBtn";
-            SaveRMCRuntimeLogBtn.Size = new Size(81, 32);
+            SaveRMCRuntimeLogBtn.Size = new Size(78, 29);
             SaveRMCRuntimeLogBtn.TabIndex = 57;
             SaveRMCRuntimeLogBtn.Text = "Save log";
             SaveRMCRuntimeLogBtn.TextAlign = ContentAlignment.MiddleRight;
             SaveRMCRuntimeLogBtn.UseVisualStyleBackColor = false;
             SaveRMCRuntimeLogBtn.Click += SaveRMCRuntimeLogBtn_Click;
             // 
-            // RMCLogLabel
+            // RMCLogsImage
             // 
-            RMCLogLabel.AutoSize = true;
-            RMCLogLabel.Font = new Font("Arial", 10F);
-            RMCLogLabel.ForeColor = Color.White;
-            RMCLogLabel.Location = new Point(30, 7);
-            RMCLogLabel.Name = "RMCLogLabel";
-            RMCLogLabel.Size = new Size(94, 19);
-            RMCLogLabel.TabIndex = 55;
-            RMCLogLabel.Text = "Debug Log:";
-            RMCLogLabel.TextAlign = ContentAlignment.TopRight;
-            // 
-            // logList
-            // 
-            logList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            logList.BackColor = Color.FromArgb(45, 45, 45);
-            logList.BorderStyle = BorderStyle.FixedSingle;
-            logList.Font = new Font("Segoe UI", 6.5F);
-            logList.ForeColor = Color.White;
-            logList.FormattingEnabled = true;
-            logList.HorizontalScrollbar = true;
-            logList.IntegralHeight = false;
-            logList.ItemHeight = 13;
-            logList.Location = new Point(0, 32);
-            logList.Margin = new Padding(3, 2, 3, 2);
-            logList.Name = "logList";
-            logList.Size = new Size(394, 309);
-            logList.TabIndex = 54;
+            RMCLogsImage.Image = Properties.Resources.icons8_pc_24;
+            RMCLogsImage.Location = new Point(3, 1);
+            RMCLogsImage.Margin = new Padding(3, 2, 3, 2);
+            RMCLogsImage.Name = "RMCLogsImage";
+            RMCLogsImage.Size = new Size(24, 24);
+            RMCLogsImage.SizeMode = PictureBoxSizeMode.AutoSize;
+            RMCLogsImage.TabIndex = 105;
+            RMCLogsImage.TabStop = false;
             // 
             // IconList
             // 
@@ -2339,6 +2348,7 @@
             // 
             // HideQuickLoadBtn
             // 
+            HideQuickLoadBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             HideQuickLoadBtn.BackColor = Color.FromArgb(48, 48, 48);
             HideQuickLoadBtn.BackgroundImageLayout = ImageLayout.Zoom;
             HideQuickLoadBtn.FlatAppearance.BorderSize = 0;
@@ -2347,10 +2357,10 @@
             HideQuickLoadBtn.ForeColor = Color.White;
             HideQuickLoadBtn.Image = Properties.Resources.icons8_hide_24;
             HideQuickLoadBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            HideQuickLoadBtn.Location = new Point(165, -3);
+            HideQuickLoadBtn.Location = new Point(140, 1);
             HideQuickLoadBtn.Margin = new Padding(3, 2, 3, 2);
             HideQuickLoadBtn.Name = "HideQuickLoadBtn";
-            HideQuickLoadBtn.Size = new Size(151, 32);
+            HideQuickLoadBtn.Size = new Size(132, 24);
             HideQuickLoadBtn.TabIndex = 90;
             HideQuickLoadBtn.Text = "Hide Quick Load";
             HideQuickLoadBtn.TextAlign = ContentAlignment.MiddleRight;
@@ -2362,7 +2372,8 @@
             MainSplitContainer.Dock = DockStyle.Fill;
             MainSplitContainer.FixedPanel = FixedPanel.Panel1;
             MainSplitContainer.IsSplitterFixed = true;
-            MainSplitContainer.Location = new Point(0, 48);
+            MainSplitContainer.Location = new Point(0, 36);
+            MainSplitContainer.Margin = new Padding(3, 2, 3, 2);
             MainSplitContainer.Name = "MainSplitContainer";
             // 
             // MainSplitContainer.Panel1
@@ -2374,13 +2385,13 @@
             MainSplitContainer.Panel1.Controls.Add(QuickLoadRMSGFileLabel);
             MainSplitContainer.Panel1.Controls.Add(QuickLoadListbox);
             MainSplitContainer.Panel1.Controls.Add(RMSGHelpLink);
-            MainSplitContainer.Panel1MinSize = 317;
+            MainSplitContainer.Panel1MinSize = 275;
             // 
             // MainSplitContainer.Panel2
             // 
             MainSplitContainer.Panel2.Controls.Add(ModulesTabControl);
-            MainSplitContainer.Size = new Size(724, 374);
-            MainSplitContainer.SplitterDistance = 317;
+            MainSplitContainer.Size = new Size(645, 320);
+            MainSplitContainer.SplitterDistance = 275;
             MainSplitContainer.TabIndex = 91;
             // 
             // panel1
@@ -2389,9 +2400,10 @@
             panel1.Controls.Add(RefreshQuickLoadListBtn);
             panel1.Controls.Add(DeleteSelectedRMSGFileBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 333);
+            panel1.Location = new Point(0, 289);
+            panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(317, 41);
+            panel1.Size = new Size(275, 31);
             panel1.TabIndex = 91;
             // 
             // DeleteSelectedRMSGFileBtn
@@ -2404,36 +2416,106 @@
             DeleteSelectedRMSGFileBtn.ForeColor = Color.FromArgb(224, 224, 224);
             DeleteSelectedRMSGFileBtn.Image = Properties.Resources.icons8_delete_24_white;
             DeleteSelectedRMSGFileBtn.ImageAlign = ContentAlignment.MiddleLeft;
-            DeleteSelectedRMSGFileBtn.Location = new Point(225, 0);
+            DeleteSelectedRMSGFileBtn.Location = new Point(195, 0);
             DeleteSelectedRMSGFileBtn.Margin = new Padding(3, 2, 3, 2);
             DeleteSelectedRMSGFileBtn.Name = "DeleteSelectedRMSGFileBtn";
-            DeleteSelectedRMSGFileBtn.Size = new Size(92, 41);
+            DeleteSelectedRMSGFileBtn.Size = new Size(80, 31);
             DeleteSelectedRMSGFileBtn.TabIndex = 75;
             DeleteSelectedRMSGFileBtn.Text = "Delete";
             DeleteSelectedRMSGFileBtn.TextAlign = ContentAlignment.MiddleRight;
             DeleteSelectedRMSGFileBtn.UseVisualStyleBackColor = false;
             DeleteSelectedRMSGFileBtn.Click += DeleteSelectedRMSGFileBtn_Click;
             // 
+            // panel2
+            // 
+            panel2.Controls.Add(StartBroadcastBtn);
+            panel2.Controls.Add(ScheduleBroadcastBtn);
+            panel2.Controls.Add(BroadcastHistoryBtn);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(0, 356);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(645, 52);
+            panel2.TabIndex = 92;
+            // 
+            // StartBroadcastBtn
+            // 
+            StartBroadcastBtn.BackColor = Color.FromArgb(53, 48, 70);
+            StartBroadcastBtn.BackgroundImageLayout = ImageLayout.Center;
+            StartBroadcastBtn.Dock = DockStyle.Bottom;
+            StartBroadcastBtn.FlatStyle = FlatStyle.Flat;
+            StartBroadcastBtn.Font = new Font("Arial", 9F, FontStyle.Bold);
+            StartBroadcastBtn.ForeColor = Color.PaleGreen;
+            StartBroadcastBtn.Image = Properties.Resources.Send4;
+            StartBroadcastBtn.ImageAlign = ContentAlignment.TopCenter;
+            StartBroadcastBtn.Location = new Point(93, 1);
+            StartBroadcastBtn.Margin = new Padding(3, 2, 3, 2);
+            StartBroadcastBtn.Name = "StartBroadcastBtn";
+            StartBroadcastBtn.Size = new Size(459, 51);
+            StartBroadcastBtn.TabIndex = 95;
+            StartBroadcastBtn.Text = "Start Message Broadcast";
+            StartBroadcastBtn.TextAlign = ContentAlignment.BottomCenter;
+            StartBroadcastBtn.UseVisualStyleBackColor = false;
+            StartBroadcastBtn.Click += StartBroadcastBtn_Click;
+            // 
+            // ScheduleBroadcastBtn
+            // 
+            ScheduleBroadcastBtn.BackColor = Color.FromArgb(48, 48, 90);
+            ScheduleBroadcastBtn.Dock = DockStyle.Right;
+            ScheduleBroadcastBtn.FlatAppearance.BorderColor = Color.Gray;
+            ScheduleBroadcastBtn.FlatStyle = FlatStyle.Flat;
+            ScheduleBroadcastBtn.Font = new Font("Arial", 9F);
+            ScheduleBroadcastBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            ScheduleBroadcastBtn.Image = Properties.Resources.icons8_schedule_24;
+            ScheduleBroadcastBtn.ImageAlign = ContentAlignment.TopCenter;
+            ScheduleBroadcastBtn.Location = new Point(552, 0);
+            ScheduleBroadcastBtn.Margin = new Padding(3, 2, 3, 2);
+            ScheduleBroadcastBtn.Name = "ScheduleBroadcastBtn";
+            ScheduleBroadcastBtn.Size = new Size(93, 52);
+            ScheduleBroadcastBtn.TabIndex = 94;
+            ScheduleBroadcastBtn.Text = "Schedule...";
+            ScheduleBroadcastBtn.TextAlign = ContentAlignment.BottomCenter;
+            ScheduleBroadcastBtn.UseVisualStyleBackColor = false;
+            ScheduleBroadcastBtn.Click += ScheduleBroadcastBtn_Click;
+            // 
+            // BroadcastHistoryBtn
+            // 
+            BroadcastHistoryBtn.BackColor = Color.FromArgb(48, 48, 90);
+            BroadcastHistoryBtn.Dock = DockStyle.Left;
+            BroadcastHistoryBtn.FlatAppearance.BorderColor = Color.Gray;
+            BroadcastHistoryBtn.FlatStyle = FlatStyle.Flat;
+            BroadcastHistoryBtn.Font = new Font("Arial", 9F);
+            BroadcastHistoryBtn.ForeColor = Color.FromArgb(224, 224, 224);
+            BroadcastHistoryBtn.Image = Properties.Resources.icons8_broadcast_24;
+            BroadcastHistoryBtn.ImageAlign = ContentAlignment.TopCenter;
+            BroadcastHistoryBtn.Location = new Point(0, 0);
+            BroadcastHistoryBtn.Margin = new Padding(3, 2, 3, 2);
+            BroadcastHistoryBtn.Name = "BroadcastHistoryBtn";
+            BroadcastHistoryBtn.Size = new Size(93, 52);
+            BroadcastHistoryBtn.TabIndex = 93;
+            BroadcastHistoryBtn.Text = "History";
+            BroadcastHistoryBtn.TextAlign = ContentAlignment.BottomCenter;
+            BroadcastHistoryBtn.UseVisualStyleBackColor = false;
+            BroadcastHistoryBtn.Click += BroadcastHistoryBtn_Click;
+            // 
             // RMCManager
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(30, 30, 30);
-            ClientSize = new Size(724, 490);
+            ClientSize = new Size(645, 408);
             Controls.Add(MainSplitContainer);
+            Controls.Add(panel2);
             Controls.Add(MainTitleBar);
-            Controls.Add(ScheduleBroadcastBtn);
-            Controls.Add(BroadcastHistoryBtn);
-            Controls.Add(StartBroadcastBtn);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(3, 2, 3, 2);
-            MinimumSize = new Size(742, 537);
+            MinimumSize = new Size(661, 447);
             Name = "RMCManager";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "RapidMessageCast - vx.x.x.x";
             FormClosing += RMCManager_FormClosing;
             Load += Form1_Load;
             Shown += RMCManager_Shown;
+            Resize += RMCManager_Resize;
             MainTitleBar.ResumeLayout(false);
             RMCLogoPanel.ResumeLayout(false);
             RMCLogoPanel.PerformLayout();
@@ -2442,11 +2524,11 @@
             PCtabControl1.ResumeLayout(false);
             PCMessageTab.ResumeLayout(false);
             PCMessageTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             ((System.ComponentModel.ISupportInitialize)PCBroadcastImage).EndInit();
             ((System.ComponentModel.ISupportInitialize)PCexpirySecondsTime).EndInit();
             ((System.ComponentModel.ISupportInitialize)PCexpiryMinutesTime).EndInit();
             ((System.ComponentModel.ISupportInitialize)PCexpiryHourTime).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             PCBroadcastToTab.ResumeLayout(false);
             PCBroadcastToTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)BroadcastToImage).EndInit();
@@ -2476,7 +2558,8 @@
             AboutTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogoImage2).EndInit();
             LogTab.ResumeLayout(false);
-            LogTab.PerformLayout();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)RMCLogsImage).EndInit();
             MainSplitContainer.Panel1.ResumeLayout(false);
             MainSplitContainer.Panel1.PerformLayout();
@@ -2484,13 +2567,12 @@
             ((System.ComponentModel.ISupportInitialize)MainSplitContainer).EndInit();
             MainSplitContainer.ResumeLayout(false);
             panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private Panel MainTitleBar;
-        private Button BroadcastHistoryBtn;
-        private Button ScheduleBroadcastBtn;
         private Button OpenRMCFileBtn;
         private Button SaveRMCFileBTN;
         private Button QuickSaveRMSGBtn;
@@ -2587,7 +2669,6 @@
         private CheckBox ReattemptOnErrorCheckbox;
         private LinkLabel ReattemptonErrorHelpLbl;
         private Label MessageCheckboxSettingLabel;
-        public Button StartBroadcastBtn;
         private ToolTip toolTipHelp;
         private Label verNumbLblAboutLbl;
         private Label RMCTitleLabel;
@@ -2648,5 +2729,10 @@
         private SplitContainer MainSplitContainer;
         private Panel panel1;
         private Button DeleteSelectedRMSGFileBtn;
+        private Panel panel2;
+        public Button StartBroadcastBtn;
+        private Button ScheduleBroadcastBtn;
+        private Button BroadcastHistoryBtn;
+        private Panel panel3;
     }
 }

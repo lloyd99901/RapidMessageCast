@@ -5,8 +5,9 @@ namespace RapidMessageCast_Manager
         [STAThread]
         static void Main()
         {
-            // Initialize the application and run the main form
-            ApplicationConfiguration.Initialize();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
             Application.Run(new RMCManager());
         }
     }

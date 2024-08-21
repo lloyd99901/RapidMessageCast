@@ -45,6 +45,7 @@ using System.Text.RegularExpressions;
 //Fix me list:
 //(1) [FIXME] - 21/07/24 - Why is this function (ScheduledBroadcast) only running the PC module? It should check if the other modules are enabled and run them as well. TODO: Fix this.
 //(2) [Critical Fault] - 03/08/24 - There is a fault where if there are too many msg commands sent at once, the entire network service stack on the broadcaster machine freezes. Primary suspect is DNS Service hanging, I believe this is because the DNS Client has to parse alot of DNS hostnames quickly so it gets overwhelmed. This is a theory, but it is the most likely cause. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens. This is a critical fault that needs to be fixed before the program can be released. Try to make a service restart for DNS Client if this happens.
+//Reenable TRACELOG SAVES WHEN FORM CLOSED once built, is it just writing loads of logs to my disk when im constantly testing.
 
 namespace RapidMessageCast_Manager
 {
@@ -70,7 +71,7 @@ namespace RapidMessageCast_Manager
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            TraceLog($"Info - [RMC Startup]: Starting RMC GUI {versionNumb}. Welcome, {Environment.UserName}");
+            TraceLog($"Info - [RMC Startup]: Starting RMC {versionNumb}. Welcome, {Environment.UserName}");
             CheckCommandLineArguments();
             //This if statement is to prevent the program from loading fully when the program is started with a command line argument (This will prevent slowdowns when doing automatic broadcasting).
             if (!dontPromptClosureMessage)
@@ -84,8 +85,7 @@ namespace RapidMessageCast_Manager
                 RefreshRMSGFileList();
                 InitalizeToolTipHelp();
             }
-            Console.WriteLine("RapidMessageCast Manager has started.");
-            TraceLog("Info - [RMC Startup]: RMC GUI is now ready.");
+            TraceLog("Info - [RMC Startup]: RMC is now ready.");
         }
 
         #region Functions
@@ -449,7 +449,7 @@ namespace RapidMessageCast_Manager
                     return;
                 }
             }
-            TraceLog($"Info - [LoadAndParseRMSGFile]: Parsing RMSG file: {Path.GetFileName(filePath)}");
+            TraceLog($"Info - [LoadAndParseRMSGFile]: Starting to parse RMSG file: {Path.GetFileName(filePath)}");
             try
             {
                 //Check RMCSoftwareVersion, if it doesn't match the current version, then show a message box.
@@ -850,6 +850,7 @@ namespace RapidMessageCast_Manager
                 if (newFileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
                 {
                     TraceLog("Error - [RenameSelectedRMSGBtn]: Error renaming file, invalid characters in the filename.");
+                    MessageBox.Show("The file name contains invalid characters. Please enter a valid file name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -860,6 +861,7 @@ namespace RapidMessageCast_Manager
                     DialogResult dialogResult = MessageBox.Show("The file already exists. Do you want to overwrite it?", "Overwrite File", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                     if (dialogResult == DialogResult.No)
                         return;
+                    TraceLog($"Info - [RenameSelectedRMSGBtn]: File overwrite request approved on file: {newFileName}");
                 }
 
                 try
@@ -936,7 +938,9 @@ namespace RapidMessageCast_Manager
             {
                 // Attempt Save the rmc runtime logfile by clicking the save log button.
                 TraceLog("Info - [RMC Manager]: Saving log file and closing... [END OF LOG]");
-                SaveRMCRuntimeLogBtn_Click(sender, e);
+
+                //Reenable this once built, is it just writing loads of logs to my disk when im constantly testing. so i have disabled it for now.
+                //SaveRMCRuntimeLogBtn_Click(sender, e);
             }
         }
 
@@ -1056,7 +1060,7 @@ namespace RapidMessageCast_Manager
 
         private void RMCManager_Shown(object sender, EventArgs e)
         {
-            //check if scheduled broadcast is true. If it is, hide the form.
+            //Check if scheduled broadcast is true. If it is, hide the form.
             if (dontPromptClosureMessage)
             {
                 Hide();
@@ -1167,6 +1171,14 @@ namespace RapidMessageCast_Manager
         private void OpenSaveLocationBtn_Click(object sender, EventArgs e)
         {
             IOManager.OpenLinkOrFolder("RMSG Files");
+        }
+
+        private void RMCManager_Resize(object sender, EventArgs e)
+        {
+            // Determine the new font size based on the form's width or height
+            float newFontSize = Math.Max(9, Math.Min(this.ClientSize.Width / 40, this.ClientSize.Height / 40));
+            // Apply the new font size
+            PCBroadcastMessageTxt.Font = new Font(PCBroadcastMessageTxt.Font.FontFamily, newFontSize);
         }
     }
 }
