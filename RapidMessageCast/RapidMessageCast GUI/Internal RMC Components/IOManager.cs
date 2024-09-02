@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
 using System.Xml;
 
 //--RapidMessageCast Software--
@@ -181,7 +179,73 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             // Save the document to the specified file path
             doc.Save(filePath);
         }
+        public static string[] LoadRMCEmailFile(string filePath)
+        {
+            //Load the email file from the specified file path.
+            //Here is the return array structure:
+            // [0] = Error message (if any)
+            // [1] = RMC Software Version
+            // [2] = Email Subject
+            // [3] = Email Body
+            // [4] = Is HTML enabled
+            try
+            {
+                XmlDocument doc = new();
+                doc.Load(filePath);
 
+                // Helper function to get element's inner text by tag name
+                string GetElementValue(string tagName)
+                {
+                    var node = doc.GetElementsByTagName(tagName).Item(0);
+                    return node?.InnerText ?? string.Empty;
+                }
+
+                // Helper function to check if a module is enabled
+                bool IsEnabled(string tagName) => GetElementValue(tagName).Equals("Enabled", StringComparison.OrdinalIgnoreCase);
+
+                // Extract values
+                string RMCSoftwareVersion = GetElementValue("RMCSoftwareVersion");
+                string emailSubject = GetElementValue("EmailSubject");
+                string emailBody = GetElementValue("EmailBody");
+                bool isHTML = IsEnabled("IsHTML");
+
+                //return as an array
+                return ["", RMCSoftwareVersion, emailSubject, emailBody, isHTML ? "Enabled" : "Disabled"];
+            }
+            catch (Exception ex)
+            {
+                return [$"Error - IO Manager Exception: {ex.Message}"];
+            }
+        }
+
+        public static void SaveRMCEmailFile(string filepath, string subject, string body, bool isHTML)
+        {
+            //Create a new XML document to store the email document.
+            XmlDocument doc = new();
+            //Create the root element for the email document.
+            XmlElement root = doc.CreateElement("RMCEmailSettings");
+            doc.AppendChild(root);
+            // Helper function to add elements to the root
+            void AddElement(string name, string value)
+            {
+                XmlElement elem = doc.CreateElement(name);
+                elem.InnerText = value;
+                root.AppendChild(elem);
+            }
+
+            // Helper function to add boolean elements as "Enabled" or "Disabled"
+            void AddBoolElement(string name, bool value)
+            {
+                AddElement(name, value ? "Enabled" : "Disabled");
+            }
+            //Add version of the software to the document, this is for future compatibility.
+            AddElement("RMCSoftwareVersion", Application.ProductVersion);
+            AddElement("EmailSubject", subject);
+            AddElement("EmailBody", body);
+            AddBoolElement("IsHTML", isHTML);
+            //Save
+            doc.Save(filepath);
+        }
         public static string AttemptToCreateRMCDirectories()
         {
             bool directoriesCreated = false;

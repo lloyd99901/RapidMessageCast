@@ -26,6 +26,7 @@ using RapidMessageCast_Manager.Internal_RMC_Components;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace RapidMessageCast_Manager.BroadcastModules
 {
@@ -69,7 +70,46 @@ namespace RapidMessageCast_Manager.BroadcastModules
             {
                 return;
             }
-            //TODO - Implement Email Sending
+            //Email Sending Code Here - Read the RMCEmail file via iomanager and send the email
+            string emailSubject = string.Empty;
+            string emailBody = string.Empty;
+            bool isEmailBodyHTML = false;
+            Encoding subjectEncodingType = Encoding.UTF8;
+            Encoding bodyEncodingType = Encoding.UTF8;
+            //Read the RMCEmail file IOManager LoadRMCEmailFile XML.
+            try
+            {
+                string[] EmailFileContents = IOManager.LoadRMCEmailFile(RMCEmailFileLocation);
+                //check if first 0 index is empty, if it isn't, something went wrong
+                if (string.IsNullOrWhiteSpace(EmailFileContents[0]))
+                {
+                    return;
+                }
+                //Check if the email subject is empty, if it is, return
+                if (string.IsNullOrWhiteSpace(EmailFileContents[1]))
+                {
+                    return;
+                }
+                //Check if the email body is empty, if it is, return
+                if (string.IsNullOrWhiteSpace(EmailFileContents[2]))
+                {
+                    return;
+                }
+                //Check if the email body is HTML
+                if (EmailFileContents[3].ToLower() == "true")
+                {
+                    isEmailBodyHTML = true;
+                }
+                //Since this is now checked, send the email
+                emailSubject = EmailFileContents[1];
+                emailBody = EmailFileContents[2];
+                //Send the email [TODO: PORT IS NOT CORRECT]
+                SendEmail(FQDNServer, 25, FromEmailAddress, AuthMode, AccountText, Password, TargetEmailAddresses, emailSubject, emailBody, isEmailBodyHTML, subjectEncodingType, bodyEncodingType);
+            }
+            catch
+            {
+                return;
+            }
         }
         private static void SendEmail(string FQDNServer, int FQDNPort, string FromEmailAddress, AuthMode AuthMode, string AccountText, string Password, string TargetEmailAddresses, string EmailSubject, string EmailBody, bool isEmailBodyHTML, Encoding SubjectEncodingType, Encoding BodyEncodingType)
         {

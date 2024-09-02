@@ -117,52 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="Rmsgcontextstrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>23, 19</value>
-  </metadata>
-  <metadata name="PCListcontextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>482, 17</value>
-  </metadata>
-  <data name="AboutText.Text" xml:space="preserve">
-    <value>RapidMessageCast Copyright (c) 2024 Lunar/lloyd99901
-
-License, Important Information, Caution Information, Acknowledgements, and Security Policy:
-
-MIT License:
-
-Copyright (c) 2024 Lunar/lloyd99901
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Important:
-This program is provided "as is" under the MIT License, without any guarantees or warranties, express or implied.
-By using this program, you acknowledge that the developers and distributors are not responsible for any failures, delays, errors, or other issues that may arise, including undelivered, delayed, or incorrect messages. Users should report any errors or problems on the GitHub Issues page of this project for support.
-
-Caution
-For critical emergency communication, always have a backup method in place. Use additional resources as needed and conduct a thorough audit to ensure this tool meets your specific needs. This audit should include testing the program in various scenarios, verifying compatibility with existing systems, and assessing its reliability and performance under different conditions.
-Conducting an audit helps identify any potential limitations or issues affecting the program's effectiveness in emergencies. It is the user's responsibility to verify the program's suitability and implement necessary safeguards or alternative communication methods.
-
-
-Acknowledgements:
-Icons in the RMC GUI are by Icons8
-Poul Bak on StackOverflow for WOL code base
-
-Security Policy:
-Our security policy is on our GitHub project page under the Security.md tab.</value>
-  </data>
-  <metadata name="IconList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>373, 17</value>
-  </metadata>
-  <metadata name="toolTipHelp.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>218, 21</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>82</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

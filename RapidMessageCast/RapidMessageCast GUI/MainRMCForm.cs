@@ -403,9 +403,8 @@ namespace RapidMessageCast_Manager
                 }
                 catch
                 {
-                    MessageBox.Show("Fatal Error! Unable to write to console! RMC will attempt save the debug log and will terminate.", "Critical Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     SaveRMCRuntimeLogBtn_Click(this, EventArgs.Empty); //Attempt Save the loglist to a file.
-                    Environment.Exit(713); //Bail out. If we can't even write to the console, then something is seriously wrong. ERROR_FATAL_APP_EXIT
+                    throw new Exception("RMC has encountered a critical error. Please close RMC and check the RMC log list for more information about what went wrong.");
                 }
             }
         }
@@ -1179,6 +1178,32 @@ namespace RapidMessageCast_Manager
             float newFontSize = Math.Max(9, Math.Min(this.ClientSize.Width / 40, this.ClientSize.Height / 40));
             // Apply the new font size
             PCBroadcastMessageTxt.Font = new Font(PCBroadcastMessageTxt.Font.FontFamily, newFontSize);
+            //TraceLog($"Info - [RMC Manager]: Resized the form. New font size: {newFontSize}");
+        }
+
+        private void EmailEditBtn_Click(object sender, EventArgs e)
+        {
+            //Open EmailEditor form. But wait for it to close, if the form returns a file path, put that path in the SelectedEmailFileTxtbox.
+            EmailEditor emailEditorForm = new();
+            if (emailEditorForm.ShowDialog() == DialogResult.OK)
+            {
+                AddressOfSMTPServerTxt.Text = emailEditorForm.SelectedEmailFile;
+            }
+        }
+
+        private void SelectRMCEmailFileBtn_Click(object sender, EventArgs e)
+        {
+            //Open file dialog to select a file. If the file is selected, put the file path in the SelectedEmailFileTxtbox. with Filter of .RMCEmail
+            using OpenFileDialog openFileDialog = new()
+            {
+                InitialDirectory = Application.StartupPath + "Email Files",
+                Filter = "RMC Email Files (*.RMCEmail)|*.RMCEmail|All Files (*.*)|*.*"
+            };
+            //If the file is selected, put the file path in the SelectedEmailFileTxtbox.
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                AddressOfSMTPServerTxt.Text = openFileDialog.FileName;
+            }
         }
     }
 }
