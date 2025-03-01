@@ -159,7 +159,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             if (isSecondTimeRunningWatchdog)
             {
                 RMCManagerForm.TraceLog("Critical - [MonitorBroadcastModules] - A hung broadcast module has been detected again. RMC is stuck. Call RMCDebugCall.");
-                RMCDebugCall(RMCManagerForm, "MonitorBroadcastModules");
+                RMCDebugCall(RMCManagerForm, "HandleHungBroadcastModule");
                 // Alert the user with a more urgent message
                 MessageBox.Show("A broadcast module has hung for the second time. It is recommended that you restart RapidMessageCast. A detailed debug text is on the log tab.", "RapidMessageCast - Critical Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 //Find out what module is still running and stop it.

@@ -1,5 +1,6 @@
 using RapidMessageCast_Manager.Internal_RMC_Components;
 using System.DirectoryServices;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -71,7 +72,7 @@ namespace RapidMessageCast_Manager
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            TraceLog($"Info - [RMC Startup]: Starting RMC {versionNumb}. Welcome, {Environment.UserName}");
+            TraceLog($"Info - [{MethodBase.GetCurrentMethod()?.Name ?? "FormLoad"}]: Starting RMC {versionNumb}. Welcome, {Environment.UserName}");
             CheckCommandLineArguments();
             //This if statement is to prevent the program from loading fully when the program is started with a command line argument (This will prevent slowdowns when doing automatic broadcasting).
             if (!dontPromptClosureMessage)
@@ -134,7 +135,7 @@ namespace RapidMessageCast_Manager
         {
             if (StartBroadcastBtn.InvokeRequired)
             {
-                StartBroadcastBtn.Invoke(new MethodInvoker(() => UpdateStartBroadcastButtonText(text)));
+                StartBroadcastBtn.Invoke(new System.Windows.Forms.MethodInvoker(() => UpdateStartBroadcastButtonText(text)));
             }
             else
             {
@@ -383,7 +384,7 @@ namespace RapidMessageCast_Manager
             {
                 if (logList.InvokeRequired)
                 {
-                    logList.Invoke(new MethodInvoker(() => TraceLog(item))); //This was added to prevent crashing when there are multiple threads trying to access the listbox.
+                    logList.Invoke(new System.Windows.Forms.MethodInvoker(() => TraceLog(item))); //This was added to prevent crashing when there are multiple threads trying to access the listbox.
                 }
                 else
                 {
@@ -408,6 +409,39 @@ namespace RapidMessageCast_Manager
                 }
             }
         }
+        //private void LogList_DrawItem(object sender, DrawItemEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (e.Index < 0) return;
+
+        //        ListBox listBox = sender as ListBox;
+        //        string itemText = listBox.Items[e.Index].ToString();
+        //        Color textColor = Color.Black; // Default color
+
+        //        // Determine color based on log level
+        //        if (itemText.Contains("Critical")) textColor = Color.Red;
+        //        else if (itemText.Contains("Error")) textColor = Color.OrangeRed;
+        //        else if (itemText.Contains("Warning")) textColor = Color.Orange;
+        //        else if (itemText.Contains("Notice")) textColor = Color.Blue;
+        //        else if (itemText.Contains("Info")) textColor = Color.Green;
+
+        //        // Draw background
+        //        e.DrawBackground();
+
+        //        // Draw text with color
+        //        using (Brush brush = new SolidBrush(textColor))
+        //        {
+        //            e.Graphics.DrawString(itemText, e.Font, brush, e.Bounds);
+        //        }
+
+        //        e.DrawFocusRectangle(); // Optional, draws focus rectangle when selected
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceLog($"Error - [{MethodBase.GetCurrentMethod()?.Name ?? "DrawItem"}] Failure in drawing log list item. {ex.Message}");
+        //    }
+        //}
 
         private void LoadGlobalSettings()
         {
@@ -439,11 +473,13 @@ namespace RapidMessageCast_Manager
                 }
                 else if (RMSGFileValues[0].StartsWith("Error"))
                 {
+                    MessageBox.Show("A RMSG file error has occurred. Please check the debug log for details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     TraceLog($"Error - [LoadAndParseRMSGFile]: Loading message returned an error: {RMSGFileValues[0]} - Loading of RMSG file halted.");
                     return;
                 }
                 else
                 {
+                    MessageBox.Show("An unknown file load error has occurred. Please check the debug log for details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     TraceLog($"Error - [LoadAndParseRMSGFile]: Loading message returned an unknown error: {RMSGFileValues[0]} - Loading of RMSG file halted.");
                     return;
                 }
@@ -455,7 +491,7 @@ namespace RapidMessageCast_Manager
                 if (RMSGFileValues[20] != versionNumb)
                 {
                     MessageBox.Show($"This RMSG file was created with a different version of RMC (Expected Version: {versionNumb}, Actual File Version: {RMSGFileValues[20]}). RMC will attempt to load this file, and once the file is loaded you can save this file again to convert this save to one that is compatible with the current version of RMC.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    TraceLog($"Info - [LoadAndParseRMSGFile]: RMSG file was created with a different version of RMC. RMSG resave might be required. RMC Version: {versionNumb}, RMSG Version: {RMSGFileValues[20]}");
+                    TraceLog($"Info - [LoadAndParseRMSGFile]: RMSG file was created with a different version of RMC. RMSG resave might be required. RMC Version: {versionNumb}, RMSG Version: {RMSGFileValues[20]}. Attempting to load...");
                 }
                 PCBroadcastMessageTxt.Text = RMSGFileValues[1];
                 PCBroadcastToList.Text = RMSGFileValues[2];
@@ -498,6 +534,7 @@ namespace RapidMessageCast_Manager
             catch (Exception ex)
             {
                 TraceLog($"Error - [LoadAndParseRMSGFile]: General Parse Failure: {ex} - Will now load global settings.");
+                MessageBox.Show("A general RMSG parse error has occurred. Please check the debug log for file errors.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LoadGlobalSettings(); //If the RMSG file fails to load, then load the global settings instead.
                 return;
             }
@@ -819,6 +856,7 @@ namespace RapidMessageCast_Manager
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show("File deletion error. Please check the debug log for details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     TraceLog($"Error - [DeleteSelectedRMSGFile]: Failure in deleting file: {ex}");
                 }
             }
@@ -939,7 +977,7 @@ namespace RapidMessageCast_Manager
                 TraceLog("Info - [RMC Manager]: Saving log file and closing... [END OF LOG]");
 
                 //Reenable this once built, is it just writing loads of logs to my disk when im constantly testing. so i have disabled it for now.
-                //SaveRMCRuntimeLogBtn_Click(sender, e);
+                SaveRMCRuntimeLogBtn_Click(sender, e);
             }
         }
 

@@ -278,7 +278,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                     return "Info - [IOManager]: Required directories created. " + directories.Length + " directories created.";
                 }
                 
-                return "Info - [IOManager]: Required directories already exist."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
+                return "Info - [IOManager]: Required RMC directories already exist. No action needed."; //This message is returned since the next instruction is to load the list of RMSG files on the main form.
             }
             catch (Exception ex)
             {
