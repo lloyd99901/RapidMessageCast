@@ -1,6 +1,6 @@
 ﻿using RapidMessageCast_Manager.BroadcastModules;
 using System.Diagnostics;
-
+using System.Runtime.InteropServices;
 //--RapidMessageCast Software--
 //BroadcastController.cs - RapidMessageCast Manager
 //Used to control and watch over the broadcast modules. This class is used to start and stop the modules, as well as check if any are running.
@@ -30,6 +30,14 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
 {
     internal class BroadcastController
     {
+        // Import the SetThreadExecutionState function from kernel32.dll
+        [DllImport("kernel32.dll")]
+        private static extern uint SetThreadExecutionState(uint esFlags);
+
+        // Flags to prevent the system from sleeping
+        private const uint ES_CONTINUOUS = 0x80000000;
+        private const uint ES_SYSTEM_REQUIRED = 0x00000001;
+
         private static readonly Dictionary<RMCEnums, bool> moduleRunning = new()
         {
             { RMCEnums.PC, false },
@@ -47,6 +55,7 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
                 MessageBox.Show("Fatal Error - StartBroadcastModule has reported a critical error, it is recommended that you restart RapidMessageCast. BroadcastController reported as null.");
                 return;
             }
+            SetSystemSleepState(RMCManagerForm, false);
             PCBroadcastModule pcBroadcastModule = new();
             RMCManagerForm.TraceLog($"Info - [BroadcastController]: Starting StartPCBroadcastModule...");
             moduleRunning[RMCEnums.PC] = true;
@@ -191,6 +200,28 @@ namespace RapidMessageCast_Manager.Internal_RMC_Components
             RMCManagerForm.TraceLog("Critical - [RMCDebugCall] - Detailed log: RMC process threads: " + Process.GetCurrentProcess().Threads.Count);
             RMCManagerForm.TraceLog("Critical - [RMCDebugCall] - Detailed log: RMC process virtual memory: " + Process.GetCurrentProcess().VirtualMemorySize64);
             RMCManagerForm.TraceLog("Critical - [RMCDebugCall] - Debug call completed.");
+        }
+
+        private static void SetSystemSleepState(RMCManager RMCManagerForm, bool AllowSleep)
+        {
+            RMCManagerForm.TraceLog($"Info - [SetSystemSleepState] - Attempting to set sleep state to: {AllowSleep} ...");
+            try
+            {
+                if (AllowSleep) // System can sleep
+                {
+                    SetThreadExecutionState(ES_CONTINUOUS);
+                    RMCManagerForm.TraceLog("Info - [SetSystemSleepState] - System sleep is now allowed.");
+                }
+                else //No, prevent sleep
+                {
+                    SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+                    RMCManagerForm.TraceLog("Info - [SetSystemSleepState] - System sleep is disabled.");
+                }
+            }
+            catch (Exception ex)
+            {
+                RMCManagerForm.TraceLog("Error - [SetSystemSleepState] - An error occurred while trying to set the system sleep state. " + ex.Message);
+            }
         }
     }
 }
